@@ -1,0 +1,868 @@
+
+import { all_moves } from "./moves.mjs";
+import { all_items } from "./items.mjs";
+import Phaser from "phaser";
+import gsap from 'gsap'
+const base_path = '/pokemons/'
+
+let oppo_position = {
+    x: 798,
+    y: 395
+}
+
+let ally_position = {
+    x: 256,
+    y: 500
+}
+
+const pokemon_natures = [
+    "Hardy", "Lonely", "Brave", "Adamant", "Naughty",
+    "Bold", "Docile", "Relaxed", "Impish", "Lax",
+    "Timid", "Hasty", "Serious", "Jolly", "Naive",
+    "Modest", "Mild", "Quiet", "Bashful", "Rash",
+    "Calm", "Gentle", "Sassy", "Careful", "Quirky"
+];
+
+
+class Pokemon {
+    constructor({ name, description, height, types, level, moves, abilities, gender, xp, base_exp, growth_rate, catch_rate, pokemon_number, status, confused, flinched, hp, atk, def, sp_atk, sp_def, speed, accuracy, evolution, images, sounds, damage, location, fainted, sprite, nature, held_item, leviates }) {
+        this.name = name;
+        this.description = description || 'no description available';
+        this.types = types || [];
+        this.height = height || 0.5
+        this.level = level || 1;
+        this.moves = moves || [];
+        this.abilities = abilities || null;
+        this.gender = gender || 'male';
+        this.xp = xp || 0;
+        this.base_exp = base_exp || 51;
+        this.growth_rate = growth_rate || 'Medium Fast';
+        this.catch_rate = catch_rate || 255;
+        this.pokemon_number = pokemon_number || null;
+        this.status = status || null;
+        this.confused = null;
+        this.flinched = false;
+        this.fainted = false
+        this.hp = hp || { base: 0, current: 0, effective: 0, stage: 0 };
+        this.atk = atk || { base: 0, current: 0, effective: 0, stage: 0 };
+        this.def = def || { base: 0, current: 0, effective: 0, stage: 0 };
+        this.sp_atk = sp_atk || { base: 0, current: 0, effective: 0, stage: 0 };
+        this.sp_def = sp_def || { base: 0, current: 0, effective: 0, stage: 0 };
+        this.speed = speed || { base: 0, current: 0, effective: 0, stage: 0 };
+        this.accuracy = {
+            effective: 1,
+            current: 1,
+            stage: 0
+        };
+        this.evasion = {
+            effective: 1,
+            current: 1,
+            stage: 0
+        }
+        this.evolution = evolution || null;
+        this.images = images || null;
+        this.sounds = sounds || null;
+        this.damage = damage || 0;
+        this.location = location || null;
+        this.player_controlled = false
+        this.sprite = null
+        this.nature = nature || pokemon_natures[Math.floor(Math.random() * pokemon_natures.length)]
+        this.held_item = held_item || null
+        this.levitates = leviates || false
+
+
+    }
+    drawSprite(scene) {
+
+
+        let position = this.player_controlled ? ally_position : oppo_position;
+
+
+
+        let asset_key = this.player_controlled ? this.images.front.key : this.images.back.key;
+
+        // Create and configure sprite
+        let starting_offset = this.player_controlled ? -500 : +500;
+        this.sprite = scene.add.sprite(position.x + starting_offset, position.y + 10, asset_key);
+        this.sprite.setOrigin(0.5, 1); // Set anchor to bottom center
+        this.setPropScale()
+
+    }
+
+    setPropScale() {
+        const MIN_SCALE = 0.35;
+        const MAX_SCALE = 1.5;
+        let scale;
+        // Get the height of the Pokémon
+        let pokemonHeight = this.height;
+        let player_controlled_multiplier = this.player_controlled ? 1.1 : 0.8;
+
+        // Adjust scale based on pokemonHeight
+        let heightMultiplier = Math.min(1 + pokemonHeight / 5, 5); // Adjust this multiplier as needed
+
+        // Calculate scale based on pokemonHeight, player_controlled_multiplier, and heightMultiplier
+        scale = Phaser.Math.Clamp((pokemonHeight / 30) + 0.5, MIN_SCALE, MAX_SCALE);
+        this.sprite.setScale(scale * player_controlled_multiplier * heightMultiplier);
+    }
+
+
+
+    async playDamageAnim(scene) {
+        return new Promise(resolve => {
+            let position = this.player_controlled ? ally_position : oppo_position;
+
+            scene.tweens.add({
+                delay: 0,
+                duration: 150,
+                targets: this.sprite,
+                alpha: {
+                    from: 1,
+                    start: 1,
+                    to: 0,
+                    repeat: 6
+                },
+                x: {
+                    from: position.x,
+                    start: position.x,
+                    to: position.x - 5,
+                },
+                repeat: 6,
+                onComplete: () => {
+                    this.sprite.setX(position.x);
+                    this.sprite.setAlpha(1);
+                    resolve(); // Resolve the promise when animation completes
+                }
+            });
+        });
+    }
+
+    playRetireAnim(dur) {
+        let position = this.player_controlled ? ally_position : oppo_position;
+        //reverse animations in case of enemy pokemon
+
+        let multiplier = this.player_controlled ? +1 : -1;
+        return new Promise(resolve => {
+            gsap.to(this.sprite, {
+                // scale: 0,
+                duration: dur,
+                y: position.y + 30,
+                x: position.x - 400 * multiplier,
+                onComplete: () => {
+                    resolve()
+                }
+            })
+        });
+    }
+    playSwitchAnim(new_scale_val) {
+        // fix for enemy swap
+        return new Promise(resolve => {
+            let position = this.player_controlled ? ally_position : oppo_position;
+
+            gsap.to(this.sprite, {
+                duration: 1,
+                y: position.y,
+                x: position.x,
+                onComplete: () => {
+                    resolve()
+                }
+            })
+        });
+    }
+    async playFaintAnim(scene) {
+        return new Promise(resolve => {
+            let position = this.player_controlled ? ally_position : oppo_position;
+            if (this.levitates) {
+                position.y = position.y - 20
+            }
+            scene.tweens.add({
+                delay: 0,
+                duration: 1000,
+                targets: this.sprite,
+                y: {
+                    from: position.y,
+                    start: position.y,
+                    to: position.y + 30
+                },
+                alpha: {
+                    from: 1,
+                    start: 1,
+                    to: 0
+                },
+                onComplete: () => {
+                    resolve();
+                }
+            });
+        });
+    }
+
+
+};
+
+
+
+
+
+let squirtle = new Pokemon({
+    name: "Squirtle",
+    description: "It hides in its shell to protect itself, then strikes back with spouts of water at every opportunity.",
+    types: ['water'],
+
+    moves: [{ ...all_moves.tackle }, { ...all_moves.smoke_screen }, { ...all_moves.dobule_team }, { ...all_moves.withdraw }],
+    abilities: ['Torrent'],
+    growth_rate: 'Medium Slow',
+    level: 5,
+    catch_rate: 45,
+    pokemon_number: 7,
+    hp: {
+        base: 44,
+        max: 44,
+        current: 44
+    },
+    xp: {
+        base: 63,
+        total: 0
+    },
+    atk: {
+        base: 48,
+        current: 48,
+        effective: 48,
+        stage: 0
+    },
+    def: {
+        base: 65,
+        current: 65,
+        effective: 65,
+        stage: 0
+    },
+    sp_atk: {
+        base: 50,
+        current: 50,
+        effective: 50,
+        stage: 0
+    },
+    sp_def: {
+        base: 64,
+        current: 64,
+        effective: 64,
+        stage: 0
+    },
+    speed: {
+        base: 43,
+        current: 43,
+        effective: 43,
+        stage: 0
+    },
+    evolution: {
+
+    },
+    images: {
+        front: {
+            path: base_path + 'squirtle-front.png',
+            key: 'squirtle-front',
+            frameWidth: 389,
+            frameHeight: 410,
+            frames: 19
+        },
+        back: {
+            path: base_path + 'squirtle-back.png',
+            key: 'squirtle-back',
+            frameWidth: 389,
+            frameHeight: 410,
+            frames: 19
+        }
+    },
+    sounds: 'assets/sounds/squirtle-cry.ogg'
+
+
+
+
+});
+
+let bulbasaur = new Pokemon({
+    name: "Bulbasaur",
+    description: "It hides in its shell to protect itself, then strikes back with spouts of water at every opportunity.",
+    types: ['grass', 'poison'],
+    moves: [all_moves.tackle],
+    abilities: ['Torrent'],
+    growth_rate: 'Medium Slow',
+    catch_rate: 45,
+    pokemon_number: 7,
+    level: 5,
+    hp: {
+        base: 45,
+        max: 45,
+        current: 45
+    },
+    xp: {
+        base: 63,
+        total: 0
+    },
+    atk: {
+        base: 49,
+        current: 49,
+        effective: 49,
+        stage: 0
+    },
+    def: {
+        base: 49,
+        current: 49,
+        effective: 49,
+        stage: 0
+    },
+    sp_atk: {
+        base: 65,
+        current: 65,
+        effective: 65,
+        stage: 0
+    },
+    sp_def: {
+        base: 65,
+        current: 65,
+        effective: 65,
+        stage: 0
+    },
+    speed: {
+        base: 45,
+        current: 45,
+        effective: 45,
+        stage: 0
+    },
+    evolution: {
+
+    },
+    images: {
+        front: {
+            path: base_path + 'bulbasaur-front.png',
+            key: 'bulbasaur-front',
+            frameWidth: 283,
+            frameHeight: 310,
+            frames: 26
+        },
+        back: {
+            path: base_path + 'bulbasaur-back.png',
+            key: 'bulbasaur-back',
+            frameWidth: 283,
+            frameHeight: 310,
+            frames: 26
+        }
+    },
+    sounds: 'assets/sounds/bulbasaur-cry.ogg'
+
+
+
+
+});
+
+let torchic = new Pokemon({
+    name: "Torchic",
+    description: "A fire burns inside it, so it feels very warm to hug. It launches fireballs of 1,800 degrees Fahrenheit.",
+    types: ['fire'],
+
+    moves: [{ ...all_moves.smoke_screen }, { ...all_moves.flame_charge }, { ...all_moves.ember }, { ...all_moves.seismic_toss }],
+    abilities: ['Blaze'],
+    growth_rate: 'Medium Slow',
+    height: 0.4,
+    level: 15,
+    catch_rate: 45,
+    pokemon_number: 255,
+    hp: {
+        base: 45,
+        max: 45,
+        current: 45
+    },
+    xp: {
+        base: 62,
+        total: 0
+    },
+    atk: {
+        base: 60,
+        current: 60,
+        effective: 60,
+        stage: 0
+    },
+    def: {
+        base: 40,
+        current: 40,
+        effective: 40,
+        stage: 0
+    },
+    sp_atk: {
+        base: 70,
+        current: 70,
+        effective: 70,
+        stage: 0
+    },
+    sp_def: {
+        base: 50,
+        current: 50,
+        effective: 50,
+        stage: 0
+    },
+    speed: {
+        base: 45,
+        current: 45,
+        effective: 45,
+        stage: 0
+    },
+    evolution: {
+
+    },
+    images: {
+        front: {
+            path: base_path + 'torchic-front.png',
+            key: 'torchic-front',
+            frameWidth: 171,
+            frameHeight: 310,
+            frames: 40
+        },
+        back: {
+            path: base_path + 'torchic-back.png',
+            key: 'torchic-back',
+            frameWidth: 225,
+            frameHeight: 410,
+            frames: 40
+        }
+    },
+    sounds: 'assets/sounds/torchic-cry.ogg'
+});
+
+let treecko = new Pokemon({
+    name: "Treecko",
+    description: "The soles of its feet are covered by countless tiny hooks, enabling it to walk on walls and ceilings.",
+    types: ['grass'],
+    moves: [{ ...all_moves.giga_drain }, { ...all_moves.supersonic }, { ...all_moves.tackle }, { ...all_moves.recover }],
+    abilities: ['Overgrow'],
+    growth_rate: 'Medium Slow',
+    level: 15,
+    catch_rate: 45,
+    pokemon_number: 252,
+    hp: {
+        base: 40,
+        max: 40,
+        current: 40
+    },
+    xp: {
+        base: 62,
+        total: 0
+    },
+    atk: {
+        base: 45,
+        current: 45,
+        effective: 45,
+        stage: 0
+    },
+    def: {
+        base: 35,
+        current: 35,
+        effective: 35,
+        stage: 0
+    },
+    sp_atk: {
+        base: 65,
+        current: 65,
+        effective: 65,
+        stage: 0
+    },
+    sp_def: {
+        base: 55,
+        current: 55,
+        effective: 55,
+        stage: 0
+    },
+    speed: {
+        base: 70,
+        current: 70,
+        effective: 70,
+        stage: 0
+    },
+    evolution: {
+
+    },
+    images: {
+        front: {
+            path: base_path + 'treecko-front.png',
+            key: 'treecko-front',
+            frameWidth: 249,
+            frameHeight: 310,
+            frames: 25
+        },
+        back: {
+            path: base_path + 'treecko-back.png',
+            key: 'treecko-back',
+            frameWidth: 328,
+            frameHeight: 410,
+            frames: 25
+        }
+    },
+    sounds: 'assets/sounds/treeko-cry.ogg'
+});
+
+let mudkip = new Pokemon({
+    name: "Mudkip",
+    description: "Using the fin on its head, Mudkip senses the flow of water to keep track of what’s going on around it. Mudkip has the strength to heft boulders.",
+    types: ['water'],
+    height: 0.4,
+    moves: [{ ...all_moves.withdraw }, { ...all_moves.water_gun }, { ...all_moves.tackle }],
+    abilities: ['Torrent'],
+    growth_rate: 'Medium Slow',
+    level: 15,
+    catch_rate: 45,
+    pokemon_number: 258,
+    hp: {
+        base: 50,
+        max: 50,
+        current: 50
+    },
+    xp: {
+        base: 62,
+        total: 0
+    },
+    atk: {
+        base: 70,
+        current: 70,
+        effective: 70,
+        stage: 0
+    },
+    def: {
+        base: 50,
+        current: 50,
+        effective: 50,
+        stage: 0
+    },
+    sp_atk: {
+        base: 50,
+        current: 50,
+        effective: 50,
+        stage: 0
+    },
+    sp_def: {
+        base: 50,
+        current: 50,
+        effective: 50,
+        stage: 0
+    },
+    speed: {
+        base: 40,
+        current: 40,
+        effective: 40,
+        stage: 0
+    },
+    evolution: {
+
+    },
+    images: {
+        front: {
+            path: base_path + 'mudkip-front.png',
+            key: 'mudkip-front',
+            frameWidth: 236,
+            frameHeight: 310,
+            frames: 32
+        },
+        back: {
+            path: base_path + 'mudkip-back.png',
+            key: 'mudkip-back',
+            frameWidth: 308,
+            frameHeight: 410,
+            frames: 32
+        }
+    },
+    sounds: 'assets/sounds/mudkip-cry.ogg'
+});
+
+let aggron = new Pokemon({
+    name: "Aggron",
+    description: "Using the fin on its head, Mudkip senses the flow of water to keep track of what’s going on around it. Mudkip has the strength to heft boulders.",
+    types: ['steel'],
+    height: 2,
+    moves: [{ ...all_moves.mega_drain }, { ...all_moves.tackle }, { ...all_moves.water_gun }, { ...all_moves.ember }],
+    abilities: ['Torrent'],
+    growth_rate: 'Medium Slow',
+    level: 5,
+    catch_rate: 45,
+    pokemon_number: 258,
+    hp: {
+        base: 50,
+        max: 50,
+        current: 50
+    },
+    xp: {
+        base: 62,
+        total: 0
+    },
+    atk: {
+        base: 70,
+        current: 70,
+        effective: 70,
+        stage: 0
+    },
+    def: {
+        base: 50,
+        current: 50,
+        effective: 50,
+        stage: 0
+    },
+    sp_atk: {
+        base: 50,
+        current: 50,
+        effective: 50,
+        stage: 0
+    },
+    sp_def: {
+        base: 50,
+        current: 50,
+        effective: 50,
+        stage: 0
+    },
+    speed: {
+        base: 40,
+        current: 40,
+        effective: 40,
+        stage: 0
+    },
+    evolution: {
+
+    },
+    images: {
+        front: {
+            path: base_path + 'aggron-front.png',
+            key: 'aggron-front',
+            frameWidth: 392,
+            frameHeight: 310,
+            frames: 38
+        },
+        back: {
+            path: base_path + 'aggron-back.png',
+            key: 'aggron-back',
+            frameWidth: 504,
+            frameHeight: 410,
+            frames: 38
+        }
+    },
+    sounds: 'assets/sounds/aggron-cry.ogg'
+});
+
+let nosepass = new Pokemon({
+    name: "Nosepass",
+    description: "Once the people of Hisui discovered that its red nose always points north, they grew to rely on it greatly when traveling afar. The nose seems to work in a similar way to ancient compasses..",
+    types: ['rock'],
+    height: 1,
+    moves: [{ ...all_moves.seismic_toss }, { ...all_moves.thunder_wave }, { ...all_moves.self_destruct }, { ...all_moves.rock_trhow }],
+    abilities: ['Sturdy'],
+    growth_rate: 'Medium Fast',
+    level: 15,
+    catch_rate: 255,
+    pokemon_number: 258,
+    hp: {
+        base: 30,
+        max: 30,
+        current: 30
+    },
+    xp: {
+        base: 75,
+        total: 0
+    },
+    atk: {
+        base: 45,
+        current: 45,
+        effective: 45,
+        stage: 0
+    },
+    def: {
+        base: 135,
+        current: 135,
+        effective: 135,
+        stage: 0
+    },
+    sp_atk: {
+        base: 45,
+        current: 45,
+        effective: 45,
+        stage: 0
+    },
+    sp_def: {
+        base: 90,
+        current: 90,
+        effective: 90,
+        stage: 0
+    },
+    speed: {
+        base: 30,
+        current: 30,
+        effective: 30,
+        stage: 0
+    },
+    evolution: {
+
+    },
+    images: {
+        front: {
+            path: base_path + 'nosepass-front.png',
+            key: 'nosepass-front',
+            frameWidth: 314,
+            frameHeight: 310,
+            frames: 44
+        },
+        back: {
+            path: base_path + 'nosepass-back.png',
+            key: 'nosepass-back',
+            frameWidth: 417,
+            frameHeight: 410,
+            frames: 44
+        }
+    },
+    sounds: 'assets/sounds/nosepass-cry.ogg',
+    nature: 'Naughty',
+    held_item: all_items.sitrus_berry
+});
+
+let lunatone = new Pokemon({
+    name: "Lunatone",
+    description: "It was discovered at the site of a meteor strike 40 years ago. Its stare can lull its foes to sleep.",
+    types: ['rock', 'psychic'],
+    height: 1,
+    moves: [{ ...all_moves.moonlight }, { ...all_moves.confusion }, { ...all_moves.rock_slide }, { ...all_moves.hypnosis }],
+    abilities: ['Levitate'],
+    growth_rate: 'Fast',
+    level: 15,
+    catch_rate: 45,
+    pokemon_number: 337,
+    hp: {
+        base: 90,
+        max: 90,
+        current: 90
+    },
+    xp: {
+        base: 161,
+        total: 0
+    },
+    atk: {
+        base: 55,
+        current: 55,
+        effective: 55,
+        stage: 0
+    },
+    def: {
+        base: 65,
+        current: 65,
+        effective: 65,
+        stage: 0
+    },
+    sp_atk: {
+        base: 95,
+        current: 95,
+        effective: 95,
+        stage: 0
+    },
+    sp_def: {
+        base: 85,
+        current: 85,
+        effective: 85,
+        stage: 0
+    },
+    speed: {
+        base: 70,
+        current: 70,
+        effective: 70,
+        stage: 0
+    },
+    evolution: {
+
+    },
+    images: {
+        front: {
+            path: base_path + 'lunatone-front.png',
+            key: 'lunatone-front',
+            frameWidth: 207,
+            frameHeight: 310,
+            frames: 57
+        },
+        back: {
+            path: base_path + 'lunatone-back.png',
+            key: 'lunatone-back',
+            frameWidth: 269,
+            frameHeight: 410,
+            frames: 57
+        }
+    },
+    sounds: 'assets/sounds/lunatone-cry.ogg',
+    nature: 'Lonely',
+    leviates: true,
+    held_item: all_items.sitrus_berry
+});
+
+let lileep = new Pokemon({
+    name: "Lileep",
+    description: "Lileep clings to rocks on the seabed. When prey comes close, this Pokémon entangles it with petallike tentacles.",
+    types: ['rock', 'grass'],
+    height: 1,
+    moves: [{ ...all_moves.giga_drain }, { ...all_moves.sludge_bomb }, { ...all_moves.recover }, { ...all_moves.rock_tomb }],
+    abilities: ['Storm Drain'],
+    growth_rate: 'Erratic',
+    level: 15,
+    catch_rate: 45,
+    pokemon_number: 345,
+    hp: {
+        base: 66,
+        max: 66,
+        current: 66
+    },
+    xp: {
+        base: 71,
+        total: 0
+    },
+    atk: {
+        base: 41,
+        current: 41,
+        effective: 41,
+        stage: 0
+    },
+    def: {
+        base: 77,
+        current: 77,
+        effective: 77,
+        stage: 0
+    },
+    sp_atk: {
+        base: 61,
+        current: 61,
+        effective: 61,
+        stage: 0
+    },
+    sp_def: {
+        base: 87,
+        current: 87,
+        effective: 87,
+        stage: 0
+    },
+    speed: {
+        base: 23,
+        current: 23,
+        effective: 23,
+        stage: 0
+    },
+    evolution: {
+
+    },
+    images: {
+        front: {
+            path: base_path + 'lileep-front.png',
+            key: 'lileep-front',
+            frameWidth: 236,
+            frameHeight: 310,
+            frames: 15
+        },
+        back: {
+            path: base_path + 'lileep-back.png',
+            key: 'lileep-back',
+            frameWidth: 299,
+            frameHeight: 410,
+            frames: 15
+        }
+    },
+    sounds: 'assets/sounds/lileep-cry.ogg',
+    held_item: all_items.sitrus_berry
+});
+
+export const Pokemons = {
+    treecko, torchic, mudkip, aggron, nosepass, lunatone, lileep
+}

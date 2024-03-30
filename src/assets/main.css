@@ -1,0 +1,38 @@
+@import url('https://fonts.googleapis.com/css2?family=Gluten:wght@100;200;300;400;500;600;700;800;900&display=swap');
+
+
+/* :root {
+    --progress-color-enemy: green;
+    --progress-color-my: green;
+    --progress-color-active-slot: green;
+    --progress-color-bench-slot-0: yellow;
+    --progress-color-bench-slot-1: purple;
+    --progress-color-bench-slot-2: red;
+    --progress-color-bench-slot-3: blue;
+
+} */
+
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Gluten', cursive;
+
+}
+
+/* Scoped styles for the enemy's HP bar */
+#enemy-hp.full-hp::-webkit-progress-value,
+#my-hp.full-hp::-webkit-progress-value {
+    background-color: green;
+}
+
+#enemy-hp.medium-hp::-webkit-progress-value,
+#my-hp.medium-hp::-webkit-progress-value {
+    background-color: yellow;
+}
+
+#enemy-hp.low-hp::-webkit-progress-value,
+#my-hp.low-hp::-webkit-progress-value {
+    background-color: crimson;
+}

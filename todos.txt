@@ -1,0 +1,31 @@
+faint logic
+status condition
+swap
+multiplayer battle
+trainier battle
+improved AI (differenciate by level)
+Details UI (Pokemons stats  and moves)
+animations
+more moves 
+calc experience gains, levels plus, evolutions, possible learned moves
+double_battles
+enemy trainer another pokemons\swaps
+
+ITEMS AND ABILITIES
+
+motion one+
+
+
+bugs: -allied hp, normal types returning error on supereffective
+
+rules: 
+
+No overlevel
+Every trainer has your same amount of pokemons (random)
+balance every pokemon (Base stas, movesets, abilities)
+improve AI
+limit pokemon catching
+no healing in battle
+if faint, dead
+cannot esacpe dungeon\gym (or trainers get reset)
+abilities are not randomized
