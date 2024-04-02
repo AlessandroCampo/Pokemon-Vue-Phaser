@@ -55,11 +55,41 @@ const menu_voices = ref([
     },
     {
         path: '/badges/bag.png',
-        page: 'items'
+        page: 'items',
+        callback: async () => {
+            // if (!store.config.rules.items_in_battle_allowed) {
+            //     store.menu_state = 'text'
+            //     store.info_text = "You're not allowed to use items in battle"
+            //     await store.delay(store.info_text.length * store.config.text_speed + 500)
+            //     store.menu_state = 'options'
+            // }
+            open_menu_page('items')
+        }
     },
     {
         path: '/badges/run.png',
-        page: 'moves'
+        page: null,
+        callback: async () => {
+            if (store.battle_type == 'trainer') {
+                store.menu_state = 'text'
+                store.info_text = "You can't run away from trainer battles..."
+                await store.delay(store.info_text.length * store.config.text_speed + 500)
+                store.menu_state = 'options'
+            } else {
+                if (await store.attemptEscape(store.my_pokemon, store.oppo_pokemon)) {
+                    // end battle scene logic 
+                } else {
+                    const ai_selected_move = store.oppo_pokemon.moves[Math.floor(Math.random() * store.oppo_pokemon.moves.length)]
+                    const oppo_pokemon_attack = async () => {
+                        await store.useMove(ai_selected_move, store.oppo_pokemon, store.my_pokemon, false);
+
+                    };
+                    store.battle_events.push(oppo_pokemon_attack)
+                    await store.processEvents();
+                }
+
+            }
+        }
     },
 ])
 

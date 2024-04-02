@@ -1,22 +1,20 @@
-faint logic
-status condition
-swap
+
 multiplayer battle
-trainier battle
-improved AI (differenciate by level)
 Details UI (Pokemons stats  and moves)
-animations
-more moves 
 calc experience gains, levels plus, evolutions, possible learned moves
 double_battles
-enemy trainer another pokemons\swaps
-
-ITEMS AND ABILITIES
-
-motion one+
 
 
-bugs: -allied hp, normal types returning error on supereffective
+
+MAKE EVENT PRIORITY SMARTER
+bag, items, pokemona nd menu ifno
+
+possible bug: ai thinking hes at threat of kill when enemy pokemon is asleep or frozen
+
+catching logic, run away logic
+
+wild mons -2 or -3 level, random moveset between learnable moves up to that level, trainers -1 -2, boss fixed level
+moves, learned moves, trainer pokemonns and moves
 
 rules: 
 
@@ -29,3 +27,6 @@ no healing in battle
 if faint, dead
 cannot esacpe dungeon\gym (or trainers get reset)
 abilities are not randomized
+make
+
+pps are not unique(Need to deeper clone moves)

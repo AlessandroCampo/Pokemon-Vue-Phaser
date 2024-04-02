@@ -29,7 +29,7 @@ function deepClone(obj) {
 
 
 
-class Trainer {
+export class Trainer {
     constructor({ name, bench, lead, items, position, scale, squad_level, moveset }) {
         this.name = name
         this.bench = bench
@@ -42,6 +42,7 @@ class Trainer {
             y: 320
         }
         this.moveset = moveset
+        this.location = location || null
     }
 }
 
@@ -54,7 +55,7 @@ class Trainer {
 const roxanne = new Trainer({
     name: 'Roxanne',
     lead: Pokemons.nosepass,
-    bench: [Pokemons.lunatone, Pokemons.lileep],
+    bench: [Pokemons.lunatone, Pokemons.lileep, Pokemons.nosepass],
     position: {
         x: 950,
         y: 320

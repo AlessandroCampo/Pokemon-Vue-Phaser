@@ -1,17 +1,19 @@
 import { allAnimations } from "./animations.mjs"
 
 class Move {
-    constructor({ name, type, category, power, accuracy, pp, makes_contact, description, animation, effects }) {
+    constructor({ name, type, category, power, accuracy, pp, makes_contact, description, animation, effects, priority, targets }) {
         this.name = name
         this.type = type
         this.category = category || 'Physical'
         this.power = power
         this.accuracy = accuracy || 100
         this.pp = pp
-        this.makes_contact = makes_contact || true
+        this.makes_contact = makes_contact
         this.description = description || ''
         this.animation = animation || null
         this.effects = effects || null
+        this.priority = priority || 1
+        this.targets = targets || true
     }
 }
 
@@ -33,9 +35,106 @@ const tackle = new Move({
     effects: null
 })
 
+const pound = new Move({
+    name: 'Pound',
+    category: 'physical',
+    type: 'normal',
+    power: 40,
+    accuracy: 100,
+    pp: {
+        max: 35,
+        current: 35
+    },
+    makes_contact: true,
+    animation: allAnimations.tackle_animation,
+    description: 'The target is physically pounded with a long tail, a foreleg, or the like.',
+    effects: null
+})
+
+const scratch = new Move({
+    name: 'Scratch',
+    category: 'physical',
+    type: 'normal',
+    power: 40,
+    accuracy: 100,
+    pp: {
+        max: 35,
+        current: 35
+    },
+    makes_contact: true,
+    animation: null,
+    description: 'Hard, pointed, sharp claws rake the target to inflict damage.',
+    effects: null
+})
+
+const pay_day = new Move({
+    name: 'Pay Day',
+    category: 'physical',
+    type: 'normal',
+    power: 40,
+    accuracy: 100,
+    pp: {
+        max: 20,
+        current: 20
+    },
+    makes_contact: true,
+    animation: null,
+    description: 'Coins are hurled at the target to inflict damage. Money is earned after the battle.',
+    effects: [{ type: 'earn_money', amount: 20 }]
+})
+
+const quick_attack = new Move({
+    name: 'Quick Attack',
+    category: 'physical',
+    type: 'normal',
+    power: 40,
+    accuracy: 100,
+    pp: {
+        max: 30,
+        current: 30
+    },
+    makes_contact: true,
+    animation: allAnimations.tackle_animation,
+    description: 'The user lunges at the target to inflict damage, moving at blinding speed. This move always goes first.',
+    effects: null,
+    priority: 2
+})
+
+const headbutt = new Move({
+    name: 'Headbutt',
+    category: 'physical',
+    type: 'normal',
+    power: 70,
+    accuracy: 100,
+    pp: {
+        max: 25,
+        current: 25
+    },
+    makes_contact: true,
+    animation: null,
+    description: 'The user sticks out its head and attacks by charging straight into the target. This may also make the target flinch.',
+    effects: [{ type: 'apply_flinch', applied_status: 'flinch', target: 'enemy', chance: 30 }]
+})
+
+const take_down = new Move({
+    name: 'Take Down',
+    category: 'Physical',
+    type: 'normal',
+    power: 90,
+    accuracy: 85,
+    pp: {
+        max: 20,
+        current: 20
+    },
+    makes_contact: true,
+    animation: null,
+    description: 'A reckless full-body charge attack for slamming into the target. This also damages the user a little',
+    effects: [{ type: 'recoil', amount: 0.25 }]
+})
+
 const growl = new Move({
     name: 'Growl',
-    category: 'physical',
+    category: 'status',
     type: 'normal',
     power: null,
     accuracy: 100,
@@ -48,6 +147,72 @@ const growl = new Move({
     description: 'The user growls in an endearing way, making opposing Pokémon less wary. This lowers their Attack stats.',
     effects: [{ type: 'modify_stat', target_stat: 'atk', target: 'enemy', stages: -1, target_stat_label: 'attack' }]
 })
+
+const howl = new Move({
+    name: 'Howl',
+    category: 'status',
+    type: 'normal',
+    power: null,
+    accuracy: 100,
+    pp: {
+        max: 40,
+        current: 40
+    },
+    makes_contact: false,
+    animation: null,
+    description: 'The user howls loudly to rouse itself and its allies. This boosts their Attack stats.',
+    effects: [{ type: 'modify_stat', target_stat: 'atk', target: 'ally', stages: +1, target_stat_label: 'attack' }]
+})
+
+const leer = new Move({
+    name: 'Leer',
+    category: 'status',
+    type: 'normal',
+    power: null,
+    accuracy: 100,
+    pp: {
+        max: 30,
+        current: 30
+    },
+    makes_contact: false,
+    animation: null,
+    description: 'The user gives opposing Pokémon an intimidating leer that lowers their Defense stats.',
+    effects: [{ type: 'modify_stat', target_stat: 'def', target: 'enemy', stages: -1, target_stat_label: 'defense' }]
+})
+
+const tail_whip = new Move({
+    name: 'Tail Whip',
+    category: 'status',
+    type: 'normal',
+    power: null,
+    accuracy: 100,
+    pp: {
+        max: 30,
+        current: 30
+    },
+    makes_contact: false,
+    animation: null,
+    description: 'The user wags its tail cutely, making opposing Pokémon less wary. This lowers their Defense stats.',
+    effects: [{ type: 'modify_stat', target_stat: 'def', target: 'enemy', stages: -1, target_stat_label: 'defense' }]
+})
+
+const protect = new Move({
+    name: 'Protect',
+    category: 'status',
+    type: 'fighting',
+    power: null,
+    accuracy: 100,
+    pp: {
+        max: 10,
+        current: 10
+    },
+    makes_contact: false,
+    animation: null,
+    description: 'This move enables the user to protect itself from all attacks. Its chance of failing rises if it is used in succession.',
+    effects: [{ type: 'protect' }],
+    priority: 4
+})
+
 
 const self_destruct = new Move({
     name: 'Self Destruct',
@@ -202,6 +367,22 @@ const ember = new Move({
 
 // GRASS TYPE
 
+const leafage = new Move({
+    name: 'Leafage ',
+    category: 'physical',
+    type: 'normal',
+    power: 40,
+    accuracy: 100,
+    pp: {
+        max: 40,
+        current: 40
+    },
+    makes_contact: false,
+    animation: allAnimations.tackle_animation,
+    description: 'The user attacks by pelting the target with leaves.',
+    effects: null
+})
+
 const mega_drain = new Move({
     name: 'Mega Drain',
     category: 'special',
@@ -240,7 +421,7 @@ const giga_drain = new Move({
 
 const hypnosis = new Move({
     name: 'Hypnosis',
-    category: 'special',
+    category: 'status',
     type: 'psychic',
     power: null,
     accuracy: 60,
@@ -272,6 +453,40 @@ const confusion = new Move({
 
 })
 
+const psybeam = new Move({
+    name: 'Psybeam',
+    category: 'special',
+    type: 'psychic',
+    power: 65,
+    accuracy: 100,
+    pp: {
+        max: 20,
+        current: 20
+    },
+    makes_contact: false,
+    animation: null,
+    description: 'The target is hit by a weak telekinetic force. This may also confuse the target.',
+    effects: [{ type: 'apply_confusion', applied_status: 'confused', target: 'enemy', chance: 10 }]
+
+})
+
+const draining_kiss = new Move({
+    name: 'Draining Kiss',
+    category: 'special',
+    type: 'psychic',
+    power: 50,
+    accuracy: 100,
+    pp: {
+        max: 10,
+        current: 10
+    },
+    makes_contact: false,
+    animation: null,
+    description: 'The user steals the target’s HP with a kiss. The user’s HP is restored by over half the damage taken by the target.',
+    effects: [{ type: 'drain', target: 'ally', amount: 0.75 }]
+
+})
+
 const moonlight = new Move({
     name: 'Moonlight ',
     category: 'status',
@@ -293,7 +508,7 @@ const moonlight = new Move({
 const seismic_toss = new Move({
     name: 'Seismic Toss',
     category: 'physical',
-    type: 'normal',
+    type: 'fighting',
     power: 1,
     accuracy: 100,
     pp: {
@@ -304,6 +519,39 @@ const seismic_toss = new Move({
     animation: null,
     description: 'The target is thrown using the power of gravity. It inflicts damage equal to the user’s level.',
     effects: null
+})
+
+const detect = new Move({
+    name: 'Detect',
+    category: 'status',
+    type: 'fighting',
+    power: null,
+    accuracy: 100,
+    pp: {
+        max: 5,
+        current: 5
+    },
+    makes_contact: false,
+    animation: null,
+    description: 'This move enables the user to protect itself from all attacks. Its chance of failing rises if it is used in succession.',
+    effects: [{ type: 'protect' }],
+    priority: 4
+})
+
+const rock_smash = new Move({
+    name: 'Rock Smash',
+    category: 'physical',
+    type: 'fighting',
+    power: 40,
+    accuracy: 100,
+    pp: {
+        max: 15,
+        current: 15
+    },
+    makes_contact: true,
+    animation: null,
+    description: 'The user attacks with a punch that may lower the target’s Defense stat. It’s also one of the Pokétch’s hidden moves.',
+    effects: [{ type: 'modify_stat', target_stat: 'def', target: 'enemy', stages: -1, target_stat_label: 'defense' }]
 })
 
 // ELECTRIC MOVES
@@ -325,6 +573,23 @@ const thunder_wave = new Move({
 
 })
 
+const shock_wave = new Move({
+    name: 'Shock Wave',
+    category: 'special',
+    type: 'electric',
+    power: 60,
+    accuracy: 1000,
+    pp: {
+        max: 20,
+        current: 20
+    },
+    makes_contact: false,
+    animation: null,
+    description: 'The user strikes the target with a quick jolt of electricity. This attack never misses.',
+    effects: null
+
+})
+
 //ROCK MOVES
 
 const rock_trhow = new Move({
@@ -339,7 +604,7 @@ const rock_trhow = new Move({
     },
     makes_contact: false,
     animation: null,
-    description: 'The user picks up and throws a small rock at the target to attack..',
+    description: 'The user picks up and throws a small rock at the target to attack.',
     effects: null
 })
 
@@ -375,6 +640,26 @@ const rock_tomb = new Move({
     effects: [{ type: 'modify_stat', target_stat: 'speed', target: 'enemy', stages: -1, target_stat_label: 'speed' }]
 })
 
+//GROUND TYPE MOVES
+
+
+const sand_attack = new Move({
+    name: 'Sand Attack',
+    category: 'status',
+    type: 'groundd',
+    power: null,
+    accuracy: 100,
+    pp: {
+        max: 15,
+        current: 15
+    },
+    makes_contact: false,
+    animation: null,
+    description: 'Sand is hurled in the target’s face, lowering the target’s accuracy.',
+    effects: [{ type: 'modify_stat', target_stat: 'accuracy', target: 'enemy', stages: -1, target_stat_label: 'accuracy' }]
+})
+
+
 
 
 // ICE MOVES 
@@ -382,7 +667,7 @@ const rock_tomb = new Move({
 const ice_beam = new Move({
     name: 'Ice Beam',
     category: 'special',
-    type: 'fire',
+    type: 'ice',
     power: 90,
     accuracy: 100,
     pp: {
@@ -401,7 +686,7 @@ const ice_beam = new Move({
 const sludge_bomb = new Move({
     name: 'Sludge Bomb',
     category: 'special',
-    type: 'fire',
+    type: 'poison',
     power: 90,
     accuracy: 100,
     pp: {
@@ -414,6 +699,79 @@ const sludge_bomb = new Move({
     effects: [{ type: 'apply_status', applied_status: 'poisoned', target: 'enemy', chance: 30 }]
 
 })
+
+//FLYING MOVES
+
+const wing_attack = new Move({
+    name: 'Wing Attack',
+    category: 'physical',
+    type: 'flying',
+    power: 60,
+    accuracy: 100,
+    pp: {
+        max: 35,
+        current: 35
+    },
+    makes_contact: true,
+    animation: null,
+    description: 'The target is struck with large, imposing wings spread wide to inflict damage.',
+    effects: null
+})
+
+// DARK MOVES
+
+const bite = new Move({
+    name: 'Bite',
+    category: 'physical',
+    type: 'dark',
+    power: 60,
+    accuracy: 100,
+    pp: {
+        max: 25,
+        current: 25
+    },
+    makes_contact: true,
+    animation: null,
+    description: 'The target is bitten with viciously sharp fangs. This may also make the target flinch.',
+    effects: [{ type: 'apply_flinch', applied_status: 'flinch', target: 'enemy', chance: 30 }]
+})
+
+//FAIRY MOVES 
+
+const baby_doll_eyes = new Move({
+    name: 'Baby-Doll Eyes',
+    category: 'status',
+    type: 'fairy',
+    power: null,
+    accuracy: 100,
+    pp: {
+        max: 30,
+        current: 30
+    },
+    makes_contact: false,
+    animation: null,
+    description: 'The user stares at the target with its baby-doll eyes, which lowers the target’s Attack stat. This move always goes first.',
+    effects: [{ type: 'modify_stat', target_stat: 'atk', target: 'enemy', stages: -1, target_stat_label: 'attack' }],
+    priority: 2
+})
+
+const disarming_voice = new Move({
+    name: 'Disarming Voice',
+    category: 'Special',
+    type: 'fairy',
+    power: 40,
+    accuracy: 1000,
+    pp: {
+        max: 15,
+        current: 15
+    },
+    makes_contact: false,
+    animation: null,
+    description: 'Letting out a charming cry, the user does emotional damage to opposing Pokémon. This attack never misses..',
+    effects: null
+
+})
+
 
 export const all_moves = {
     tackle,
@@ -438,6 +796,27 @@ export const all_moves = {
     giga_drain,
     moonlight,
     recover,
-    rock_tomb
+    rock_tomb,
+    quick_attack,
+    pound,
+    leafage,
+    detect,
+    leer,
+    protect,
+    rock_smash,
+    sand_attack,
+    wing_attack,
+    howl,
+    bite,
+    tail_whip,
+    baby_doll_eyes,
+    headbutt,
+    draining_kiss,
+    psybeam,
+    scratch,
+    pay_day,
+    take_down,
+    shock_wave,
+    disarming_voice
 
 }

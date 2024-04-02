@@ -35,12 +35,20 @@ export class PreloadScene extends Phaser.Scene {
         // socket.connect()
         // socket.emit('join_room', 'test_room')
         // socket.emit('starting_pokemon', my_pokemon)
-        store.my_pokemon.player_controlled = true
-        store.oppo_pokemon.player_controlled = false
+
+
         this.load.image(BATTLE_BACKGROUND_ASSET_KEYS.FOREST_NIGHT, '/backgrounds/background-1-night.jpg')
         if (store.battle_type == 'trainer') {
-            this.load.image(`trainer_${store.oppo_trainer.name}`, `/trainers/${store.oppo_trainer.name}.png`)
+            let test_trainer = store.generate_random_trainer()
+            store.my_pokemon = test_trainer.lead
+            store.my_bench = test_trainer.bench
+            store.oppo_trainer = store.generate_random_trainer()
+            store.oppo_pokemon = store.oppo_trainer.lead
+            store.oppo_bench = store.oppo_trainer.bench
+            this.load.image(`trainer_${store.oppo_trainer.name}`, `/trainers/clown.png`)
         }
+        store.my_pokemon.player_controlled = true
+        store.oppo_pokemon.player_controlled = false
 
 
         this.load.spritesheet(store.oppo_pokemon.images.front.key, store.oppo_pokemon.images.front.path, {
@@ -70,13 +78,12 @@ export class PreloadScene extends Phaser.Scene {
             });
         }
 
-        console.log(store.my_pokemon, store.oppo_pokemon)
     }
     create() {
         if (store.battle_type == 'wild') {
-            store.info_text = `A wild ${Pokemons.torchic.name} appears! Get ready to fight for your life!`
+            store.info_text = `A wild ${store.oppo_pokemon.name} appears! Get ready to fight for your life!`
         } else if (store.battle_type == 'trainer') {
-            store.info_text = `The match against ${store.oppo_trainer.name} is about to start. Her first pokèmon is ${store.oppo_pokemon.name}`
+            store.info_text = `The match against ${store.oppo_trainer.name} is about to start. The first pokèmon is ${store.oppo_pokemon.name}`
         }
 
         this.scene.start(SCENE_KEYS.BATTLE_SCENE)

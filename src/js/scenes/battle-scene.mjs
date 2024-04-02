@@ -89,6 +89,9 @@ export class BattleScene extends Phaser.Scene {
     }
 
     async changeAllyPokemonSprite(newPokemon) {
+        // when a pokemon is switched out, all his stats are restored, and he heals from confusion if he is
+        store.my_pokemon.resetStats()
+        store.my_pokemon.confused = false
         const bench_index = store.my_bench.indexOf(newPokemon)
         const retire_animation_speed = store.my_pokemon.fainted ? 0.1 : 0.8
         store.menu_state = 'text';
@@ -102,6 +105,10 @@ export class BattleScene extends Phaser.Scene {
         if (!store.my_pokemon.fainted) {
             store.my_bench.push(store.my_pokemon)
         }
+        // heal provisional status effects
+        if (store.my_pokemon.confused) {
+            store.my_pokemon.confused = false
+        }
         store.my_pokemon = newPokemon
         store.my_pokemon.sprite.setTexture(newPokemon.images.back.key);
         store.my_pokemon.sprite.play(newPokemon.images.back.animation_key);
@@ -111,7 +118,9 @@ export class BattleScene extends Phaser.Scene {
     }
 
     async changeOpponentPokemonSprite(newPokemon) {
-        console.log(newPokemon)
+        // when a pokemon is switched out, all his stats are restored, and he heals from confusion if he is
+        store.oppo_pokemon.resetStats()
+        store.oppo_pokemon.confused = false
         const bench_index = store.oppo_bench.indexOf(newPokemon)
         const retire_animation_speed = store.oppo_pokemon.fainted ? 0.1 : 0.8
         store.menu_state = 'text';
@@ -125,6 +134,8 @@ export class BattleScene extends Phaser.Scene {
         if (!store.oppo_pokemon.fainted) {
             store.oppo_bench.push(store.oppo_pokemon)
         }
+        // heal provisional status effects
+
         store.oppo_pokemon = newPokemon
         store.oppo_pokemon.sprite.setTexture(newPokemon.images.front.key);
         store.oppo_pokemon.sprite.play(newPokemon.images.front.animation_key);

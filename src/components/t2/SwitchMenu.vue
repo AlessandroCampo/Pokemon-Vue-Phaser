@@ -57,6 +57,7 @@ const handleMovesInput = async function (e) {
             await store.battle_scene_instance.changeAllyPokemonSprite(store.my_bench[active_voice.value])
         });
 
+
         // only queuue an IA attack if ur switching out a non fainted pokemon
         if (!active_pokemon_fainted) {
             store.battle_events.push(async () => {

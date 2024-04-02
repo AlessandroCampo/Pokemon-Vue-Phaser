@@ -3,12 +3,14 @@
     <MovesMenu v-else-if="store.menu_state == 'moves'"></MovesMenu>
     <TextPanel v-else-if="store.menu_state == 'text'"></TextPanel>
     <SwitchMenu v-else-if="store.menu_state == 'switch'"></SwitchMenu>
+    <ItemsMenu v-else-if="store.menu_state == 'items'"></ItemsMenu>
 </template>
 
 <script setup>
 import ActionsMenuVue from "./t2/ActionsMenu.vue";
 import MovesMenu from "./t2/MovesMenu.vue";
 import SwitchMenu from "./t2/SwitchMenu.vue";
+import ItemsMenu from "./t2/ItemsMenu.vue";
 import TextPanel from './t2/TextPanel.vue'
 import { ref, onMounted, watch } from 'vue'
 import { store } from "@/store";

@@ -5,6 +5,9 @@ import Phaser from "phaser";
 import gsap from 'gsap'
 const base_path = '/pokemons/'
 
+
+
+
 let oppo_position = {
     x: 798,
     y: 395
@@ -25,13 +28,15 @@ const pokemon_natures = [
 
 
 class Pokemon {
-    constructor({ name, description, height, types, level, moves, abilities, gender, xp, base_exp, growth_rate, catch_rate, pokemon_number, status, confused, flinched, hp, atk, def, sp_atk, sp_def, speed, accuracy, evolution, images, sounds, damage, location, fainted, sprite, nature, held_item, leviates }) {
+    constructor({ name, description, height, weight, types, level, moves, learnable_moves, abilities, gender, xp, base_exp, growth_rate, catch_rate, pokemon_number, status, confused, flinched, hp, atk, def, sp_atk, sp_def, speed, accuracy, evasion, evolution, images, sounds, damage, location, fainted, sprite, nature, held_item, leviates, stat_total }) {
         this.name = name;
         this.description = description || 'no description available';
         this.types = types || [];
-        this.height = height || 0.5
+        this.height = height || 0.5;
+        this.weight = weight || undefined
         this.level = level || 1;
         this.moves = moves || [];
+        this.learnable_moves = learnable_moves || [];
         this.abilities = abilities || null;
         this.gender = gender || 'male';
         this.xp = xp || 0;
@@ -69,16 +74,13 @@ class Pokemon {
         this.nature = nature || pokemon_natures[Math.floor(Math.random() * pokemon_natures.length)]
         this.held_item = held_item || null
         this.levitates = leviates || false
+        this.guarded = false
+        this.stat_total = stat_total || null
 
 
     }
     drawSprite(scene) {
-
-
         let position = this.player_controlled ? ally_position : oppo_position;
-
-
-
         let asset_key = this.player_controlled ? this.images.front.key : this.images.back.key;
 
         // Create and configure sprite
@@ -95,7 +97,7 @@ class Pokemon {
         let scale;
         // Get the height of the Pokémon
         let pokemonHeight = this.height;
-        let player_controlled_multiplier = this.player_controlled ? 1.1 : 0.8;
+        let player_controlled_multiplier = this.player_controlled ? 1 : 0.7;
 
         // Adjust scale based on pokemonHeight
         let heightMultiplier = Math.min(1 + pokemonHeight / 5, 5); // Adjust this multiplier as needed
@@ -168,6 +170,29 @@ class Pokemon {
             })
         });
     }
+    playCatchAnimation() {
+        return new Promise(resolve => {
+            gsap.to(this.sprite, {
+                duration: 1,
+                scale: 0,
+                onComplete: () => {
+                    resolve()
+                }
+            })
+        })
+    }
+
+    playBrakeFreeAnimation(origina_scale) {
+        return new Promise(resolve => {
+            gsap.to(this.sprite, {
+                duration: 1,
+                scale: origina_scale,
+                onComplete: () => {
+                    resolve()
+                }
+            })
+        })
+    }
     async playFaintAnim(scene) {
         return new Promise(resolve => {
             let position = this.player_controlled ? ally_position : oppo_position;
@@ -193,6 +218,16 @@ class Pokemon {
                 }
             });
         });
+    }
+
+    resetStats() {
+        this.atk.current = this.atk.base;
+        this.def.current = this.def.base;
+        this.sp_atk.current = this.sp_atk.base;
+        this.sp_def.current = this.sp_def.base;
+        this.speed.current = this.speed.base;
+        this.accuracy.current = this.accuracy.effective;
+        this.evasion.current = this.evasion.effective;
     }
 
 
@@ -357,8 +392,7 @@ let torchic = new Pokemon({
     name: "Torchic",
     description: "A fire burns inside it, so it feels very warm to hug. It launches fireballs of 1,800 degrees Fahrenheit.",
     types: ['fire'],
-
-    moves: [{ ...all_moves.smoke_screen }, { ...all_moves.flame_charge }, { ...all_moves.ember }, { ...all_moves.seismic_toss }],
+    moves: [{ ...all_moves.ember }, { ...all_moves.detect }, { ...all_moves.flame_charge }, { ...all_moves.sand_attack }],
     abilities: ['Blaze'],
     growth_rate: 'Medium Slow',
     height: 0.4,
@@ -423,6 +457,7 @@ let torchic = new Pokemon({
             frames: 40
         }
     },
+    held_item: all_items.lum_berry,
     sounds: 'assets/sounds/torchic-cry.ogg'
 });
 
@@ -433,7 +468,7 @@ let treecko = new Pokemon({
     moves: [{ ...all_moves.giga_drain }, { ...all_moves.supersonic }, { ...all_moves.tackle }, { ...all_moves.recover }],
     abilities: ['Overgrow'],
     growth_rate: 'Medium Slow',
-    level: 15,
+    level: 5,
     catch_rate: 45,
     pokemon_number: 252,
     hp: {
@@ -494,6 +529,7 @@ let treecko = new Pokemon({
             frames: 25
         }
     },
+    held_item: all_items.lum_berry,
     sounds: 'assets/sounds/treeko-cry.ogg'
 });
 
@@ -502,10 +538,10 @@ let mudkip = new Pokemon({
     description: "Using the fin on its head, Mudkip senses the flow of water to keep track of what’s going on around it. Mudkip has the strength to heft boulders.",
     types: ['water'],
     height: 0.4,
-    moves: [{ ...all_moves.withdraw }, { ...all_moves.water_gun }, { ...all_moves.tackle }],
+    moves: [{ ...all_moves.rock_smash }, { ...all_moves.water_gun }, { ...all_moves.sand_attack }, { ...all_moves.rock_trhow }],
     abilities: ['Torrent'],
     growth_rate: 'Medium Slow',
-    level: 15,
+    level: 5,
     catch_rate: 45,
     pokemon_number: 258,
     hp: {
@@ -566,7 +602,8 @@ let mudkip = new Pokemon({
             frames: 32
         }
     },
-    sounds: 'assets/sounds/mudkip-cry.ogg'
+    sounds: 'assets/sounds/mudkip-cry.ogg',
+    held_item: null,
 });
 
 let aggron = new Pokemon({
@@ -646,7 +683,8 @@ let nosepass = new Pokemon({
     description: "Once the people of Hisui discovered that its red nose always points north, they grew to rely on it greatly when traveling afar. The nose seems to work in a similar way to ancient compasses..",
     types: ['rock'],
     height: 1,
-    moves: [{ ...all_moves.seismic_toss }, { ...all_moves.thunder_wave }, { ...all_moves.self_destruct }, { ...all_moves.rock_trhow }],
+    //self destruct, seismic toss, thunder wave, rock throw
+    moves: [{ ...all_moves.self_destruct }, { ...all_moves.seismic_toss }, { ...all_moves.thunder_wave }, { ...all_moves.rock_trhow }],
     abilities: ['Sturdy'],
     growth_rate: 'Medium Fast',
     level: 15,
@@ -863,6 +901,444 @@ let lileep = new Pokemon({
     held_item: all_items.sitrus_berry
 });
 
+let wingull = new Pokemon({
+    name: "Wingull",
+    description: "It rides upon ocean winds as if it were a glider. In the winter, it hides food around its nest.",
+    types: ['water', 'flying'],
+    height: 0.6,
+    weight: 9.5,
+    moves: [{ ...all_moves.growl }, { ...all_moves.water_gun }],
+    learnable_moves: [{ at_level: 5, move: { ...all_moves.quick_attack } }, { at_level: 10, move: { ...all_moves.supersonic } }, { at_level: 15, move: { ...all_moves.wing_attack } }],
+    abilities: ['Keen Eye'],
+    growth_rate: 'Medium Fast',
+    level: 5,
+    catch_rate: 190,
+    pokemon_number: 278,
+    hp: {
+        base: 40,
+        max: 40,
+        current: 40
+    },
+    xp: {
+        base: 54,
+        total: 0
+    },
+    atk: {
+        base: 30,
+        current: 30,
+        effective: 30,
+        stage: 0
+    },
+    def: {
+        base: 30,
+        current: 30,
+        effective: 30,
+        stage: 0
+    },
+    sp_atk: {
+        base: 55,
+        current: 55,
+        effective: 55,
+        stage: 0
+    },
+    sp_def: {
+        base: 30,
+        current: 30,
+        effective: 30,
+        stage: 0
+    },
+    speed: {
+        base: 85,
+        current: 85,
+        effective: 85,
+        stage: 0
+    },
+    images: {
+        front: {
+            path: base_path + 'wingull-front.png',
+            key: 'wingull-front',
+            frameWidth: 348,
+            frameHeight: 310,
+            frames: 32
+        },
+        back: {
+            path: base_path + 'wingull-back.png',
+            key: 'wingull-back',
+            frameWidth: 460,
+            frameHeight: 410,
+            frames: 32
+        }
+    },
+    sounds: 'assets/sounds/wingull-cry.ogg',
+    held_item: all_items.sitrus_berry,
+    stat_total: 270
+});
+
+let poochyena = new Pokemon({
+    name: "Poochyena",
+    description: "A Pokémon with a persistent nature, it chases its chosen prey until the prey becomes exhausted.",
+    types: ['dark'],
+    height: 0.5,
+    weight: 13.6,
+    moves: [{ ...all_moves.tackle }, { ...all_moves.howl }],
+    learnable_moves: [{ at_level: 7, move: { ...all_moves.sand_attack } }, { at_level: 10, move: { ...all_moves.bite } }, { at_level: 13, move: { ...all_moves.leer } }],
+    abilities: ['Run Away'],
+    growth_rate: 'Medium Fast',
+    level: 5,
+    catch_rate: 255,
+    pokemon_number: 261,
+    hp: {
+        base: 35,
+        max: 35,
+        current: 35
+    },
+    xp: {
+        base: 56,
+        total: 0
+    },
+    atk: {
+        base: 55,
+        current: 55,
+        effective: 55,
+        stage: 0
+    },
+    def: {
+        base: 35,
+        current: 35,
+        effective: 35,
+        stage: 0
+    },
+    sp_atk: {
+        base: 30,
+        current: 30,
+        effective: 30,
+        stage: 0
+    },
+    sp_def: {
+        base: 30,
+        current: 30,
+        effective: 30,
+        stage: 0
+    },
+    speed: {
+        base: 35,
+        current: 35,
+        effective: 35,
+        stage: 0
+    },
+    images: {
+        front: {
+            path: base_path + 'poochyena-front.png',
+            key: 'poochyena-front',
+            frameWidth: 248,
+            frameHeight: 310,
+            frames: 22
+        },
+        back: {
+            path: base_path + 'poochyena-back.png',
+            key: 'poochyena-back',
+            frameWidth: 317,
+            frameHeight: 410,
+            frames: 22
+        }
+    },
+    sounds: 'assets/sounds/poochyena-cry.ogg',
+    held_item: null,
+    stat_total: 220
+});
+
+let zigzagoon = new Pokemon({
+    name: "Zigzagoon",
+    description: "It walks in zigzag fashion. It’s good at finding items in the grass and even in the ground.",
+    types: ['normal'],
+    height: 0.4,
+    weight: 17.5,
+    moves: [{ ...all_moves.growl }, { ...all_moves.tackle }],
+    learnable_moves: [{ at_level: 3, move: { ...all_moves.sand_attack } }, { at_level: 6, move: { ...all_moves.tail_whip } }, { at_level: 9, move: { ...all_moves.headbutt } }, { at_level: 15, move: { ...all_moves.baby_doll_eyes } }],
+    abilities: ['Glattony'],
+    growth_rate: 'Medium Fast',
+    level: 5,
+    catch_rate: 255,
+    pokemon_number: 263,
+    hp: {
+        base: 38,
+        max: 38,
+        current: 38
+    },
+    xp: {
+        base: 56,
+        total: 0
+    },
+    atk: {
+        base: 30,
+        current: 30,
+        effective: 30,
+        stage: 0
+    },
+    def: {
+        base: 41,
+        current: 41,
+        effective: 41,
+        stage: 0
+    },
+    sp_atk: {
+        base: 30,
+        current: 30,
+        effective: 30,
+        stage: 0
+    },
+    sp_def: {
+        base: 41,
+        current: 41,
+        effective: 41,
+        stage: 0
+    },
+    speed: {
+        base: 60,
+        current: 60,
+        effective: 60,
+        stage: 0
+    },
+    images: {
+        front: {
+            path: base_path + 'zigzagoon-front.png',
+            key: 'zigzagoon-front',
+            frameWidth: 368,
+            frameHeight: 310,
+            frames: 30
+        },
+        back: {
+            path: base_path + 'zigzagoon-back.png',
+            key: 'zigzagoon-back',
+            frameWidth: 504,
+            frameHeight: 410,
+            frames: 30
+        }
+    },
+    sounds: 'assets/sounds/zigzagoon-cry.ogg',
+    held_item: null,
+    stat_total: 240
+});
+
+let ralts = new Pokemon({
+    name: "Ralts",
+    description: "The horns on its head provide a strong power that enables it to sense people’s emotions.",
+    types: ['psychic', 'fairy'],
+    height: 0.4,
+    weight: 6.6,
+    moves: [{ ...all_moves.growl }, { ...all_moves.disarming_voice }],
+    learnable_moves: [{ at_level: 6, move: { ...all_moves.confusion } }, { at_level: 9, move: { ...all_moves.hypnosis } }, { at_level: 12, move: { ...all_moves.draining_kiss } }, { at_level: 15, move: { ...all_moves.psybeam } }],
+    abilities: ['Synchronize'],
+    growth_rate: 'Slow',
+    level: 5,
+    catch_rate: 235,
+    pokemon_number: 280,
+    hp: {
+        base: 28,
+        max: 28,
+        current: 28
+    },
+    xp: {
+        base: 40,
+        total: 0
+    },
+    atk: {
+        base: 25,
+        current: 25,
+        effective: 25,
+        stage: 0
+    },
+    def: {
+        base: 25,
+        current: 25,
+        effective: 25,
+        stage: 0
+    },
+    sp_atk: {
+        base: 45,
+        current: 45,
+        effective: 45,
+        stage: 0
+    },
+    sp_def: {
+        base: 35,
+        current: 35,
+        effective: 35,
+        stage: 0
+    },
+    speed: {
+        base: 40,
+        current: 40,
+        effective: 40,
+        stage: 0
+    },
+    images: {
+        front: {
+            path: base_path + 'ralts-front.png',
+            key: 'ralts-front',
+            frameWidth: 196,
+            frameHeight: 310,
+            frames: 38
+        },
+        back: {
+            path: base_path + 'ralts-back.png',
+            key: 'ralts-back',
+            frameWidth: 249,
+            frameHeight: 410,
+            frames: 38
+        }
+    },
+    sounds: 'assets/sounds/ralts-cry.ogg',
+    held_item: null,
+    stat_total: 198
+});
+
+let meowth = new Pokemon({
+    name: "Meowth",
+    description: "It loves things that sparkle. When it sees a shiny object, the gold coin on its head shines, too.",
+    types: ['normal'],
+    height: 0.4,
+    weight: 4.2,
+    moves: [{ ...all_moves.growl }, { ...all_moves.scratch }],
+    learnable_moves: [{ at_level: 6, move: { ...all_moves.tail_whip } }, { at_level: 9, move: { ...all_moves.bite } }, { at_level: 15, move: { ...all_moves.take_down } }],
+    abilities: ['Technician'],
+    growth_rate: 'Medium Fast',
+    level: 5,
+    catch_rate: 255,
+    pokemon_number: 52,
+    hp: {
+        base: 40,
+        max: 40,
+        current: 40
+    },
+    xp: {
+        base: 58,
+        total: 0
+    },
+    atk: {
+        base: 45,
+        current: 45,
+        effective: 45,
+        stage: 0
+    },
+    def: {
+        base: 35,
+        current: 35,
+        effective: 35,
+        stage: 0
+    },
+    sp_atk: {
+        base: 40,
+        current: 40,
+        effective: 40,
+        stage: 0
+    },
+    sp_def: {
+        base: 40,
+        current: 40,
+        effective: 40,
+        stage: 0
+    },
+    speed: {
+        base: 90,
+        current: 90,
+        effective: 90,
+        stage: 0
+    },
+    images: {
+        front: {
+            path: base_path + 'meowth-front.png',
+            key: 'meowth-front',
+            frameWidth: 246,
+            frameHeight: 310,
+            frames: 27
+        },
+        back: {
+            path: base_path + 'meowth-back.png',
+            key: 'meowth-back',
+            frameWidth: 341,
+            frameHeight: 410,
+            frames: 27
+        }
+    },
+    sounds: 'assets/sounds/meowth-cry.ogg',
+    held_item: null,
+    stat_total: 290
+});
+
+let electrike = new Pokemon({
+    name: "Electrike",
+    description: "Using electricity stored in its fur, it stimulates its muscles to heighten its reaction speed.",
+    types: ['electric'],
+    height: 0.6,
+    weight: 15.2,
+    moves: [{ ...all_moves.tackle }, { ...all_moves.thunder_wave }],
+    learnable_moves: [{ at_level: 4, move: { ...all_moves.leer } }, { at_level: 8, move: { ...all_moves.howl } }, { at_level: 12, move: { ...all_moves.quick_attack } }, { at_level: 15, move: { ...all_moves.shock_wave } }],
+    abilities: ['Static'],
+    growth_rate: 'Slow',
+    level: 5,
+    catch_rate: 255,
+    pokemon_number: 52,
+    hp: {
+        base: 40,
+        max: 40,
+        current: 40
+    },
+    xp: {
+        base: 59,
+        total: 0
+    },
+    atk: {
+        base: 45,
+        current: 45,
+        effective: 45,
+        stage: 0
+    },
+    def: {
+        base: 40,
+        current: 40,
+        effective: 40,
+        stage: 0
+    },
+    sp_atk: {
+        base: 65,
+        current: 65,
+        effective: 65,
+        stage: 0
+    },
+    sp_def: {
+        base: 40,
+        current: 40,
+        effective: 40,
+        stage: 0
+    },
+    speed: {
+        base: 65,
+        current: 65,
+        effective: 65,
+        stage: 0
+    },
+    images: {
+        front: {
+            path: base_path + 'electrike-front.png',
+            key: 'electrike-front',
+            frameWidth: 335,
+            frameHeight: 310,
+            frames: 25
+        },
+        back: {
+            path: base_path + 'electrike-back.png',
+            key: 'electrike-back',
+            frameWidth: 457,
+            frameHeight: 410,
+            frames: 25
+        }
+    },
+    sounds: 'assets/sounds/electrike-cry.ogg',
+    held_item: null,
+    stat_total: 290
+});
+
 export const Pokemons = {
-    treecko, torchic, mudkip, aggron, nosepass, lunatone, lileep
+    treecko, torchic, mudkip, aggron, nosepass, lunatone, lileep, wingull, ralts, zigzagoon, poochyena, electrike, meowth
 }
