@@ -51,7 +51,7 @@ onBeforeUnmount(() => {
 })
 
 const handleMovesInput = async function (e) {
-
+    console.log(active_move.value.name)
 
     if (store.menu_state !== 'moves') {
 
@@ -148,7 +148,6 @@ const handleMovesInput = async function (e) {
     } else if (e.key == 'ArrowDown') {
         active_voice.value++
         if (active_voice.value > store.my_pokemon.moves.length - 1) active_voice.value = 0
-        console.log(active_move.makes_contact)
     } else if (e.key == 'y') {
         console.log(e.key)
         show_details.value = !show_details.value

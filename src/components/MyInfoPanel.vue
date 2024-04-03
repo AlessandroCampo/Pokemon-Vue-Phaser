@@ -1,46 +1,49 @@
 <template>
-    <div>
-        <div id="my-bar">
-            <div class="info-container">
-                <div class="name_status">
-                    <span>{{ store.my_pokemon.name }}</span>
-                    <img v-if="store.my_pokemon.status" class="status"
-                        :src="'/badges/' + store.my_pokemon.status + '.png'">
 
-                </div>
-                <div class="level_gender">
-                    <span><i class="fa-solid"
-                            :class="store.my_pokemon.gender == 'male' ? 'fa-mars' : 'fa-venus'"></i></span>
-                    <span>LV.{{ store.my_pokemon.level }}</span>
-                </div>
 
+    <div id="my-bar">
+        <div class="info-container">
+            <div class="name_status">
+                <span>{{ store.my_pokemon.name }}</span>
+                <img v-if="store.my_pokemon.status" class="status" :src="'/badges/' + store.my_pokemon.status + '.png'">
 
             </div>
-
-            <div class="progress-bars">
-                <div class="progress player-progress">
-
-                    <progress id="my-hp" :value="store.my_pokemon.hp.current" :max="store.my_pokemon.hp.max"
-                        :class="hpBarClass">
-                    </progress>
-                    <div class="hp-num">{{ store.my_pokemon.hp.current }}/{{ store.my_pokemon.hp.max }}</div>
-                </div>
-                <div>
-                    <progress class="my-xp" :value="store.my_pokemon.xp.total" :max="store.xp_for_next_level">
-                    </progress>
+            <div class="level_gender">
+                <span><i class="fa-solid"
+                        :class="store.my_pokemon.gender == 'male' ? 'fa-mars' : 'fa-venus'"></i></span>
+                <span>LV.{{ store.my_pokemon.level }}</span>
+            </div>
 
 
-                </div>
+        </div>
+
+        <div class="progress-bars">
+            <div class="progress player-progress">
+
+                <progress id="my-hp" :value="store.my_pokemon.hp.current" :max="store.my_pokemon.hp.max"
+                    :class="hpBarClass">
+                </progress>
+                <div class="hp-num">{{ store.my_pokemon.hp.current }}/{{ store.my_pokemon.hp.max }}</div>
+            </div>
+            <div>
+                <progress class="my-xp" :value="store.my_pokemon.xp.total" :max="store.xp_for_next_level">
+                </progress>
+
 
             </div>
 
         </div>
+
     </div>
+
+
 </template>
 
 <script setup>
 import { store } from '@/store'
+import { map_store } from '@/mapStore';
 import { ref, onMounted, computed } from 'vue'
+import gsap from 'gsap'
 
 const hpPercentage = computed(() => {
     return (store.my_pokemon.hp.current / store.my_pokemon.hp.max) * 100;
@@ -56,6 +59,11 @@ const hpBarClass = computed(() => {
         return 'low-hp';
     }
 });
+
+onMounted(() => {
+    map_store.bar_transition(true)
+})
+
 
 
 </script>
@@ -106,11 +114,11 @@ const hpBarClass = computed(() => {
     right: 10%;
 }
 
-
+/* 
 #my-bar {
     top: 5%;
-    left: 10%;
-}
+    left: -10%;
+} */
 
 .info-container {
     display: flex;
@@ -199,5 +207,15 @@ span.status {
     flex-direction: column;
     align-items: flex-start;
     gap: 0.3em;
+}
+
+.slide-enter-active,
+.slide-leave-active {
+    transition: transform 0.5s ease;
+}
+
+.slide-enter,
+.slide-leave-to {
+    transform: translateX(-100%);
 }
 </style>

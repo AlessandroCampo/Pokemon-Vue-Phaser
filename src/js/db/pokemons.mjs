@@ -1,12 +1,37 @@
 
 import { all_moves } from "./moves.mjs";
 import { all_items } from "./items.mjs";
+
 import Phaser from "phaser";
 import gsap from 'gsap'
 const base_path = '/pokemons/'
 
 
 
+function deepClone(obj) {
+    if (obj === null || typeof obj !== 'object') {
+        return obj;
+    }
+
+    let clone = Array.isArray(obj) ? [] : {};
+
+    // Copy own properties
+    for (let key in obj) {
+        if (obj.hasOwnProperty(key)) {
+            clone[key] = deepClone(obj[key]);
+        }
+    }
+
+    // Copy prototype methods
+    let prototype = Object.getPrototypeOf(obj);
+    let prototypeMethods = Object.getOwnPropertyNames(prototype)
+        .filter(prop => typeof prototype[prop] === 'function');
+    prototypeMethods.forEach(method => {
+        clone[method] = obj[method].bind(clone);
+    });
+
+    return clone;
+}
 
 let oppo_position = {
     x: 798,
@@ -92,20 +117,39 @@ class Pokemon {
     }
 
     setPropScale() {
+        //FIXME - enormous sprites
         const MIN_SCALE = 0.35;
         const MAX_SCALE = 1.5;
         let scale;
+
         // Get the height of the Pokémon
         let pokemonHeight = this.height;
-        let player_controlled_multiplier = this.player_controlled ? 1 : 0.7;
+        console.log('Pokemon height:', pokemonHeight);
 
-        // Adjust scale based on pokemonHeight
-        let heightMultiplier = Math.min(1 + pokemonHeight / 5, 5); // Adjust this multiplier as needed
+        // Apply a larger scale to player-controlled Pokémon
+        let player_controlled_multiplier = this.player_controlled ? 3 : 1.0;
+        console.log('Player controlled multiplier:', player_controlled_multiplier);
 
-        // Calculate scale based on pokemonHeight, player_controlled_multiplier, and heightMultiplier
-        scale = Phaser.Math.Clamp((pokemonHeight / 30) + 0.5, MIN_SCALE, MAX_SCALE);
-        this.sprite.setScale(scale * player_controlled_multiplier * heightMultiplier);
+        // Normalize the height to a range of 0 to 1
+        let normalizedHeight = (pokemonHeight - 0.6) / (1.5 - 0.6); // Adjust the range according to your actual minimum and maximum heights
+
+        // Scale the normalized height to the desired scale range
+        scale = MIN_SCALE + normalizedHeight * (MAX_SCALE - MIN_SCALE);
+
+        // Apply the player-controlled multiplier
+        scale *= player_controlled_multiplier;
+
+        // Ensure scale stays within the specified limits
+        scale = Math.max(MIN_SCALE, Math.min(MAX_SCALE, scale));
+        console.log('Final scale:', scale);
+
+        // Set the scale of the sprite
+        this.sprite.setScale(scale);
     }
+
+
+
+
 
 
 
@@ -237,162 +281,163 @@ class Pokemon {
 
 
 
-let squirtle = new Pokemon({
-    name: "Squirtle",
-    description: "It hides in its shell to protect itself, then strikes back with spouts of water at every opportunity.",
-    types: ['water'],
+// let squirtle = new Pokemon({
+//     name: "Squirtle",
+//     description: "It hides in its shell to protect itself, then strikes back with spouts of water at every opportunity.",
+//     types: ['water'],
 
-    moves: [{ ...all_moves.tackle }, { ...all_moves.smoke_screen }, { ...all_moves.dobule_team }, { ...all_moves.withdraw }],
-    abilities: ['Torrent'],
-    growth_rate: 'Medium Slow',
-    level: 5,
-    catch_rate: 45,
-    pokemon_number: 7,
-    hp: {
-        base: 44,
-        max: 44,
-        current: 44
-    },
-    xp: {
-        base: 63,
-        total: 0
-    },
-    atk: {
-        base: 48,
-        current: 48,
-        effective: 48,
-        stage: 0
-    },
-    def: {
-        base: 65,
-        current: 65,
-        effective: 65,
-        stage: 0
-    },
-    sp_atk: {
-        base: 50,
-        current: 50,
-        effective: 50,
-        stage: 0
-    },
-    sp_def: {
-        base: 64,
-        current: 64,
-        effective: 64,
-        stage: 0
-    },
-    speed: {
-        base: 43,
-        current: 43,
-        effective: 43,
-        stage: 0
-    },
-    evolution: {
+//     moves: [{ ...all_moves.tackle }, { ...all_moves.smoke_screen }, { ...all_moves.dobule_team }, { ...all_moves.withdraw }],
+//     abilities: ['Torrent'],
+//     growth_rate: 'Medium Slow',
+//     level: 5,
+//     catch_rate: 45,
+//     pokemon_number: 7,
+//     hp: {
+//         base: 44,
+//         max: 44,
+//         current: 44
+//     },
+//     xp: {
+//         base: 63,
+//         total: 0
+//     },
+//     atk: {
+//         base: 48,
+//         current: 48,
+//         effective: 48,
+//         stage: 0
+//     },
+//     def: {
+//         base: 65,
+//         current: 65,
+//         effective: 65,
+//         stage: 0
+//     },
+//     sp_atk: {
+//         base: 50,
+//         current: 50,
+//         effective: 50,
+//         stage: 0
+//     },
+//     sp_def: {
+//         base: 64,
+//         current: 64,
+//         effective: 64,
+//         stage: 0
+//     },
+//     speed: {
+//         base: 43,
+//         current: 43,
+//         effective: 43,
+//         stage: 0
+//     },
+//     evolution: {
 
-    },
-    images: {
-        front: {
-            path: base_path + 'squirtle-front.png',
-            key: 'squirtle-front',
-            frameWidth: 389,
-            frameHeight: 410,
-            frames: 19
-        },
-        back: {
-            path: base_path + 'squirtle-back.png',
-            key: 'squirtle-back',
-            frameWidth: 389,
-            frameHeight: 410,
-            frames: 19
-        }
-    },
-    sounds: 'assets/sounds/squirtle-cry.ogg'
-
-
-
-
-});
-
-let bulbasaur = new Pokemon({
-    name: "Bulbasaur",
-    description: "It hides in its shell to protect itself, then strikes back with spouts of water at every opportunity.",
-    types: ['grass', 'poison'],
-    moves: [all_moves.tackle],
-    abilities: ['Torrent'],
-    growth_rate: 'Medium Slow',
-    catch_rate: 45,
-    pokemon_number: 7,
-    level: 5,
-    hp: {
-        base: 45,
-        max: 45,
-        current: 45
-    },
-    xp: {
-        base: 63,
-        total: 0
-    },
-    atk: {
-        base: 49,
-        current: 49,
-        effective: 49,
-        stage: 0
-    },
-    def: {
-        base: 49,
-        current: 49,
-        effective: 49,
-        stage: 0
-    },
-    sp_atk: {
-        base: 65,
-        current: 65,
-        effective: 65,
-        stage: 0
-    },
-    sp_def: {
-        base: 65,
-        current: 65,
-        effective: 65,
-        stage: 0
-    },
-    speed: {
-        base: 45,
-        current: 45,
-        effective: 45,
-        stage: 0
-    },
-    evolution: {
-
-    },
-    images: {
-        front: {
-            path: base_path + 'bulbasaur-front.png',
-            key: 'bulbasaur-front',
-            frameWidth: 283,
-            frameHeight: 310,
-            frames: 26
-        },
-        back: {
-            path: base_path + 'bulbasaur-back.png',
-            key: 'bulbasaur-back',
-            frameWidth: 283,
-            frameHeight: 310,
-            frames: 26
-        }
-    },
-    sounds: 'assets/sounds/bulbasaur-cry.ogg'
+//     },
+//     images: {
+//         front: {
+//             path: base_path + 'squirtle-front.png',
+//             key: 'squirtle-front',
+//             frameWidth: 389,
+//             frameHeight: 410,
+//             frames: 19
+//         },
+//         back: {
+//             path: base_path + 'squirtle-back.png',
+//             key: 'squirtle-back',
+//             frameWidth: 389,
+//             frameHeight: 410,
+//             frames: 19
+//         }
+//     },
+//     sounds: 'assets/sounds/squirtle-cry.ogg'
 
 
 
 
-});
+// });
+
+// let bulbasaur = new Pokemon({
+//     name: "Bulbasaur",
+//     description: "It hides in its shell to protect itself, then strikes back with spouts of water at every opportunity.",
+//     types: ['grass', 'poison'],
+//     moves: [all_moves.tackle],
+//     abilities: ['Torrent'],
+//     growth_rate: 'Medium Slow',
+//     catch_rate: 45,
+//     pokemon_number: 7,
+//     level: 5,
+//     hp: {
+//         base: 45,
+//         max: 45,
+//         current: 45
+//     },
+//     xp: {
+//         base: 63,
+//         total: 0
+//     },
+//     atk: {
+//         base: 49,
+//         current: 49,
+//         effective: 49,
+//         stage: 0
+//     },
+//     def: {
+//         base: 49,
+//         current: 49,
+//         effective: 49,
+//         stage: 0
+//     },
+//     sp_atk: {
+//         base: 65,
+//         current: 65,
+//         effective: 65,
+//         stage: 0
+//     },
+//     sp_def: {
+//         base: 65,
+//         current: 65,
+//         effective: 65,
+//         stage: 0
+//     },
+//     speed: {
+//         base: 45,
+//         current: 45,
+//         effective: 45,
+//         stage: 0
+//     },
+//     evolution: {
+
+//     },
+//     images: {
+//         front: {
+//             path: base_path + 'bulbasaur-front.png',
+//             key: 'bulbasaur-front',
+//             frameWidth: 283,
+//             frameHeight: 310,
+//             frames: 26
+//         },
+//         back: {
+//             path: base_path + 'bulbasaur-back.png',
+//             key: 'bulbasaur-back',
+//             frameWidth: 283,
+//             frameHeight: 310,
+//             frames: 26
+//         }
+//     },
+//     sounds: 'assets/sounds/bulbasaur-cry.ogg'
+
+
+
+
+// });
 
 let torchic = new Pokemon({
     name: "Torchic",
     description: "A fire burns inside it, so it feels very warm to hug. It launches fireballs of 1,800 degrees Fahrenheit.",
     types: ['fire'],
-    moves: [{ ...all_moves.ember }, { ...all_moves.detect }, { ...all_moves.flame_charge }, { ...all_moves.sand_attack }],
+    moves: [deepClone(all_moves.growl), deepClone(all_moves.scratch), deepClone(all_moves.ember)],
+    learnable_moves: [{ at_level: 6, move: { ...all_moves.quick_attack } }, { at_level: 9, move: { ...all_moves.flame_charge } }, { at_level: 12, move: { ...all_moves.detect } }, { at_level: 15, move: { ...all_moves.sand_attack } }],
     abilities: ['Blaze'],
     growth_rate: 'Medium Slow',
     height: 0.4,
@@ -465,7 +510,8 @@ let treecko = new Pokemon({
     name: "Treecko",
     description: "The soles of its feet are covered by countless tiny hooks, enabling it to walk on walls and ceilings.",
     types: ['grass'],
-    moves: [{ ...all_moves.giga_drain }, { ...all_moves.supersonic }, { ...all_moves.tackle }, { ...all_moves.recover }],
+    moves: [deepClone(all_moves.leer), deepClone(all_moves.pound), deepClone(all_moves.leafage)],
+    learnable_moves: [{ at_level: 6, move: { ...all_moves.quick_attack } }, { at_level: 9, move: { ...all_moves.mega_drain } }, { at_level: 12, move: { ...all_moves.detect } }, { at_level: 15, move: { ...all_moves.giga_drain } }],
     abilities: ['Overgrow'],
     growth_rate: 'Medium Slow',
     level: 5,
@@ -538,7 +584,8 @@ let mudkip = new Pokemon({
     description: "Using the fin on its head, Mudkip senses the flow of water to keep track of what’s going on around it. Mudkip has the strength to heft boulders.",
     types: ['water'],
     height: 0.4,
-    moves: [{ ...all_moves.rock_smash }, { ...all_moves.water_gun }, { ...all_moves.sand_attack }, { ...all_moves.rock_trhow }],
+    moves: [deepClone(all_moves.growl), deepClone(all_moves.tackle), deepClone(all_moves.water_gun)],
+    learnable_moves: [{ at_level: 6, move: { ...all_moves.rock_smash } }, { at_level: 9, move: { ...all_moves.rock_trhow } }, { at_level: 12, move: { ...all_moves.protect } }, { at_level: 15, move: { ...all_moves.supersonic } }],
     abilities: ['Torrent'],
     growth_rate: 'Medium Slow',
     level: 5,
@@ -907,7 +954,7 @@ let wingull = new Pokemon({
     types: ['water', 'flying'],
     height: 0.6,
     weight: 9.5,
-    moves: [{ ...all_moves.growl }, { ...all_moves.water_gun }],
+    moves: [deepClone(all_moves.growl), deepClone(all_moves.water_gun)],
     learnable_moves: [{ at_level: 5, move: { ...all_moves.quick_attack } }, { at_level: 10, move: { ...all_moves.supersonic } }, { at_level: 15, move: { ...all_moves.wing_attack } }],
     abilities: ['Keen Eye'],
     growth_rate: 'Medium Fast',
@@ -980,7 +1027,7 @@ let poochyena = new Pokemon({
     types: ['dark'],
     height: 0.5,
     weight: 13.6,
-    moves: [{ ...all_moves.tackle }, { ...all_moves.howl }],
+    moves: [deepClone(all_moves.tackle), deepClone(all_moves.howl)],
     learnable_moves: [{ at_level: 7, move: { ...all_moves.sand_attack } }, { at_level: 10, move: { ...all_moves.bite } }, { at_level: 13, move: { ...all_moves.leer } }],
     abilities: ['Run Away'],
     growth_rate: 'Medium Fast',
@@ -1053,7 +1100,7 @@ let zigzagoon = new Pokemon({
     types: ['normal'],
     height: 0.4,
     weight: 17.5,
-    moves: [{ ...all_moves.growl }, { ...all_moves.tackle }],
+    moves: [deepClone(all_moves.growl), deepClone(all_moves.tackle)],
     learnable_moves: [{ at_level: 3, move: { ...all_moves.sand_attack } }, { at_level: 6, move: { ...all_moves.tail_whip } }, { at_level: 9, move: { ...all_moves.headbutt } }, { at_level: 15, move: { ...all_moves.baby_doll_eyes } }],
     abilities: ['Glattony'],
     growth_rate: 'Medium Fast',
@@ -1126,7 +1173,7 @@ let ralts = new Pokemon({
     types: ['psychic', 'fairy'],
     height: 0.4,
     weight: 6.6,
-    moves: [{ ...all_moves.growl }, { ...all_moves.disarming_voice }],
+    moves: [deepClone(all_moves.growl), deepClone(all_moves.disarming_voice)],
     learnable_moves: [{ at_level: 6, move: { ...all_moves.confusion } }, { at_level: 9, move: { ...all_moves.hypnosis } }, { at_level: 12, move: { ...all_moves.draining_kiss } }, { at_level: 15, move: { ...all_moves.psybeam } }],
     abilities: ['Synchronize'],
     growth_rate: 'Slow',
@@ -1199,7 +1246,7 @@ let meowth = new Pokemon({
     types: ['normal'],
     height: 0.4,
     weight: 4.2,
-    moves: [{ ...all_moves.growl }, { ...all_moves.scratch }],
+    moves: [deepClone(all_moves.growl), deepClone(all_moves.scratch)],
     learnable_moves: [{ at_level: 6, move: { ...all_moves.tail_whip } }, { at_level: 9, move: { ...all_moves.bite } }, { at_level: 15, move: { ...all_moves.take_down } }],
     abilities: ['Technician'],
     growth_rate: 'Medium Fast',
@@ -1263,7 +1310,8 @@ let meowth = new Pokemon({
     },
     sounds: 'assets/sounds/meowth-cry.ogg',
     held_item: null,
-    stat_total: 290
+    stat_total: 290,
+    location: [{ map_name: 'start', chance: 0.2 }]
 });
 
 let electrike = new Pokemon({
@@ -1272,7 +1320,7 @@ let electrike = new Pokemon({
     types: ['electric'],
     height: 0.6,
     weight: 15.2,
-    moves: [{ ...all_moves.tackle }, { ...all_moves.thunder_wave }],
+    moves: [deepClone(all_moves.tackle), deepClone(all_moves.thunder_wave)],
     learnable_moves: [{ at_level: 4, move: { ...all_moves.leer } }, { at_level: 8, move: { ...all_moves.howl } }, { at_level: 12, move: { ...all_moves.quick_attack } }, { at_level: 15, move: { ...all_moves.shock_wave } }],
     abilities: ['Static'],
     growth_rate: 'Slow',

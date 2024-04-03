@@ -3,6 +3,8 @@ import { SCENE_KEYS } from './scene-keys.mjs'
 import { BATTLE_ASSET_KEYS, BATTLE_BACKGROUND_ASSET_KEYS } from './assets-keys.mjs'
 import { Pokemons } from '../db/pokemons.mjs'
 import { store } from '@/store'
+import { map_store } from '@/mapStore'
+// import SceneTransition from ''
 
 
 export class BattleScene extends Phaser.Scene {
@@ -16,6 +18,10 @@ export class BattleScene extends Phaser.Scene {
         store.battle_scene_instance = this
         store.calcStats(store.my_pokemon)
         store.calcStats(store.oppo_pokemon)
+        this.load.spritesheet(store.oppo_pokemon.images.front.key, store.oppo_pokemon.images.front.path, {
+            frameWidth: store.oppo_pokemon.images.front.frameWidth,
+            frameHeight: store.oppo_pokemon.images.front.frameHeight,
+        })
         store.my_bench.forEach((member) => {
             store.calcStats(member)
             member.player_controlled = true
@@ -28,11 +34,17 @@ export class BattleScene extends Phaser.Scene {
         }
 
     }
-    create() {
+    async create() {
+        if (store.battle_type == 'wild') {
+            store.info_text = `A wild ${store.oppo_pokemon.name} appears! Get ready to fight for your life!`
+        } else if (store.battle_type == 'trainer') {
+            store.info_text = `The match against ${store.oppo_trainer.name} is about to start. The first pokèmon is ${store.oppo_pokemon.name}`
+            const trainer_image = this.add.image(store.oppo_trainer.position.x, store.oppo_trainer.position.y, 'trainer_' + store.oppo_trainer.name).setScale(store.oppo_trainer.scale)
+        }
 
         const backgroundTexture = this.textures.get(BATTLE_BACKGROUND_ASSET_KEYS.FOREST_NIGHT);
         const backgroundImage = this.add.image(0, 0, BATTLE_BACKGROUND_ASSET_KEYS.FOREST_NIGHT).setOrigin(0);
-        const trainer_image = this.add.image(store.oppo_trainer.position.x, store.oppo_trainer.position.y, 'trainer_' + store.oppo_trainer.name).setScale(store.oppo_trainer.scale)
+
         const scaleX = this.sys.canvas.width / backgroundTexture.source[0].width;
         const scaleY = this.sys.canvas.height / backgroundTexture.source[0].height;
         const ally_starter_animation_key = `ally_${store.my_pokemon.name}_anim`
@@ -78,6 +90,10 @@ export class BattleScene extends Phaser.Scene {
                 member.images.front.animation_key = new_anim_key
             });
         }
+        //only show huds once the battle transition is over
+        await map_store.createSceneTransition(this)
+        store.show_hud = true
+
 
 
 
@@ -118,6 +134,7 @@ export class BattleScene extends Phaser.Scene {
     }
 
     async changeOpponentPokemonSprite(newPokemon) {
+        console.log(newPokemon)
         // when a pokemon is switched out, all his stats are restored, and he heals from confusion if he is
         store.oppo_pokemon.resetStats()
         store.oppo_pokemon.confused = false

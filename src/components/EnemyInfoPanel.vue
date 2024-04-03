@@ -33,6 +33,7 @@
 
 <script setup>
 import { store } from '@/store'
+import { map_store } from '@/mapStore';
 import { ref, onMounted, computed } from 'vue'
 let oppo_pokemon = ref(store.oppo_pokemon)
 
@@ -51,6 +52,10 @@ const hpBarClass = computed(() => {
         return 'low-hp';
     }
 });
+
+onMounted(() => {
+    map_store.bar_transition(false)
+})
 
 </script>
 

@@ -1,9 +1,11 @@
 import Phaser from 'phaser'
 import { SCENE_KEYS } from './scene-keys.mjs'
-import { BATTLE_ASSET_KEYS, BATTLE_BACKGROUND_ASSET_KEYS } from './assets-keys.mjs'
+import { BATTLE_ASSET_KEYS, BATTLE_BACKGROUND_ASSET_KEYS, CHARACTER_ASSET_KEYS, DATA_ASSET_KEYS, WORLD_ASSETS_KEYS } from './assets-keys.mjs'
 import { Pokemons } from '../db/pokemons.mjs'
 import { io } from "socket.io-client";
 import { store } from '@/store'
+import { map_store } from '@/mapStore';
+import { DataUtils } from '../utils/DataUtills.mjs';
 
 // const socket = io("http://localhost:3000");
 // socket.connect()
@@ -41,6 +43,7 @@ export class PreloadScene extends Phaser.Scene {
         if (store.battle_type == 'trainer') {
             let test_trainer = store.generate_random_trainer()
             store.my_pokemon = test_trainer.lead
+
             store.my_bench = test_trainer.bench
             store.oppo_trainer = store.generate_random_trainer()
             store.oppo_pokemon = store.oppo_trainer.lead
@@ -48,13 +51,14 @@ export class PreloadScene extends Phaser.Scene {
             this.load.image(`trainer_${store.oppo_trainer.name}`, `/trainers/clown.png`)
         }
         store.my_pokemon.player_controlled = true
-        store.oppo_pokemon.player_controlled = false
+        // COMMENTED CAUSE ENEMY POKEMONS LOADING LOGIC SHOULD HAPPEN WHEN A BATTLE IS DEFINED
+        // store.oppo_pokemon.player_controlled = false
 
 
-        this.load.spritesheet(store.oppo_pokemon.images.front.key, store.oppo_pokemon.images.front.path, {
-            frameWidth: store.oppo_pokemon.images.front.frameWidth,
-            frameHeight: store.oppo_pokemon.images.front.frameHeight,
-        })
+        // this.load.spritesheet(store.oppo_pokemon.images.front.key, store.oppo_pokemon.images.front.path, {
+        //     frameWidth: store.oppo_pokemon.images.front.frameWidth,
+        //     frameHeight: store.oppo_pokemon.images.front.frameHeight,
+        // })
         this.load.spritesheet(store.my_pokemon.images.back.key, store.my_pokemon.images.back.path, {
             frameWidth: store.my_pokemon.images.back.frameWidth,
             frameHeight: store.my_pokemon.images.back.frameHeight,
@@ -78,15 +82,44 @@ export class PreloadScene extends Phaser.Scene {
             });
         }
 
+        this.load.json(DATA_ASSET_KEYS.ANIMATIONS, 'json/animations.json')
+
+        // LOAD WORLD ASSETS
+
+        this.load.image(WORLD_ASSETS_KEYS.WORLD_BACKGROUND, `/map/level_background.png`)
+        this.load.tilemapTiledJSON(WORLD_ASSETS_KEYS.WORLD_MAIN_LEVEL, `/json/level.json`)
+        this.load.image(WORLD_ASSETS_KEYS.WORLD_COLLISION, `/map/collision.png`)
+        this.load.image(WORLD_ASSETS_KEYS.WORLD_ENCOUNTER_ZONE, `/map/encounter.png`)
+        this.load.image(WORLD_ASSETS_KEYS.WORLD_FOREGROUND, `/map/level_foreground.png`)
+
+
+
+        this.load.spritesheet(CHARACTER_ASSET_KEYS.PLAYER, `/characters/hero_walking.png`, {
+            frameWidth: 32,
+            frameHeight: 46,
+        })
+
     }
     create() {
-        if (store.battle_type == 'wild') {
-            store.info_text = `A wild ${store.oppo_pokemon.name} appears! Get ready to fight for your life!`
-        } else if (store.battle_type == 'trainer') {
-            store.info_text = `The match against ${store.oppo_trainer.name} is about to start. The first pokèmon is ${store.oppo_pokemon.name}`
-        }
 
-        this.scene.start(SCENE_KEYS.BATTLE_SCENE)
+        this.createAnimations()
+        this.scene.start(SCENE_KEYS.WORLD_SCENE)
+    }
+
+    createAnimations() {
+        const animations = DataUtils.getAnimations(this)
+        animations.forEach(animation => {
+            const frames = animation.frames ? this.anims.generateFrameNumbers(animation.assetKey, { frames: animation.frames }) : this.anims.generateFrameNumbers(animation.assetKey)
+            this.anims.create({
+                key: animation.key,
+                frames: frames,
+                frameRate: animation.frameRate,
+                repeat: animation.repeat,
+                delay: animation.delay,
+                yoyo: animation.yoyo
+            })
+        });
+
     }
 
 }

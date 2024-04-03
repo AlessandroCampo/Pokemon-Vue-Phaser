@@ -370,8 +370,8 @@ const ember = new Move({
 const leafage = new Move({
     name: 'Leafage ',
     category: 'physical',
-    type: 'normal',
-    power: 40,
+    type: 'grass',
+    power: 4000,
     accuracy: 100,
     pp: {
         max: 40,

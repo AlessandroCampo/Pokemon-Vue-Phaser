@@ -4,6 +4,10 @@ import { BattleScene } from './js/scenes/battle-scene.mjs';
 import { trainers, Trainer } from './js/db/trainers.mjs';
 import { all_items } from './js/db/items.mjs';
 import { all_moves } from './js/db/moves.mjs';
+import { encounter_map } from './js/db/encounter_map.mjs';
+import { map_store } from './mapStore';
+import { SCENE_KEYS } from './js/scenes/scene-keys.mjs';
+import { WORLD_ASSETS_KEYS } from './js/scenes/assets-keys.mjs';
 
 function deepClone(obj) {
     if (obj === null || typeof obj !== 'object') {
@@ -31,15 +35,15 @@ function deepClone(obj) {
 }
 
 export const store = reactive({
-    my_pokemon: deepClone(Pokemons.torchic),
-    oppo_pokemon: deepClone(trainers.roxanne.lead),
-    my_bench: [deepClone(Pokemons.torchic), deepClone(Pokemons.torchic), deepClone(Pokemons.torchic), deepClone(Pokemons.torchic)],
+    my_pokemon: deepClone(Pokemons.treecko),
+    oppo_pokemon: undefined,
+    my_bench: [],
     my_items: [all_items.poke_ball, all_items.potion, all_items.sitrus_berry, all_items.awakening, all_items.paralyze_heal],
     player_info: {
         name: 'Aleks'
     },
     oppo_trainer: trainers.roxanne,
-    oppo_bench: [deepClone(trainers.roxanne.bench[0]), deepClone(trainers.roxanne.bench[1]), deepClone(trainers.roxanne.bench[2])],
+    oppo_bench: [],
     menu_state: 'text',
     info_text: ``,
     additional_info_text: null,
@@ -48,7 +52,7 @@ export const store = reactive({
     battle_scene_instance: undefined,
     multiplayer_battle: false,
     my_socket_id: undefined,
-    battle_type: 'trainer',
+    battle_type: undefined,
     config: {
         text_speed: 20,
         play_move_animation: true,
@@ -58,6 +62,8 @@ export const store = reactive({
     },
     player_last_move: undefined,
     escape_attempts: 0,
+    show_hud: false,
+    in_battle: false,
 
     useMove: async function (move, caster, target, player_attack) {
 
@@ -244,7 +250,7 @@ export const store = reactive({
                         await this.delay(this.info_text.length * this.config.text_speed + 500);
                     };
                 } else if (effect.type == 'self_faint') {
-                    await this.applyDamage(caster, caster.hp.current)
+                    await this.applyDamage(caster, caster.hp.current + 1)
                     await this.faint_logic(caster, target)
                 } else if (effect.type == 'apply_flinch') {
                     let move_target = effect.target == 'enemy' ? target : caster
@@ -643,7 +649,7 @@ export const store = reactive({
         });
     },
 
-    // SECTION FOR AI DECISION MAKING`
+    // SECTION FOR AI DECISION MAKING```
     calcAiBestMove() {
         let selected_move = undefined;
         let most_damage_move = this.highestAiDmgMove(this.oppo_pokemon);
@@ -1046,6 +1052,9 @@ export const store = reactive({
                     this.info_text = `${this.oppo_pokemon.name} died and you won the battle ${this.battle_type == 'trainer' ? 'against ' + this.oppo_trainer.name : ''}`;
                     await this.delay(this.info_text.length * this.config.text_speed + 500);
                     // window.location.reload()
+                    console.log(map_store.world_scene_istance)
+                    map_store.world_scene_istance.scene.start(SCENE_KEYS.WORLD_SCENE)
+                    this.endBattle()
                     return
                 }
 
@@ -1413,8 +1422,10 @@ export const store = reactive({
             }
         }
         if (can_escape) {
+            this.battle_sequence_playing = true
             this.info_text = `You succesfully run away from ${this.oppo_pokemon.name}`
             await this.delay(this.info_text.length * this.config.text_speed + 500)
+            this.endBattle()
         } else {
             this.info_text = `${this.oppo_pokemon.name} won't let you run away`
             await this.delay(this.info_text.length * this.config.text_speed + 500)
@@ -1422,11 +1433,14 @@ export const store = reactive({
         return can_escape;
     },
     generate_random_trainer() {
+        //cancel later
+
         // trainers can have random pokmeons from a predefined pool
         const possible_trainer_pokemons = [Pokemons.zigzagoon, Pokemons.ralts, Pokemons.wingull, Pokemons.poochyena, Pokemons.electrike, Pokemons.meowth]
         //trainers pokemons can hold random items
         const possible_trainer_items = [all_items.lum_berry, all_items.sitrus_berry]
         const my_pokemons = [];
+        this.my_pokemon = deepClone(possible_trainer_pokemons[Math.floor(Math.random() * possible_trainer_pokemons.length)])
         // trainers pokemons will have an average level which is randomly even to 2 level lower compared to the average
         let my_pokemons_avg_level;
         my_pokemons.push(this.my_pokemon);
@@ -1456,7 +1470,7 @@ export const store = reactive({
         random_trainer_lead.held_item = possible_trainer_items[Math.random() * possible_trainer_items.length]
         while (random_trainer_lead.moves.length < 4) {
             const randomMoveKey = moveKeys[Math.floor(Math.random() * moveKeys.length)];
-            const randomMove = all_moves[randomMoveKey];
+            const randomMove = deepClone(all_moves[randomMoveKey]);
 
             if (!random_trainer_lead.moves.includes(randomMove)) {
                 random_trainer_lead.moves.push(randomMove);
@@ -1470,7 +1484,7 @@ export const store = reactive({
 
             while (pokemon.moves.length < 4) {
                 const randomMoveKey = moveKeys[Math.floor(Math.random() * moveKeys.length)];
-                const randomMove = all_moves[randomMoveKey];
+                const randomMove = deepClone(all_moves[randomMoveKey]);
 
 
                 if (!pokemon.moves.includes(randomMove)) {
@@ -1509,6 +1523,82 @@ export const store = reactive({
         })
 
         return random_trainer
+    },
+    getRandomEncounter(map) {
+        // Find the encounter map for the given map name
+        const mapData = encounter_map.find(entry => entry.map_name === map);
+
+        // If the map doesn't exist or has no encounters, return null
+        if (!mapData || !mapData.possible_encounters || mapData.possible_encounters.length === 0) {
+            return Pokemons.zigzagoon;
+        }
+
+        // Get the possible encounters for the map
+        const possibleEncounters = mapData.possible_encounters;
+
+        // Calculate total encounter chance
+        const totalChance = possibleEncounters.reduce((acc, encounter) => acc + encounter.chance, 0);
+
+        // Generate a random number to select the encounter
+        const randomChance = Math.random() * totalChance;
+        let random_encounter = null; // Initialize with null
+
+        // Loop through encounters and select one based on chance
+        let accumulatedChance = 0;
+        for (const encounter of possibleEncounters) {
+            accumulatedChance += encounter.chance;
+            if (randomChance < accumulatedChance) {
+                random_encounter = encounter.pokemon;
+                console.log('encounter is random');
+                break; // Break out of the loop once random_encounter is set
+            }
+        }
+
+        // If no encounter is selected, set random_encounter to the last encounter
+        if (!random_encounter) {
+            random_encounter = possibleEncounters[possibleEncounters.length - 1].pokemon;
+            console.log('encounter is not random');
+        }
+
+        // Right now, wild pokemons can't hold items
+        random_encounter.held_item = null;
+        // Right now, random pokemons can have +1/-1 level to the level average of the mapData
+        const randomLevel = Math.floor(Math.random() * 3) + (mapData.level_average - 1);
+        random_encounter.level = randomLevel;
+        return deepClone(random_encounter);
+    }
+
+    ,
+    deepClone(obj) {
+        if (obj === null || typeof obj !== 'object') {
+            return obj;
+        }
+
+        let clone = Array.isArray(obj) ? [] : {};
+
+        // Copy own properties
+        for (let key in obj) {
+            if (obj.hasOwnProperty(key)) {
+                clone[key] = deepClone(obj[key]);
+            }
+        }
+
+        // Copy prototype methods
+        let prototype = Object.getPrototypeOf(obj);
+        let prototypeMethods = Object.getOwnPropertyNames(prototype)
+            .filter(prop => typeof prototype[prop] === 'function');
+        prototypeMethods.forEach(method => {
+            clone[method] = obj[method].bind(clone);
+        });
+
+        return clone;
+    },
+    endBattle() {
+        this.menu_state = 'hidden'
+        this.show_hud = false
+        this.info_text = ''
+        this.battle_sequence_playing = false;
+        this.battle_scene_instance.scene.start(SCENE_KEYS.WORLD_SCENE)
     }
 
 
