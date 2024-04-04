@@ -23,6 +23,14 @@ export class Controls {
         return Phaser.Input.Keyboard.JustDown(this.#cursorKeys.space)
     }
 
+    wasEnterKeyPressed() {
+        if (this.#cursorKeys === undefined) {
+            return false
+        }
+        return Phaser.Input.Keyboard.JustDown(this.#cursorKeys.enter)
+    }
+
+
     wasBackKeyPressed() {
         if (this.#cursorKeys === undefined) {
             return false

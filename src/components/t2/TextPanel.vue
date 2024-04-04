@@ -71,7 +71,7 @@ function renderTextLetterByLetter(text) {
 }
 
 function skipToEnd(e) {
-    console.log(store.in_battle)
+
     if (e.key !== 'Enter' || store.battle_sequence_playing) return;
     clearInterval(intervalId);
     if (store.info_text !== '') {
@@ -94,7 +94,7 @@ function skipToEnd(e) {
 }
 
 function skipToNextMessage(e) {
-    console.log('skippign msgS')
+
     if (e.key !== 'Enter') {
         return
     }
@@ -112,7 +112,7 @@ function skipToNextMessage(e) {
 
 function showOptionsMenu(e) {
     if (e.key !== 'Enter' || store.battle_sequence_playing) return;
-    console.log('showing menu')
+
     store.menu_state = 'options'
 }
 

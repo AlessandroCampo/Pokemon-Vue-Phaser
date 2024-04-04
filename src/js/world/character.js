@@ -24,9 +24,10 @@ export class Character {
         this._previousTargetPosition = { ...config.position }
         this._idleFrameConfig = config.idleFrameConfig;
         this._origin = config.origin ? { ...config.origin } : { x: 0, y: 0 }
-        this._phaserGameObject = this._scene.add.sprite(config.position.x, config.position.y, config.assetKey, this.getIdleFrame()[0] || 0).setScale(config.scale || 1.3).setOrigin(this._origin.x, this._origin.y)
+        this._phaserGameObject = this._scene.add.sprite(config.position.x, config.position.y, config.assetKey, this.getIdleFrame() || 0).setScale(config.scale || 0.5).setOrigin(this._origin.x, this._origin.y)
         this._spriteGridMovementFinishedCallback = config.spriteGridMovementFinishedCallback
         this._collisionLayer = config.collision_layer;
+        this._direction = config.direction
 
     }
 
@@ -37,6 +38,15 @@ export class Character {
     get direction() {
         return this._direction
     }
+
+    // setDirection(direction) {
+    //     if (direction == 'UP') {
+    //         direction = DIRECTION.UP
+    //     }
+    //     console.log(direction)
+    //     this._direction = direction
+    //     this._phaserGameObject.setFrame(this.getIdleFrame())
+    // }
 
     get sprite() {
         return this._phaserGameObject
@@ -85,6 +95,7 @@ export class Character {
     }
 
     getIdleFrame() {
+        console.log(this._direction)
         return this._idleFrameConfig[this._direction]
     }
 

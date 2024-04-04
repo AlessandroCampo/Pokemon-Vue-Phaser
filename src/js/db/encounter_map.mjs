@@ -10,5 +10,5 @@ export let encounter_map = [{
         { pokemon: Pokemons.zigzagoon, chance: 0.3 },
         { pokemon: Pokemons.electrike, chance: 0.15 }
     ],
-    level_average: 3
+    level_average: 3,
 }];

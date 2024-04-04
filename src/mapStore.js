@@ -2,13 +2,24 @@ import { computed, reactive } from 'vue'
 import { store } from './store';
 import gsap from 'gsap'
 import Phaser from 'phaser';
+import { tile_size } from './js/scenes/world-scene';
+import { DIRECTION } from './js/utils/Controls.mjs';
+import { encounter_map } from './js/db/encounter_map.mjs';
 
 export const map_store = reactive({
     walking_speed: 450,
     text_queue: [],
     encounter_frequency: 0.9,
-    current_map: 'start',
+    current_map: encounter_map[0],
     world_scene_istance: undefined,
+    player_initial_coords: { x: 24 * tile_size, y: 22 * tile_size },
+    player_position_info: {
+        coords: undefined,
+        direction: DIRECTION.DOWN,
+        map: undefined
+    },
+    player_istance: undefined,
+    chracacter_istances: {},
     createSceneTransition: async function (scene) {
 
         // const skipSceneTransition = options?.skipSceneTransition || false;

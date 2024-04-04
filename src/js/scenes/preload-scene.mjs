@@ -85,12 +85,14 @@ export class PreloadScene extends Phaser.Scene {
         this.load.json(DATA_ASSET_KEYS.ANIMATIONS, 'json/animations.json')
 
         // LOAD WORLD ASSETS
+        console.log(map_store.current_map.map_name)
 
-        this.load.image(WORLD_ASSETS_KEYS.WORLD_BACKGROUND, `/map/level_background.png`)
-        this.load.tilemapTiledJSON(WORLD_ASSETS_KEYS.WORLD_MAIN_LEVEL, `/json/level.json`)
+        this.load.image(WORLD_ASSETS_KEYS.WORLD_BACKGROUND, `/maps/${map_store.current_map.map_name}.png`)
+        this.load.tilemapTiledJSON(WORLD_ASSETS_KEYS.WORLD_MAIN_LEVEL, `/json/${map_store.current_map.map_name}.json`)
         this.load.image(WORLD_ASSETS_KEYS.WORLD_COLLISION, `/map/collision.png`)
         this.load.image(WORLD_ASSETS_KEYS.WORLD_ENCOUNTER_ZONE, `/map/encounter.png`)
-        this.load.image(WORLD_ASSETS_KEYS.WORLD_FOREGROUND, `/map/level_foreground.png`)
+        this.load.image(WORLD_ASSETS_KEYS.WORLD_FOREGROUND, `/maps/${map_store.current_map.map_name}-foreground.png`)
+
 
 
 
