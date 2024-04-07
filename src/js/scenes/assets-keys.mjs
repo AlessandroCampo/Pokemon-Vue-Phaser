@@ -3,11 +3,20 @@ export const BATTLE_BACKGROUND_ASSET_KEYS = Object.freeze({
 })
 
 export const WORLD_ASSETS_KEYS = Object.freeze({
-    WORLD_BACKGROUND: 'world-background',
-    WORLD_MAIN_LEVEL: 'world-main-level',
-    WORLD_FOREGROUND: 'world-foreground',
-    WORLD_COLLISION: 'world-collision',
-    WORLD_ENCOUNTER_ZONE: 'world-encounter-zone',
+    START_BACKGROUND: 'start-background',
+    START_MAIN_LEVEL: 'start-main-level',
+    START_FOREGROUND: 'start-foreground',
+    START_COLLISION: 'start-collision',
+    START_ENCOUNTER_ZONE: 'start-encounter-zone',
+
+})
+
+export const BUILDING_ASSET_KEYS = Object.freeze({
+    BUILDING_1_BACKGROUND: 'building-1-background',
+    BUILDING_1_MAIN_LEVEL: 'building-1-main-level',
+    BUILDING_1_FOREGROUND: 'building-1-foreground',
+    BUILDING_1_COLLISION: 'building-1-collision',
+
 
 })
 

@@ -4,7 +4,7 @@ import { BattleScene } from './js/scenes/battle-scene.mjs';
 import { trainers, Trainer } from './js/db/trainers.mjs';
 import { all_items } from './js/db/items.mjs';
 import { all_moves } from './js/db/moves.mjs';
-import { encounter_map } from './js/db/encounter_map.mjs';
+import { encounter_map } from './mapStore';
 import { map_store } from './mapStore';
 import { SCENE_KEYS } from './js/scenes/scene-keys.mjs';
 import { WORLD_ASSETS_KEYS } from './js/scenes/assets-keys.mjs';
@@ -35,10 +35,10 @@ function deepClone(obj) {
 }
 
 export const store = reactive({
-    my_pokemon: deepClone(Pokemons.treecko),
+    my_pokemon: undefined,
     oppo_pokemon: undefined,
     my_bench: [],
-    my_items: [all_items.poke_ball, all_items.potion, all_items.sitrus_berry, all_items.awakening, all_items.paralyze_heal],
+    my_items: [],
     player_info: {
         name: 'Aleks'
     },
@@ -150,8 +150,11 @@ export const store = reactive({
 
 
 
+        //hustle makes the physical moves 20% less likely to hit
+        if (move.category == 'physical' && caster.abilities.includes('Hustle')) {
+            move.accuracy *= 0.8
+        }
         //  check if the ability missed
-
         if (this.move_missed(move.accuracy, caster.accuracy.effective, target.evasion.effective)) {
             this.info_text = `${move.name} missed!`
             await this.delay(this.info_text.length * this.config.text_speed + 500);
@@ -183,7 +186,7 @@ export const store = reactive({
         //Account for crhit chance
         let crhit = false
         const crhit_chance = Math.random() * 100
-        if (crhit_chance < 4.17) {
+        if (crhit_chance < caster.crhit_chance) {
             crhit = true
         }
         let damage = this.calcDamage(move, caster, target, crhit, true);
@@ -440,6 +443,12 @@ export const store = reactive({
         } else if (!move.power) {
             return 0
         }
+
+        if (move.name == 'Low Kick') {
+            move.power = this.calcPowerBasedOnTargetWeight(target)
+        }
+
+
         let caster_pinched = caster.hp.current < caster.hp.max * 0.34
         let offensive_stat = move.category == 'physical' ? caster.atk.effective : caster.sp_atk.effective
         let defensive_stat = move.category == 'physical' ? target.def.effective : target.sp_def.effective
@@ -447,12 +456,16 @@ export const store = reactive({
         let effectiveness = this.checkEffectiveness(move.type, target.types)
         //moves can do 85% to 100% of their maximum damage
         let random = 0.85 + Math.random() * 0.15;
+        //hustle boosts atk by 50% when using physical moves,and guts  does so if the caster has a major status condition
+        if ((caster.abilities.includes('Hustle') || ((caster.abilities.includes('Guts') && caster.status !== null))) && move.category == 'physical') {
+            offensive_stat *= 1.5
+        }
         let damage_equation =
             (((caster.level * 2 / 5) + 2) * move.power * (offensive_stat / defensive_stat) / 50) * pb * effectiveness + 2 * random
         if (crhit) {
             damage_equation *= 1.5
         }
-        if (caster.status == 'burned' && move.category == 'physical') {
+        if (caster.status == 'burned' && move.category == 'physical' && !caster.abilities.includes('Guts')) {
             damage_equation *= 0.5
         }
         if (caster_pinched && ((caster.abilities.includes('Overgrow') && move.type == 'grass') || (caster.abilities.includes('Torrent') && move.type == 'water') || (caster.abilities.includes('Blaze') && move.type == 'fire'))) {
@@ -468,6 +481,21 @@ export const store = reactive({
             damage_equation = target.hp.current + 1
         }
         return Math.round(damage_equation)
+    },
+    calcPowerBasedOnTargetWeight(target) {
+        if (target.weight < 10) {
+            return 20
+        } else if (target.weight < 25) {
+            return 40
+        } else if (target.weight < 50) {
+            return 60
+        } else if (target.weight < 100) {
+            return 80
+        } else if (target.weight < 200) {
+            return 100
+        } else {
+            return 120
+        }
     },
 
     checkEffectiveness: function (moveType, targetTypes) {
@@ -656,7 +684,7 @@ export const store = reactive({
         let ai_healign_move = null
         let high_prio_move = null
         let ai_is_slower = this.oppo_pokemon.speed.effective <= this.my_pokemon.speed.effective
-        console.log(most_damage_move.move.name)
+
         // check if AI holds an healing move or high prio move
 
         this.oppo_pokemon.moves.forEach((move) => {
@@ -825,7 +853,7 @@ export const store = reactive({
                 best_swap.predicted_dmg_tanked = expected_incoming_damage // If damage is equal, choose the one with higher remaining HP
             }
         });
-        console.log(best_swap)
+
         return best_swap;
     },
     aiWantsSwap() {
@@ -849,7 +877,7 @@ export const store = reactive({
         }
 
         // THE ai always wants to swap if the human player can kill his pokemon, he is slower and has a pokemon on the bench whose gonna take less than 40% max hp as dmg
-        console.log(predicted_player_move)
+
         if (predicted_player_move.can_kill && ai_is_slower && possible_swap.predicted_dmg_tanked <= possible_swap.pokemon.hp.current * 0.4) {
             wants_to_swap = true
             console.log('ai wanted to swap cause', predicted_player_move.move.name, 'is about to deal', predicted_player_move.expected_dmg, 'His swap options is', possible_swap.pokemon.name)
@@ -922,6 +950,10 @@ export const store = reactive({
         const stat = move_effect.target_stat;
         const stages = move_effect.stages;
         // stat modifying preventers logic
+        if (move_effect.target_stat == 'crhit_chance') {
+            target.crhit_chance *= 4
+            return `${target.name}'s is way more likely to strike a critical hit now`;
+        }
         if (move_effect.target_stat == 'accuracy' && target.abilities.includes('Keen Eye')) {
             return `${target.name}'s ${target.abilities[0]} prevented his ${move_effect.target_stat} from ${stages > 0 ? 'increasing' : 'decreasing'}`;
         }
@@ -1038,7 +1070,7 @@ export const store = reactive({
 
             this.info_text = `All of your pokemons died, you're gonna get killed as well`;
             await this.delay(this.info_text.length * this.config.text_speed + 500);
-            // window.location.reload()
+            window.location.reload()
             return
 
         } else {
@@ -1052,7 +1084,7 @@ export const store = reactive({
                     this.info_text = `${this.oppo_pokemon.name} died and you won the battle ${this.battle_type == 'trainer' ? 'against ' + this.oppo_trainer.name : ''}`;
                     await this.delay(this.info_text.length * this.config.text_speed + 500);
                     // window.location.reload()
-                    console.log(map_store.world_scene_istance)
+
                     map_store.world_scene_istance.scene.start(SCENE_KEYS.WORLD_SCENE)
                     this.endBattle()
                     return
@@ -1391,7 +1423,7 @@ export const store = reactive({
         if (pokemonCaught) {
             this.info_text = `${this.oppo_pokemon.name} has been caught`
             await this.delay(this.info_text.length * this.config.text_speed + 500)
-            console.log(pkmn)
+
             this.my_bench.push(deepClone(pkmn))
         } else {
             ball.sprite.destroy()
@@ -1427,6 +1459,7 @@ export const store = reactive({
             await this.delay(this.info_text.length * this.config.text_speed + 500)
             this.endBattle()
         } else {
+            this.battle_sequence_playing = true
             this.info_text = `${this.oppo_pokemon.name} won't let you run away`
             await this.delay(this.info_text.length * this.config.text_speed + 500)
         }
@@ -1440,7 +1473,8 @@ export const store = reactive({
         //trainers pokemons can hold random items
         const possible_trainer_items = [all_items.lum_berry, all_items.sitrus_berry]
         const my_pokemons = [];
-        this.my_pokemon = deepClone(possible_trainer_pokemons[Math.floor(Math.random() * possible_trainer_pokemons.length)])
+        //NOTE - REMOVE THIS WHEN DECIDING LOGIC TO GET YOUR POKEMOn
+        // this.my_pokemon = deepClone(possible_trainer_pokemons[Math.floor(Math.random() * possible_trainer_pokemons.length)])
         // trainers pokemons will have an average level which is randomly even to 2 level lower compared to the average
         let my_pokemons_avg_level;
         my_pokemons.push(this.my_pokemon);
@@ -1457,7 +1491,7 @@ export const store = reactive({
         random_trainer_lead.level = Math.floor(Math.random() * 3) + my_pokemons_avg_level - 2;
         for (let i = 0;i < store.my_bench.length;i++) {
             let rand_pokemon = deepClone(possible_trainer_pokemons[Math.floor(Math.random() * possible_trainer_pokemons.length)])
-            console.log(rand_pokemon.name)
+
             rand_pokemon.level = Math.floor(Math.random() * 3) + my_pokemons_avg_level - 2;
             random_trainer_bench.push(rand_pokemon)
         }
@@ -1526,11 +1560,12 @@ export const store = reactive({
     },
     getRandomEncounter(map) {
         // Find the encounter map for the given map name
-        const mapData = encounter_map.find(entry => entry.map_name === map);
-
+        const mapData = encounter_map.find(entry => entry.map_name === map.map_name);
+        console.log(encounter_map, map)
+        console.log(mapData)
         // If the map doesn't exist or has no encounters, return null
         if (!mapData || !mapData.possible_encounters || mapData.possible_encounters.length === 0) {
-            return Pokemons.zigzagoon;
+            return deepClone(Pokemons.zigzagoon);
         }
 
         // Get the possible encounters for the map
@@ -1549,7 +1584,7 @@ export const store = reactive({
             accumulatedChance += encounter.chance;
             if (randomChance < accumulatedChance) {
                 random_encounter = encounter.pokemon;
-                console.log('encounter is random');
+
                 break; // Break out of the loop once random_encounter is set
             }
         }
@@ -1557,7 +1592,7 @@ export const store = reactive({
         // If no encounter is selected, set random_encounter to the last encounter
         if (!random_encounter) {
             random_encounter = possibleEncounters[possibleEncounters.length - 1].pokemon;
-            console.log('encounter is not random');
+
         }
 
         // Right now, wild pokemons can't hold items
@@ -1598,6 +1633,7 @@ export const store = reactive({
         this.show_hud = false
         this.info_text = ''
         this.battle_sequence_playing = false;
+        this.in_battle = false
         this.battle_scene_instance.scene.start(SCENE_KEYS.WORLD_SCENE)
     }
 

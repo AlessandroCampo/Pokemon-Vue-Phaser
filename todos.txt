@@ -30,3 +30,13 @@ abilities are not randomized
 make
 
 pps are not unique(Need to deeper clone moves)
+
+
+// create a function to interpeate events coming from npcs, handle moving npcs (and automove in case of battle)
+// refactor npc logic
+
+NPC EVENTS OTHER THAN battle
+SAVING DATA 
+improve dialogue behavior and skip text logic (maybe only spacebar)
+levelling up, evolving and learning moves
+imrpove npc interaction

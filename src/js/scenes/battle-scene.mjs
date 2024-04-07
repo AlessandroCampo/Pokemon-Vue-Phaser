@@ -13,24 +13,46 @@ export class BattleScene extends Phaser.Scene {
             key: SCENE_KEYS.BATTLE_SCENE
         })
     }
-    preload() {
+    async preload() {
+
+        //TODO - organize preload scene better
 
         store.battle_scene_instance = this
+        store.my_pokemon.player_controlled = true
+        store.my_pokemon.resetStats()
         store.calcStats(store.my_pokemon)
+
         store.calcStats(store.oppo_pokemon)
         this.load.spritesheet(store.oppo_pokemon.images.front.key, store.oppo_pokemon.images.front.path, {
             frameWidth: store.oppo_pokemon.images.front.frameWidth,
             frameHeight: store.oppo_pokemon.images.front.frameHeight,
         })
+        this.load.spritesheet(store.my_pokemon.images.back.key, store.my_pokemon.images.back.path, {
+            frameWidth: store.my_pokemon.images.back.frameWidth,
+            frameHeight: store.my_pokemon.images.back.frameHeight,
+        })
         store.my_bench.forEach((member) => {
+            member.resetStats()
             store.calcStats(member)
             member.player_controlled = true
+            this.load.spritesheet(member.images.back.key, member.images.back.path, {
+                frameWidth: member.images.back.frameWidth,
+                frameHeight: member.images.back.frameHeight,
+            })
         })
         if (store.battle_type == 'trainer') {
+            this.load.image(`trainer_${store.oppo_trainer.name}`, `/trainers/${store.oppo_trainer.name}.    
+            png`)
+            console.log(store.oppo_trainer.name)
             store.oppo_bench.forEach((member) => {
                 store.calcStats(member)
                 member.player_controlled = false
+                this.load.spritesheet(member.images.front.key, member.images.front.path, {
+                    frameWidth: member.images.front.frameWidth,
+                    frameHeight: member.images.front.frameHeight,
+                })
             })
+
         }
 
     }
@@ -39,7 +61,7 @@ export class BattleScene extends Phaser.Scene {
             store.info_text = `A wild ${store.oppo_pokemon.name} appears! Get ready to fight for your life!`
         } else if (store.battle_type == 'trainer') {
             store.info_text = `The match against ${store.oppo_trainer.name} is about to start. The first pokèmon is ${store.oppo_pokemon.name}`
-            const trainer_image = this.add.image(store.oppo_trainer.position.x, store.oppo_trainer.position.y, 'trainer_' + store.oppo_trainer.name).setScale(store.oppo_trainer.scale)
+
         }
 
         const backgroundTexture = this.textures.get(BATTLE_BACKGROUND_ASSET_KEYS.FOREST_NIGHT);
@@ -78,6 +100,8 @@ export class BattleScene extends Phaser.Scene {
             member.images.back.animation_key = new_anim_key
         });
         if (store.battle_type == 'trainer') {
+            const trainer_image = this.add.image(store.oppo_trainer.position.x, store.oppo_trainer.position.y, 'trainer_' + store.oppo_trainer.name).setScale(store.oppo_trainer.scale)
+            console.log(store.oppo_trainer)
             store.oppo_bench.forEach((member, index) => {
                 member.sprite = store.oppo_pokemon.sprite
                 let new_anim_key = `oppo_${member.name}_${index}_anim`

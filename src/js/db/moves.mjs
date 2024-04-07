@@ -164,6 +164,22 @@ const howl = new Move({
     effects: [{ type: 'modify_stat', target_stat: 'atk', target: 'ally', stages: +1, target_stat_label: 'attack' }]
 })
 
+const focus_energy = new Move({
+    name: 'Focus Energy',
+    category: 'status',
+    type: 'normal',
+    power: null,
+    accuracy: 100,
+    pp: {
+        max: 30,
+        current: 30
+    },
+    makes_contact: false,
+    animation: null,
+    description: 'The user takes a deep breath and focuses so that its future attacks have a heightened chance of landing critical hits.',
+    effects: [{ type: 'modify_stat', target_stat: 'crhit_chance', target: 'ally', stages: +1, target_stat_label: 'attack' }]
+})
+
 const leer = new Move({
     name: 'Leer',
     category: 'status',
@@ -285,7 +301,7 @@ const supersonic = new Move({
     category: 'status',
     type: 'normal',
     power: null,
-    accuracy: 155,
+    accuracy: 55,
     pp: {
         max: 20,
         current: 20
@@ -521,6 +537,23 @@ const seismic_toss = new Move({
     effects: null
 })
 
+const low_kick = new Move({
+    name: 'Low Kick',
+    category: 'physical',
+    type: 'fighting',
+    power: 1,
+    accuracy: 100,
+    pp: {
+        max: 20,
+        current: 20
+    },
+    makes_contact: true,
+    animation: null,
+    description: 'A powerful low kick that makes the target fall over. The heavier the target, the greater the move’s power',
+    effects: null
+})
+
+
 const detect = new Move({
     name: 'Detect',
     category: 'status',
@@ -552,6 +585,22 @@ const rock_smash = new Move({
     animation: null,
     description: 'The user attacks with a punch that may lower the target’s Defense stat. It’s also one of the Pokétch’s hidden moves.',
     effects: [{ type: 'modify_stat', target_stat: 'def', target: 'enemy', stages: -1, target_stat_label: 'defense' }]
+})
+
+const bulk_up = new Move({
+    name: 'Bulk up',
+    category: 'status',
+    type: 'fighting',
+    power: null,
+    accuracy: 1000,
+    pp: {
+        max: 20,
+        current: 20
+    },
+    makes_contact: false,
+    animation: null,
+    description: 'The user tenses its muscles to bulk up its body, boosting its Attack and Defense stats.',
+    effects: [{ type: 'modify_stat', target_stat: 'def', target: 'ally', stages: +1, target_stat_label: 'defense' }, { type: 'modify_stat', target_stat: 'atk', target: 'ally', stages: +1, target_stat_label: 'attack' }]
 })
 
 // ELECTRIC MOVES
@@ -772,6 +821,57 @@ const disarming_voice = new Move({
 
 })
 
+//DRAGON MOVES
+
+const dragon_breath = new Move({
+    name: 'Dragon Breath',
+    category: 'special',
+    type: 'dragon',
+    power: 60,
+    accuracy: 100,
+    pp: {
+        max: 20,
+        current: 20
+    },
+    makes_contact: false,
+    animation: null,
+    description: '	The user exhales a mighty gust that inflicts damage. This may also leave the target with paralysis.',
+    effects: [{ type: 'applied_status', applied_status: 'paralyzed', target: 'enemy', chance: 30 }]
+})
+
+//GHOST MOVES
+
+const confuse_ray = new Move({
+    name: 'Confuse Ray',
+    category: 'status',
+    type: 'ghost',
+    power: null,
+    accuracy: 100,
+    pp: {
+        max: 10,
+        current: 10
+    },
+    makes_contact: false,
+    animation: null,
+    description: 'The target is exposed to a sinister ray that causes confusion.',
+    effects: [{ type: 'apply_confusion', applied_status: 'confused', target: 'enemy', chance: 100 }]
+})
+
+const lick = new Move({
+    name: 'Lick',
+    category: 'physical',
+    type: 'ghost',
+    power: 30,
+    accuracy: 100,
+    pp: {
+        max: 30,
+        current: 30
+    },
+    makes_contact: false,
+    animation: null,
+    description: 'The user licks the target with a long tongue to inflict damage. This may also leave the target with paralysis.',
+    effects: [{ type: 'applied_status', applied_status: 'paralyzed', target: 'enemy', chance: 30 }]
+})
 
 export const all_moves = {
     tackle,
@@ -817,6 +917,12 @@ export const all_moves = {
     pay_day,
     take_down,
     shock_wave,
-    disarming_voice
+    disarming_voice,
+    focus_energy,
+    dragon_breath,
+    lick,
+    confuse_ray,
+    bulk_up,
+    low_kick
 
 }

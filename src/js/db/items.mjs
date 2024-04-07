@@ -14,7 +14,7 @@ class Item {
         this.effect = effect || null
         this.description = description
         this.img_path = img_path
-        this.owned_amount = 100
+        this.owned_amount = 1
         this.sprite = null
         this.asset_key = asset_key || null
         this.can_be_used_in_battle = can_be_used_in_battle
@@ -50,6 +50,30 @@ export class Ball extends Item {
         super({ name, price, effect, description, img_path, owned_amount, sprite, asset_key, can_be_used_in_battle });
 
         this.catch_multiplier = catch_multiplier;
+        this.type = 'ball'
+    }
+
+
+    drawSprite(scene) {
+        console.log('draw sprite');
+        return new Promise((resolve, reject) => {
+            // Load the image in the scene
+            scene.load.image(this.name, this.img_path);
+
+            // Get the Loader instance
+            const loader = scene.load;
+
+            // Attach an event listener for when loading is complete
+            loader.once('complete', () => {
+                // Create the sprite once loading is complete
+                this.sprite = scene.add.image(300, 300, this.name).setScale(0.4);
+                console.log('sprite loaded');
+                resolve(); // Resolve the Promise
+            });
+
+            // Start loading
+            loader.start();
+        });
     }
 
     use() {
@@ -92,6 +116,7 @@ export class Potion extends Item {
         super({ name, price, effect, description, img_path, owned_amount, sprite, asset_key, amount, can_be_used_in_battle });
         this.amount = amount
         this.can_be_used_in_battle = true
+        this.type = 'potion'
     }
 
 
@@ -102,6 +127,7 @@ export class Antidote extends Item {
         super({ name, price, effect, description, img_path, owned_amount, sprite, asset_key, can_be_used_in_battle });
         this.helead_status = helead_status
         this.can_be_used_in_battle = true
+        this.type = 'antidote'
     }
 }
 

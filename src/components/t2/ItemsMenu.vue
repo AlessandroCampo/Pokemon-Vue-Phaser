@@ -17,7 +17,7 @@
     </div>
     <div class="target-selection" v-show="selecting_target">
         <div class="bench">
-            <div class="pokemon" v-for="(pkmn, index) in  targets " :key="index"
+            <div class="pokemon" v-for="(pkmn, index) in targets " :key="index"
                 :class="{ 'active_m': index === 0, 'active-target': index === active_target }">
 
                 <img :src="`/pokemons/${pkmn.name.toLowerCase()}.gif`" alt="">
@@ -63,10 +63,11 @@ onBeforeUnmount(() => {
 })
 
 const useItem = async function (item, target) {
-
+    console.log(item, item instanceof Ball)
     if (item.owned_amount <= 0) {
         return
     }
+
     store.menu_state = 'text'
     store.battle_events = [];
     const ai_selected_move = store.oppo_pokemon.moves[Math.floor(Math.random() * store.oppo_pokemon.moves.length)]
@@ -76,7 +77,7 @@ const useItem = async function (item, target) {
 
     };
 
-    if (item instanceof Ball) {
+    if (item.type == 'ball') {
         if (store.battle_type !== 'wild') {
             store.info_text = `Only wild pokemons can be caught...`
             await store.delay(store.info_text.length * store.config.text_speed + 500)
@@ -94,7 +95,7 @@ const useItem = async function (item, target) {
             await store.delay(store.info_text.length * store.config.text_speed + 500)
 
         }
-    } else if (item instanceof Potion) {
+    } else if (item.type == 'potion') {
         if (target.hp.current == target.hp.max) {
             store.info_text = `${target.name} is already full hp, a potion would be wasted...`
             await store.delay(store.info_text.length * store.config.text_speed + 500)
@@ -114,7 +115,7 @@ const useItem = async function (item, target) {
 
 
         }
-    } else if (item instanceof Antidote) {
+    } else if (item.type == 'antidote') {
         if (target.status !== item.helead_status) {
             store.info_text = `${target.name} is not ${item.helead_status}, ${item.name} would be wasted...`
             await store.delay(store.info_text.length * store.config.text_speed + 500)
@@ -147,10 +148,11 @@ const handleMovesInput = async function (e) {
 
     if (e.key == 'Enter') {
 
-        if (selected_item instanceof Ball) {
+        if (selected_item.type == 'ball') {
             console.log('its a ball')
             await useItem(selected_item);
         } else {
+            console.log('thats not a ball')
             let target = await targetSelect()
             console.log(target)
             if (target) {

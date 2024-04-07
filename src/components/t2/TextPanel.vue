@@ -15,25 +15,26 @@ let intervalId;
 let index = 0;
 const delay = store.config.text_speed;
 
-watch(() => store.info_text, (newValue, oldValue) => {
-    if (newValue !== oldValue) {
 
-        renderTextLetterByLetter(store.info_text)
-    }
-
-});
-
-watch(() => map_store.text_queue[0], (newValue, oldValue) => {
-    if (newValue !== oldValue) {
-        window.addEventListener('keydown', skipToEnd);
-        renderTextLetterByLetter(map_store.text_queue[0])
-    }
-
-});
 
 onMounted(() => {
     renderTextLetterByLetter(store.info_text)
     window.addEventListener('keydown', skipToEnd);
+    watch(() => store.info_text, (newValue, oldValue) => {
+        if (newValue !== oldValue) {
+
+            renderTextLetterByLetter(store.info_text)
+        }
+
+    });
+
+    watch(() => map_store.text_queue.length, (newValue, oldValue) => {
+
+        if (newValue !== oldValue) {
+            renderTextLetterByLetter(map_store.text_queue[0])
+            window.addEventListener('keydown', skipToEnd);
+        }
+    });
 });
 
 onBeforeUnmount(() => {
@@ -41,21 +42,10 @@ onBeforeUnmount(() => {
     window.removeEventListener('keydown', skipToEnd)
 })
 
-// function showNextText(e) {
-//     if (e.key !== 'Enter') return;
-//     window.removeEventListener('keydown', showNextText)
-//     textQueue.value.shift();
-//     if (textQueue.value.length > 0) {
-//         const nextText = textQueue.value[0];
-//         renderTextLetterByLetter(nextText);
-//         window.addEventListener('keydown', skipToEnd)
-//     }
-//     else {
-//         store.menu_state = 'options'
-//     }
-// }
+
 
 function renderTextLetterByLetter(text) {
+    if (!text) return
     clearInterval(intervalId);
     renderedText.value = '';
     index = 0;
@@ -72,22 +62,21 @@ function renderTextLetterByLetter(text) {
 
 function skipToEnd(e) {
 
-    if (e.key !== 'Enter' || store.battle_sequence_playing) return;
+    if ((e.key !== 'Enter' && e.code !== 'Space') || store.battle_sequence_playing) return;
     clearInterval(intervalId);
     if (store.info_text !== '') {
         renderedText.value = store.info_text
     } else {
-        console.log(map_store.text_queue[0])
         renderedText.value = map_store.text_queue[0]
     }
     // window.removeEventListener('keydown', skipToEnd)
 
     if (store.in_battle) {
-        console.log('in battle')
+
         window.addEventListener('keydown', showOptionsMenu)
 
     } else {
-        console.log('not in battle')
+
         window.addEventListener('keydown', skipToNextMessage)
     }
 
@@ -95,13 +84,15 @@ function skipToEnd(e) {
 
 function skipToNextMessage(e) {
 
-    if (e.key !== 'Enter') {
+    if (e.key !== 'Enter' && e.code !== 'Space') {
         return
     }
     if (store.in_battle) {
         return
     }
     if (!map_store.text_queue[1]) {
+        map_store.skip_to_next_message()
+
         store.menu_state = 'hidden'
     } else {
         window.removeEventListener('keydown', skipToNextMessage)
@@ -111,8 +102,8 @@ function skipToNextMessage(e) {
 }
 
 function showOptionsMenu(e) {
-    if (e.key !== 'Enter' || store.battle_sequence_playing) return;
-
+    if ((e.key !== 'Enter' && e.code !== 'Space') || store.battle_sequence_playing || store.menu_state !== 'text') return;
+    console.log('showing options menu')
     store.menu_state = 'options'
 }
 

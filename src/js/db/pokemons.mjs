@@ -101,6 +101,7 @@ class Pokemon {
         this.levitates = leviates || false
         this.guarded = false
         this.stat_total = stat_total || null
+        this.crhit_chance = 4.17
 
 
     }
@@ -117,31 +118,27 @@ class Pokemon {
     }
 
     setPropScale() {
-        //FIXME - enormous sprites
+        // Constants for scaling
         const MIN_SCALE = 0.35;
         const MAX_SCALE = 1.5;
-        let scale;
 
         // Get the height of the Pokémon
         let pokemonHeight = this.height;
-        console.log('Pokemon height:', pokemonHeight);
 
         // Apply a larger scale to player-controlled Pokémon
-        let player_controlled_multiplier = this.player_controlled ? 3 : 1.0;
-        console.log('Player controlled multiplier:', player_controlled_multiplier);
+        let player_controlled_multiplier = this.player_controlled ? 1 : 0.7;
 
-        // Normalize the height to a range of 0 to 1
-        let normalizedHeight = (pokemonHeight - 0.6) / (1.5 - 0.6); // Adjust the range according to your actual minimum and maximum heights
+        // Normalize the height to a range of 0 to 1, based on a reasonable minimum and maximum height
+        let normalizedHeight = (pokemonHeight - 0.4) / (1.6 - 0.4); // Adjust the range according to your actual minimum and maximum heights
 
         // Scale the normalized height to the desired scale range
-        scale = MIN_SCALE + normalizedHeight * (MAX_SCALE - MIN_SCALE);
+        let scale = MIN_SCALE + normalizedHeight * (MAX_SCALE - MIN_SCALE);
 
         // Apply the player-controlled multiplier
         scale *= player_controlled_multiplier;
 
         // Ensure scale stays within the specified limits
         scale = Math.max(MIN_SCALE, Math.min(MAX_SCALE, scale));
-        console.log('Final scale:', scale);
 
         // Set the scale of the sprite
         this.sprite.setScale(scale);
@@ -272,6 +269,13 @@ class Pokemon {
         this.speed.current = this.speed.base;
         this.accuracy.current = this.accuracy.effective;
         this.evasion.current = this.evasion.effective;
+        this.atk.stage = 0
+        this.def.stage = 0
+        this.sp_atk.stage = 0
+        this.sp_def.stage = 0
+        this.accuracy.stage = 0
+        this.evasion.stage = 0
+        this.crhit_chance = 4.17
     }
 
 
@@ -431,6 +435,236 @@ class Pokemon {
 
 
 // });
+
+let deino = new Pokemon({
+    name: "Deino",
+    description: "It nests deep inside a cave. Food there is scarce, so Deino will sink its teeth into anything that moves and attempt to eat it.",
+    types: ['dark', 'dragon'],
+    moves: [deepClone(all_moves.focus_energy), deepClone(all_moves.tackle), deepClone(all_moves.dragon_breath)],
+    learnable_moves: [{ at_level: 8, move: { ...all_moves.bite } }, { at_level: 12, move: { ...all_moves.roar } }, { at_level: 15, move: { ...all_moves.headbutt } }],
+    abilities: ['Hustle'],
+    growth_rate: 'Medium Slow',
+    height: 0.8,
+    weight: 17.3,
+    level: 5,
+    catch_rate: 45,
+    pokemon_number: 633,
+    hp: {
+        base: 52,
+        max: 52,
+        current: 52
+    },
+    xp: {
+        base: 60,
+        total: 0
+    },
+    atk: {
+        base: 65,
+        current: 65,
+        effective: 65,
+        stage: 0
+    },
+    def: {
+        base: 50,
+        current: 50,
+        effective: 50,
+        stage: 0
+    },
+    sp_atk: {
+        base: 45,
+        current: 45,
+        effective: 45,
+        stage: 0
+    },
+    sp_def: {
+        base: 50,
+        current: 50,
+        effective: 50,
+        stage: 0
+    },
+    speed: {
+        base: 38,
+        current: 38,
+        effective: 38,
+        stage: 0
+    },
+    evolution: {
+
+    },
+    images: {
+        front: {
+            path: base_path + 'deino-front.png',
+            key: 'deino-front',
+            frameWidth: 165,
+            frameHeight: 310,
+            frames: 43
+        },
+        back: {
+            path: base_path + 'deino-back.png',
+            key: 'deino-back',
+            frameWidth: 218,
+            frameHeight: 410,
+            frames: 43
+        }
+    },
+    held_item: null,
+    sounds: 'assets/sounds/deino-cry.ogg',
+    stat_total: 300
+});
+
+let gastly = new Pokemon({
+    name: "Gastly",
+    description: "Its body is made of gas. Despite lacking substance, it can envelop an opponent of any size and cause suffocation.",
+    types: ['ghost', 'poison'],
+    moves: [deepClone(all_moves.confuse_ray), deepClone(all_moves.lick), deepClone(all_moves.hypnosis)],
+    learnable_moves: [],
+    abilities: ['Levitate'],
+    growth_rate: 'Medium Slow',
+    height: 1.3,
+    weight: 0.1,
+    level: 5,
+    catch_rate: 190,
+    pokemon_number: 633,
+    hp: {
+        base: 30,
+        max: 30,
+        current: 30
+    },
+    xp: {
+        base: 62,
+        total: 0
+    },
+    atk: {
+        base: 35,
+        current: 35,
+        effective: 35,
+        stage: 0
+    },
+    def: {
+        base: 30,
+        current: 30,
+        effective: 30,
+        stage: 0
+    },
+    sp_atk: {
+        base: 100,
+        current: 100,
+        effective: 100,
+        stage: 0
+    },
+    sp_def: {
+        base: 35,
+        current: 35,
+        effective: 35,
+        stage: 0
+    },
+    speed: {
+        base: 80,
+        current: 80,
+        effective: 80,
+        stage: 0
+    },
+    evolution: {
+
+    },
+    images: {
+        front: {
+            path: base_path + 'gastly-front.png',
+            key: 'gastly-front',
+            frameWidth: 286,
+            frameHeight: 310,
+            frames: 40
+        },
+        back: {
+            path: base_path + 'gastly-back.png',
+            key: 'gastly-back',
+            frameWidth: 377,
+            frameHeight: 410,
+            frames: 40
+        }
+    },
+    held_item: null,
+    sounds: 'assets/sounds/gastly-cry.ogg',
+    stat_total: 310
+});
+
+
+let timburr = new Pokemon({
+    name: "Timburr",
+    description: "It loves helping out with construction projects. It loves it so much that if rain causes work to halt, it swings its log around and throws a tantrum.",
+    types: ['fighting'],
+    moves: [deepClone(all_moves.leer), deepClone(all_moves.pound), deepClone(all_moves.low_kick)],
+    learnable_moves: [{ at_level: 8, move: { ...all_moves.rock_trhow } }, { at_level: 12, move: { ...all_moves.focus_energy } }, { at_level: 15, move: { ...all_moves.bulk_up } }],
+    abilities: ['Guts'],
+    growth_rate: 'Medium Slow',
+    height: 0.6,
+    weight: 12.5,
+    level: 5,
+    catch_rate: 180,
+    pokemon_number: 532,
+    hp: {
+        base: 75,
+        max: 75,
+        current: 75
+    },
+    xp: {
+        base: 61,
+        total: 0
+    },
+    atk: {
+        base: 80,
+        current: 80,
+        effective: 80,
+        stage: 0
+    },
+    def: {
+        base: 55,
+        current: 55,
+        effective: 55,
+        stage: 0
+    },
+    sp_atk: {
+        base: 25,
+        current: 25,
+        effective: 25,
+        stage: 0
+    },
+    sp_def: {
+        base: 35,
+        current: 35,
+        effective: 35,
+        stage: 0
+    },
+    speed: {
+        base: 35,
+        current: 35,
+        effective: 35,
+        stage: 0
+    },
+    evolution: {
+
+    },
+    images: {
+        front: {
+            path: base_path + 'timburr-front.png',
+            key: 'timburr-front',
+            frameWidth: 335,
+            frameHeight: 310,
+            frames: 23
+        },
+        back: {
+            path: base_path + 'timburr-back.png',
+            key: 'timburr-back',
+            frameWidth: 441,
+            frameHeight: 410,
+            frames: 23
+        }
+    },
+    held_item: null,
+    sounds: 'assets/sounds/timburr-cry.ogg',
+    stat_total: 305
+});
+
 
 let torchic = new Pokemon({
     name: "Torchic",
@@ -1388,5 +1622,5 @@ let electrike = new Pokemon({
 });
 
 export const Pokemons = {
-    treecko, torchic, mudkip, aggron, nosepass, lunatone, lileep, wingull, ralts, zigzagoon, poochyena, electrike, meowth
+    treecko, torchic, mudkip, aggron, nosepass, lunatone, lileep, wingull, ralts, zigzagoon, poochyena, electrike, meowth, timburr, gastly, deino
 }

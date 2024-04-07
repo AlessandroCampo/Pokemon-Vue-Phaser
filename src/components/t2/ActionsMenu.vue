@@ -1,6 +1,6 @@
 <template>
     <div class="options-menu">
-        <button v-for="(voice, index) in  menu_voices" :key="index" @click="voice.callback"
+        <button v-for="(voice, index) in menu_voices" :key="index" @click="voice.callback"
             :class="index == active_voice ? 'active' : ''">
             <i class="fa-solid fa-chevron-right" v-if="index == active_voice"></i>
             <img :src="voice.path">
@@ -63,7 +63,18 @@ const menu_voices = ref([
             //     await store.delay(store.info_text.length * store.config.text_speed + 500)
             //     store.menu_state = 'options'
             // }
-            open_menu_page('items')
+            let items_amount_0 = store.my_items.find(item => {
+                return item.owned_amount > 0;
+            });
+            if (store.my_items.length == 0 || !items_amount_0) {
+                store.menu_state = 'text'
+                store.info_text = "You  don't have any items in your inventory"
+                await store.delay(store.info_text.length * store.config.text_speed + 500)
+                store.menu_state = 'options'
+            } else {
+                open_menu_page('items')
+            }
+
         }
     },
     {

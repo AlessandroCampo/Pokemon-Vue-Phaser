@@ -15,6 +15,8 @@ export class Character {
     _previousTargetPosition;
     _spriteGridMovementFinishedCallback;
     _collisionLayer;
+    _collidingCharacters;
+    can_move;
 
     constructor(config) {
         this._scene = config.scene;
@@ -24,16 +26,19 @@ export class Character {
         this._previousTargetPosition = { ...config.position }
         this._idleFrameConfig = config.idleFrameConfig;
         this._origin = config.origin ? { ...config.origin } : { x: 0, y: 0 }
+        this._collidingCharacters = config.collidingCharacters || []
         this._phaserGameObject = this._scene.add.sprite(config.position.x, config.position.y, config.assetKey, this.getIdleFrame() || 0).setScale(config.scale || 0.5).setOrigin(this._origin.x, this._origin.y)
         this._spriteGridMovementFinishedCallback = config.spriteGridMovementFinishedCallback
         this._collisionLayer = config.collision_layer;
         this._direction = config.direction
+        this.can_move = true
 
     }
 
     get isMoving() {
         return this._isMoving
     }
+
 
     get direction() {
         return this._direction
@@ -54,7 +59,7 @@ export class Character {
 
 
     moveCharacter(direction) {
-        if (this._isMoving) {
+        if (this._isMoving || !this.can_move) {
             return
         }
 
@@ -62,15 +67,17 @@ export class Character {
 
     }
 
-    update(time) {
-        if (this._isMoving) {
+    addCharactersToCheckCollisionWith(character) {
+        this._collidingCharacters.push(character)
+    }
 
+    update(time) {
+
+        if (this._isMoving || !this.can_move) {
             return
         }
 
         const idleFrame = this._phaserGameObject.anims.currentAnim?.frames[0].frame.name;
-
-
         this._phaserGameObject.anims.stop()
         if (idleFrame == 0) {
             this._phaserGameObject.setFrame(this.getIdleFrame()[0])
@@ -95,7 +102,7 @@ export class Character {
     }
 
     getIdleFrame() {
-        console.log(this._direction)
+
         return this._idleFrameConfig[this._direction]
     }
 
@@ -109,7 +116,7 @@ export class Character {
 
 
 
-        return this.doesPositionCollide(updated_position)
+        return this.doesPositionCollide(updated_position) || this.doesPositionCollideWithOtherCharacter(updated_position)
     }
 
 
@@ -168,5 +175,21 @@ export class Character {
         const { x, y } = position
         const tile = this._collisionLayer.getTileAtWorldXY(x, y, true)
         return tile.index !== -1
+    }
+
+    doesPositionCollideWithOtherCharacter(position) {
+
+        const { x, y } = position
+        if (this._collidingCharacters.length === 0) {
+            return false
+        }
+
+
+        const collides_with_character = this._collidingCharacters.some((character) => {
+            // console.log('My position', x, y, 'Character position', character._targetPosition.x, character._targetPosition.y)
+            return (character._targetPosition.x == x && character._targetPosition.y == y) || (character._previousTargetPosition.x == x && character._previousTargetPosition.y == y)
+        })
+
+        return collides_with_character
     }
 }

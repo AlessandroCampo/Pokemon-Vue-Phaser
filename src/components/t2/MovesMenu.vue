@@ -2,9 +2,9 @@
     <div class="moves-container">
         <div class="move" :class="index == active_voice ? 'active' : ''" v-for="(move, index) in store.my_pokemon.moves"
             :key="move.name" :style="{
-            backgroundColor: getMoveBackgroundColor(move.type)
+                backgroundColor: getMoveBackgroundColor(move.type)
 
-        }" @click="store.useMove(move, store.my_pokemon, store.oppo_pokemon)">
+            }" @click="store.useMove(move, store.my_pokemon, store.oppo_pokemon)">
             <div class="type-name">
                 <img :src="`/icons/${move.type}.png`" alt="">
                 <div>
@@ -51,7 +51,7 @@ onBeforeUnmount(() => {
 })
 
 const handleMovesInput = async function (e) {
-    console.log(active_move.value.name)
+    console.log('clicked')
 
     if (store.menu_state !== 'moves') {
 
@@ -59,6 +59,7 @@ const handleMovesInput = async function (e) {
     }
 
     if (e.key == 'Enter') {
+        console.log('enter')
         store.battle_events = [];
         // Determine AI decision and selected moves
         const ai_decided_swap = store.aiWantsSwap();

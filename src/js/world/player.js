@@ -4,6 +4,8 @@ import { DIRECTION } from "../utils/Controls.mjs";
 
 export class Player extends Character {
     _directionQueue = []
+    in_battle
+    is_talking
 
     constructor(config) {
         super({
@@ -11,17 +13,22 @@ export class Player extends Character {
             assetKey: CHARACTER_ASSET_KEYS.PLAYER,
             origin: { x: 0, y: 0.2 },
             idleFrameConfig: {
-                DOWN: 3,
-                UP: 0,
-                NONE: 3,
-                LEFT: 6,
-                RIGHT: 9
+                DOWN: 0,
+                UP: 36,
+                NONE: 0,
+                LEFT: 12,
+                RIGHT: 24
             }
         });
+        this.in_battle = false
+        this.is_talking = false
 
     }
 
     moveCharacter(direction) {
+        if (this.in_battle || this.is_talking) {
+            return
+        }
         // Queue the direction if the character is already moving
         if (this.isMoving) {
             this._directionQueue.push(direction);
@@ -52,6 +59,28 @@ export class Player extends Character {
             if (!this._phaserGameObject.anims.isPlaying || this._phaserGameObject.anims.currentAnim.key !== animationKey) {
                 this._phaserGameObject.anims.play(animationKey);
             }
+        }
+    }
+
+    faceNpc(direction) {
+        this._phaserGameObject.anims.stop()
+        switch (direction) {
+            case DIRECTION.UP:
+                this._phaserGameObject.setFrame(this._idleFrameConfig.DOWN)
+                break;
+            case DIRECTION.DOWN:
+                this._phaserGameObject.setFrame(this._idleFrameConfig.UP)
+                break;
+            case DIRECTION.LEFT:
+                this._phaserGameObject.setFrame(this._idleFrameConfig.RIGHT)
+                break;
+            case DIRECTION.RIGHT:
+                this._phaserGameObject.setFrame(this._idleFrameConfig.LEFT)
+                break;
+
+            default:
+
+                break;
         }
     }
 
