@@ -7,7 +7,8 @@
                 <div>
                     {{ pokemon.name }}
                 </div>
-                <i class="fa-solid" :class="pokemon?.gender == 'male' ? 'fa-mars' : 'fa-venus'"></i>
+                <img v-if="pokemon.status" class="status" :src="'/badges/' + pokemon.status + '.png'">
+                <!-- <i class="fa-solid" :class="pokemon?.gender == 'male' ? 'fa-mars' : 'fa-venus'"></i> -->
             </div>
             <div class="progress">
 

@@ -11,6 +11,7 @@ import { trainers } from './js/db/trainers.mjs';
 import { db, auth } from '@/firebase';
 import { getAuth, signInAnonymously, onAuthStateChanged } from "firebase/auth";
 import { doc, setDoc, onSnapshot, getDoc, updateDoc } from 'firebase/firestore'
+import { all_moves } from './js/db/moves.mjs';
 
 function deepClone(obj) {
     if (obj === null || typeof obj !== 'object') {
@@ -84,7 +85,7 @@ export let encounter_map = [{
             battler: false,
             already_talked_to: false,
             event: async function () {
-                if (!this.already_talked_to) {
+                if (!this.already_talked_to && !store.my_pokemon) {
                     return new Promise(async resolve => {
                         if (this.already_talked_to || map_store.choosing_starter) return
                         // map_store.add_new_message_to_queue();
@@ -174,6 +175,7 @@ export const map_store = reactive({
     chracacter_istances: {},
     starter_choices: [deepClone(Pokemons.timburr), deepClone(Pokemons.deino), deepClone(Pokemons.gastly)],
     fetched_data: {},
+    show_menu: false,
     createSceneTransition: async function (scene) {
 
         // const skipSceneTransition = options?.skipSceneTransition || false;
@@ -305,8 +307,18 @@ export const map_store = reactive({
     },
     async updateDB() {
         const playerRef = doc(db, 'Players', this.fetched_data?.uid);
+        const my_bench_copy = []
+        const my_inventory_copy = []
+        store.my_bench.forEach((mon) => {
+            my_bench_copy.push(store.generateSaveCopy(mon))
+        })
+        store.my_items.forEach((item) => {
+            my_inventory_copy.push(store.generateItemSaveCopy(item))
+        })
         const infosToSave = {
             my_pokemon: store.generateSaveCopy(store.my_pokemon),
+            my_bench: my_bench_copy,
+            my_items: my_inventory_copy,
             position: this.getPositionSaveObj()
         };
         await updateDoc(playerRef, infosToSave);
@@ -328,6 +340,8 @@ export const map_store = reactive({
                             my_pokemon: my_pokemon_copy,
                             username: store.player_info.name,
                             position: map_store.getPositionSaveObj(),
+                            my_bench: [],
+                            my_items: [],
                             new_game: map_store.first_loading
                         });
                     }
@@ -341,33 +355,92 @@ export const map_store = reactive({
                 });
         });
 
-        // Now that user is signed in, wait for auth state change
+
         await new Promise((resolve, reject) => {
             const unsubscribe = onAuthStateChanged(auth, (user) => {
                 if (user) {
-                    // User is signed in, proceed with other operations
+
                     const uid = user.uid;
                     const player_unsub = onSnapshot(doc(db, "Players", uid), (doc) => {
                         this.fetched_data = doc.data();
                         this.player_position_info.coords = this.fetched_data.position.coords;
+                        store.my_pokemon = this.retrivePokemonData(this.fetched_data.my_pokemon)
                         resolve()
-
-                        // Save data if needed
-                        setTimeout(async () => {
-                            await this.updateDB();
-                        }, 10000);
+                        this.fetched_data.my_bench.forEach((mon) => {
+                            store.my_bench.push(this.retrivePokemonData(mon))
+                        })
+                        store.my_items = this.retrieveItemsData(this.fetched_data.my_items)
                     });
 
-                    ; // Resolve the promise once the callback is executed
+
                 } else {
-                    // User is signed out
-                    // Handle signed out state if needed
+
                     reject(new Error("User is signed out"));
                 }
-                unsubscribe(); // Unsubscribe from onAuthStateChanged after the first invocation
+                unsubscribe();
             });
         });
+    },
+    retrivePokemonData(pkmn) {
+        if (!pkmn) return null
+        for (const pokemonName in Pokemons) {
+            if (Object.hasOwnProperty.call(Pokemons, pokemonName)) {
+                const pokemon = Pokemons[pokemonName];
+                if (pokemon.name === pkmn.name) {
+                    console.log("Found the Pokémon:", pokemon);
+                    const returned_pokemon = deepClone(pokemon)
+                    returned_pokemon.damage = pkmn.damage
+                    returned_pokemon.level = pkmn.level
+                    returned_pokemon.nature = pkmn.nature
+                    returned_pokemon.fainted = pkmn.fainted
+                    returned_pokemon.xp.total = pkmn.current_xp
+                    returned_pokemon.status = pkmn.status
+                    returned_pokemon.moves = this.retrieveMovesData(pkmn.moves)
+
+                    return returned_pokemon;
+                }
+            }
+        }
+        console.log("Pokémon not found:", pkmn.name);
+        return null; // Or handle the case where Pokémon is not found
+    },
+    retrieveMovesData(moves) {
+        const retrievedMoves = [];
+
+        // Loop through each move in the moves array
+        moves.forEach(move => {
+            // Find the corresponding move data in all_moves object
+            const foundMove = Object.values(all_moves).find(moveData => moveData.name === move.name);
+
+            if (foundMove) {
+                // If move data is found, add it to the retrievedMoves array
+                retrievedMoves.push(foundMove);
+                foundMove.pp.current = move.left_pp
+            } else {
+                // Handle the case where the move data is not found
+                console.log("Move data not found for:", move.name);
+            }
+        });
+
+        return retrievedMoves;
+    },
+    retrieveItemsData(items) {
+        const retrievedItems = [];
+        items.forEach(item => {
+            const foundItem = Object.values(all_items).find(itemData => itemData.name === item.name);
+
+            if (foundItem) {
+
+                retrievedItems.push(foundItem);
+                foundItem.owned_amount = item.owned_amount
+            } else {
+
+            }
+        });
+
+        return retrievedItems;
     }
+
 
 
 

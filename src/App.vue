@@ -3,6 +3,7 @@
   <EnemyInfoPanel v-if="store.oppo_pokemon && store.show_hud"></EnemyInfoPanel>
   <OptionsMenu></OptionsMenu>
   <StartingChoice v-if="map_store.choosing_starter && !store.my_pokemon"></StartingChoice>
+  <WorldMenuVue v-if="map_store.show_menu"></WorldMenuVue>
 
 
 
@@ -13,6 +14,7 @@
 import MyInfoPanel from './components/MyInfoPanel.vue'
 import EnemyInfoPanel from './components/EnemyInfoPanel.vue'
 import OptionsMenu from './components/OptionsMenu.vue'
+import WorldMenuVue from './components/t2/WorldMenuVue.vue';
 import { store } from './store';
 import { map_store } from './mapStore'
 import StartingChoice from './components/t3/StartingChoice.vue';

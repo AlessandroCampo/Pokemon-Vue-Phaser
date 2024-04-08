@@ -121,30 +121,11 @@ class Pokemon {
     }
 
     setPropScale() {
-        // Constants for scaling
-        const MIN_SCALE = 0.35;
-        const MAX_SCALE = 1.5;
 
-        // Get the height of the Pokémon
-        let pokemonHeight = this.height;
-
-        // Apply a larger scale to player-controlled Pokémon
-        let player_controlled_multiplier = this.player_controlled ? 1 : 0.7;
-
-        // Normalize the height to a range of 0 to 1, based on a reasonable minimum and maximum height
-        let normalizedHeight = (pokemonHeight - 0.4) / (1.6 - 0.4); // Adjust the range according to your actual minimum and maximum heights
-
-        // Scale the normalized height to the desired scale range
-        let scale = MIN_SCALE + normalizedHeight * (MAX_SCALE - MIN_SCALE);
-
-        // Apply the player-controlled multiplier
-        scale *= player_controlled_multiplier;
-
-        // Ensure scale stays within the specified limits
-        scale = Math.max(MIN_SCALE, Math.min(MAX_SCALE, scale));
+        let player_controlled_multiplier = this.player_controlled ? 0.9 : 0.4;
 
         // Set the scale of the sprite
-        this.sprite.setScale(scale);
+        this.sprite.setScale(player_controlled_multiplier);
     }
 
 

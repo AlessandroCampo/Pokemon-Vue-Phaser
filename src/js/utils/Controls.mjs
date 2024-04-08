@@ -13,6 +13,8 @@ export class Controls {
     constructor(scene) {
         this.scene = scene;
         this.#cursorKeys = this.scene.input.keyboard.createCursorKeys();
+        this.backspaceKey = this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.BACKSPACE);
+        this.enterKey = this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER);
         this.#lockPlayerInput = false
     }
 
@@ -27,7 +29,15 @@ export class Controls {
         if (this.#cursorKeys === undefined) {
             return false
         }
-        return Phaser.Input.Keyboard.JustDown(this.#cursorKeys.enter)
+        return Phaser.Input.Keyboard.JustDown(this.enterKey)
+    }
+
+
+    wasShiftKeyPressed() {
+        if (this.#cursorKeys === undefined) {
+            return false
+        }
+        return Phaser.Input.Keyboard.JustDown(this.backspaceKey)
     }
 
 

@@ -156,14 +156,27 @@ export class WorldScene extends Phaser.Scene {
     }
 
     async update(time) {
+        //listen to menu opens
+        if (this.#controls.wasShiftKeyPressed()) {
+            console.log('stopped')
+            map_store.show_menu = true
+        }
+
+        if (map_store.show_menu) {
+            console.log('stopped')
+            this.#player.update(time)
+            return
+        }
+
         const { x, y } = this.#player.sprite;
         const target_position = getTargetPosition({ x, y }, this.#player.direction);
         if (this.wildMonsterEcountered) {
             this.#player.update(time)
             return
         }
-        if (this.npc_battle_started || this.#player.is_talking) {
-            this.#player._phaserGameObject.anims.stop()
+        if (this.npc_battle_started) {
+            this.#player.update(time)
+            return
         }
         const selected_direction = this.#controls.getDirectionKeyPressedDown()
         if (selected_direction !== DIRECTION.NONE) {
