@@ -25,7 +25,7 @@ let npc_2 = {
 }
 
 let merchant = {
-    dialouge: ['Hey, do you want a berry? Its free!'],
+    dialouge: ['Hey, I will heal all  of your pokemons, wait a second'],
     name: 'merchant',
     frameWidth: 32,
     frameHeight: 48,

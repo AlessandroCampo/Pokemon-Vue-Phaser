@@ -278,6 +278,7 @@ export class WorldScene extends Phaser.Scene {
             return npc.sprite.x === target_position.x && npc.sprite.y === target_position.y
         })
         if (nearbyNPC) {
+
             //NPC will turn to the player when triggered
             nearbyNPC.facePlayer(this.#player.direction)
 
@@ -300,9 +301,10 @@ export class WorldScene extends Phaser.Scene {
                     }
 
                 })
+
                 //if the menu state is hidden, it means the player has completed the text queue, here we will set the npc talking to false and trigger possible events that follow the dialogue 
 
-                if (store.menu_state == 'hidden') {
+                if (map_store.text_queue.length == 0) {
                     if (nearbyNPC.event) {
                         this.#player.can_move = false
                         await nearbyNPC.event()

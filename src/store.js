@@ -1408,6 +1408,7 @@ export const store = reactive({
         return shakeOutcomes;
     },
     async attemptCatch(pkmn, ball) {
+
         let modified_catch_rate = this.calcModifiedRate(pkmn, ball);
         let shake_probability = this.calcShakeProbability(modified_catch_rate);
         let shake_outcomes = this.simulateShakeChecks(shake_probability);
@@ -1421,10 +1422,12 @@ export const store = reactive({
 
         const pokemonCaught = shake_outcomes.every(outcome => outcome === true);
         if (pokemonCaught) {
-            this.info_text = `${this.oppo_pokemon.name} has been caught`
-            await this.delay(this.info_text.length * this.config.text_speed + 500)
 
-            this.my_bench.push(deepClone(pkmn))
+            this.info_text = `${this.oppo_pokemon.name} has been caught`
+            await this.delay(this.info_text.length * this.config.text_speed + 1000)
+            let oppo_copy = { ...this.oppo_pokemon }
+            this.my_bench.push(oppo_copy)
+            this.endBattle()
         } else {
             ball.sprite.destroy()
             await pkmn.playBrakeFreeAnimation(origina_scale)
@@ -1634,6 +1637,7 @@ export const store = reactive({
         this.info_text = ''
         this.battle_sequence_playing = false;
         this.in_battle = false
+        this.battle_scene_instance.cleanupAnimations()
         this.battle_scene_instance.scene.start(SCENE_KEYS.WORLD_SCENE)
     }
 

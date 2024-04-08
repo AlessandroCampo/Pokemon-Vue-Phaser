@@ -50,7 +50,17 @@ export let encounter_map = [{
             npc: { ...all_npcs.merchant },
             position: { x: 272, y: 304 - tile_size },
             battler: false,
-            event: null
+            already_talked_to: false,
+            event: async function () {
+                if (store.my_pokemon) {
+                    await map_store.healAllPokemons()
+                } else {
+                    store.menu_state = 'text'
+                    store.info_text = 'Oh, you have no Pokemons yet, never mind'
+                    await store.delay(store.info_text.length * store.config.text_speed + 500)
+                }
+
+            }
         },
         {
             npc: { ...all_npcs.npc_1 },
@@ -73,22 +83,26 @@ export let encounter_map = [{
             event: async function () {
                 if (!this.already_talked_to) {
                     return new Promise(async resolve => {
-                        map_store.add_new_message_to_queue('Take one of my Pokémon, train him until it\'s strong enough to face her');
+                        if (this.already_talked_to || map_store.choosing_starter) return
+                        // map_store.add_new_message_to_queue();
+                        store.menu_state = 'text'
+                        store.info_text = 'Take one of my Pokémon, train him until it\'s strong enough to face her'
                         await store.delay(2000);
+                        store.info_text = ''
 
 
                         map_store.choosing_starter = true;
 
                         if (!store.my_items.some(item => item.name === all_items.poke_ball.name)) {
                             const pokeBallInstance = deepClone(all_items.poke_ball);
-                            pokeBallInstance.owned_amount = 1;
+                            pokeBallInstance.owned_amount = 10;
                             store.my_items.push(pokeBallInstance);
                         } else {
                             const pokeBallIndex = store.my_items.findIndex(item => item.name === all_items.poke_ball.name);
-                            store.my_items[pokeBallIndex].owned_amount += 3;
+                            store.my_items[pokeBallIndex].owned_amount += 10;
                         }
 
-                        this.already_talked_to = true;
+
 
                         // Use watch from Vue to watch for changes in map_store.choosing_starter and store.my_pokemon
                         const unwatch = watch(() => ({
@@ -97,10 +111,14 @@ export let encounter_map = [{
                         }), (newValues) => {
                             if (!newValues.choosing_starter) {
                                 if (newValues.my_pokemon !== undefined) {
+                                    if (this.already_talked_to) {
+                                        return
+                                    }
                                     console.log('resolved');
                                     unwatch(); // Stop watching after conditions are met
                                     map_store.add_new_message_to_queue(`${store.my_pokemon.name} was a great choice!`);
                                     map_store.add_new_message_to_queue('Take some Poké Balls as well, build an army and free us from that burden!');
+                                    this.already_talked_to = true;
                                     resolve(); // Resolve the promise
                                 } else {
                                     // Continue waiting until my_pokemon is defined
@@ -137,6 +155,7 @@ export let encounter_map = [{
 export const map_store = reactive({
     walking_speed: 100,
     text_queue: [],
+    all_messages_read: true,
     encounter_frequency: 0.1,
     current_map: encounter_map[0],
     world_scene_istance: undefined,
@@ -255,6 +274,19 @@ export const map_store = reactive({
         store.oppo_pokemon = store.oppo_trainer.lead
         store.oppo_bench = store.oppo_trainer.bench
     },
+    async healAllPokemons() {
+        store.my_pokemon.hp.effective = store.my_pokemon.hp.current
+        store.my_pokemon.status = null
+        store.my_pokemon.damage = 0
+        store.my_bench.forEach((mon) => {
+            mon.hp.effective = mon.hp.current
+            mon.status = null
+            mon.damage = 0
+        })
+        store.menu_state = 'text'
+        store.info_text = 'All of your pokemons are back to perfect health'
+        await store.delay(store.info_text.length * store.config.text_speed + 500)
+    }
 
 
 

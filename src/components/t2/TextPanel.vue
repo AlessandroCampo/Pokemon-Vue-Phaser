@@ -31,6 +31,7 @@ onMounted(() => {
     watch(() => map_store.text_queue.length, (newValue, oldValue) => {
 
         if (newValue !== oldValue) {
+            map_store.all_messages_read = false
             renderTextLetterByLetter(map_store.text_queue[0])
             window.addEventListener('keydown', skipToEnd);
         }
@@ -92,7 +93,7 @@ function skipToNextMessage(e) {
     }
     if (!map_store.text_queue[1]) {
         map_store.skip_to_next_message()
-
+        map_store.all_messages_read = true
         store.menu_state = 'hidden'
     } else {
         window.removeEventListener('keydown', skipToNextMessage)

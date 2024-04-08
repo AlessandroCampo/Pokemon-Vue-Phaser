@@ -7,6 +7,7 @@ import { store } from '@/store'
 import { map_store } from '@/mapStore';
 import { DataUtils } from '../utils/DataUtills.mjs';
 import { encounter_map } from '@/mapStore';
+import { all_items_array } from '../db/items.mjs';
 
 // const socket = io("http://localhost:3000");
 // socket.connect()
@@ -36,6 +37,10 @@ export class PreloadScene extends Phaser.Scene {
         // socket.connect()
         // socket.emit('join_room', 'test_room')
         // socket.emit('starting_pokemon', my_pokemon)
+
+        all_items_array.forEach((item) => {
+            this.load.image(item.name, item.img_path);
+        })
 
         this.load.image(BATTLE_BACKGROUND_ASSET_KEYS.FOREST_NIGHT, '/backgrounds/background-1-night.jpg')
         if (store.battle_type == 'trainer') {

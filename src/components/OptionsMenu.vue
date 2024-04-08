@@ -1,5 +1,6 @@
 <template>
-    <TextPanel v-show="store.menu_state == 'text' || map_store.text_queue.length > 0"></TextPanel>
+    <TextPanel v-show="store.menu_state == 'text' || map_store.text_queue.length > 0">
+    </TextPanel>
     <ActionsMenuVue v-if="store.menu_state == 'options'"></ActionsMenuVue>
     <MovesMenu v-else-if="store.menu_state == 'moves'"></MovesMenu>
     <SwitchMenu v-else-if="store.menu_state == 'switch'"></SwitchMenu>

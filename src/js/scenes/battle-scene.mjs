@@ -1,9 +1,10 @@
-import Phaser from 'phaser'
+import Phaser, { Textures } from 'phaser'
 import { SCENE_KEYS } from './scene-keys.mjs'
 import { BATTLE_ASSET_KEYS, BATTLE_BACKGROUND_ASSET_KEYS } from './assets-keys.mjs'
 import { Pokemons } from '../db/pokemons.mjs'
 import { store } from '@/store'
 import { map_store } from '@/mapStore'
+import { all_items, all_items_array } from '../db/items.mjs'
 // import SceneTransition from ''
 
 
@@ -17,6 +18,9 @@ export class BattleScene extends Phaser.Scene {
 
         //TODO - organize preload scene better
 
+        all_items_array.forEach((item) => {
+            this.load.image(item.name, item.img_path);
+        })
         store.battle_scene_instance = this
         store.my_pokemon.player_controlled = true
         store.my_pokemon.resetStats()
@@ -39,6 +43,7 @@ export class BattleScene extends Phaser.Scene {
                 frameWidth: member.images.back.frameWidth,
                 frameHeight: member.images.back.frameHeight,
             })
+            console.log(member, member.sprite)
         })
         if (store.battle_type == 'trainer') {
             this.load.image(`trainer_${store.oppo_trainer.name}`, `/trainers/${store.oppo_trainer.name}.    
@@ -72,46 +77,45 @@ export class BattleScene extends Phaser.Scene {
         const ally_starter_animation_key = `ally_${store.my_pokemon.name}_anim`
         const enemy_starter_animation_key = `oppo_${store.oppo_pokemon.name}_anim`
         backgroundImage.setScale(scaleX, scaleY);
-        store.oppo_pokemon.drawSprite(this, false)
-        store.my_pokemon.drawSprite(this, true)
+        store.oppo_pokemon.drawSprite(this)
+        store.my_pokemon.drawSprite(this)
+        console.log(store.my_pokemon.sprite)
         store.oppo_pokemon.images.front.animation_key = enemy_starter_animation_key
         store.my_pokemon.images.back.animation_key = ally_starter_animation_key
-        this.anims.create({
-            key: enemy_starter_animation_key,
-            frames: this.anims.generateFrameNumbers(store.oppo_pokemon.images.front.key, { start: 0, end: store.oppo_pokemon.images.front.frames - 1 }),
-            frameRate: 20,
-            repeat: -1,
-        });
-        this.anims.create({
-            key: ally_starter_animation_key,
-            frames: this.anims.generateFrameNumbers(store.my_pokemon.images.back.key, { start: 0, end: store.my_pokemon.images.back.frames - 1 }),
-            frameRate: 20,
-            repeat: -1,
-        });
-        store.my_bench.forEach((member, index) => {
-            member.sprite = store.my_pokemon.sprite
-            let new_anim_key = `ally_${member.name}_${index}_anim`
-            this.anims.create({
-                key: new_anim_key,
-                frames: this.anims.generateFrameNumbers(member.images.back.key, { start: 0, end: member.images.back.frames - 1 }),
-                frameRate: 20,
-                repeat: -1,
-            });
-            member.images.back.animation_key = new_anim_key
-        });
-        if (store.battle_type == 'trainer') {
-            const trainer_image = this.add.image(store.oppo_trainer.position.x, store.oppo_trainer.position.y, 'trainer_' + store.oppo_trainer.name).setScale(store.oppo_trainer.scale)
-            console.log(store.oppo_trainer)
-            store.oppo_bench.forEach((member, index) => {
-                member.sprite = store.oppo_pokemon.sprite
-                let new_anim_key = `oppo_${member.name}_${index}_anim`
+        const createAnimation = (key, frames, frameRate) => {
+            // Check if animation already exists
+            if (!this.anims.exists(key)) {
                 this.anims.create({
-                    key: new_anim_key,
-                    frames: this.anims.generateFrameNumbers(member.images.front.key, { start: 0, end: member.images.front.frames - 1 }),
-                    frameRate: 20,
+                    key: key,
+                    frames: frames,
+                    frameRate: frameRate,
                     repeat: -1,
                 });
-                member.images.front.animation_key = new_anim_key
+            }
+        };
+
+        // Create animations only if they don't exist
+        createAnimation(enemy_starter_animation_key, this.anims.generateFrameNumbers(store.oppo_pokemon.images.front.key, { start: 0, end: store.oppo_pokemon.images.front.frames - 1 }), 20);
+        createAnimation(ally_starter_animation_key, this.anims.generateFrameNumbers(store.my_pokemon.images.back.key, { start: 0, end: store.my_pokemon.images.back.frames - 1 }), 20);
+
+        store.my_bench.forEach((member, index) => {
+
+            member.drawSprite(this, true)
+
+
+            let new_anim_key = `ally_${member.name}_${index}_anim`;
+            createAnimation(new_anim_key, this.anims.generateFrameNumbers(member.images.back.key, { start: 0, end: member.images.back.frames - 1 }), 20);
+            member.images.back.animation_key = new_anim_key;
+        });
+
+        if (store.battle_type == 'trainer') {
+            // Create trainer and opponent's animations only if they don't exist
+            const trainer_image = this.add.image(store.oppo_trainer.position.x, store.oppo_trainer.position.y, 'trainer_' + store.oppo_trainer.name).setScale(store.oppo_trainer.scale);
+            store.oppo_bench.forEach((member, index) => {
+                member.drawSprite(this, false)
+                let new_anim_key = `oppo_${member.name}_${index}_anim`;
+                createAnimation(new_anim_key, this.anims.generateFrameNumbers(member.images.front.key, { start: 0, end: member.images.front.frames - 1 }), 20);
+                member.images.front.animation_key = new_anim_key;
             });
         }
         //only show huds once the battle transition is over
@@ -122,10 +126,22 @@ export class BattleScene extends Phaser.Scene {
 
 
         // Play the animations
-        store.oppo_pokemon.sprite.play(enemy_starter_animation_key);
-        store.my_pokemon.sprite.play(ally_starter_animation_key);
-        store.oppo_pokemon.playSwitchAnim()
-        store.my_pokemon.playSwitchAnim()
+        // Play the animations if they are not already playing
+        if (!store.oppo_pokemon.sprite.anims.isPlaying) {
+            store.oppo_pokemon.sprite.play(enemy_starter_animation_key);
+        }
+        if (!store.my_pokemon.sprite.anims.isPlaying) {
+            store.my_pokemon.sprite.play(ally_starter_animation_key);
+        }
+
+
+
+        store.oppo_pokemon.playSwitchAnim();
+
+
+        store.my_pokemon.playSwitchAnim();
+
+
     }
 
     async changeAllyPokemonSprite(newPokemon) {
@@ -183,6 +199,14 @@ export class BattleScene extends Phaser.Scene {
         store.oppo_pokemon.setPropScale()
         store.oppo_pokemon.sprite.setAlpha(1)
         await store.oppo_pokemon.playSwitchAnim(initial_scale_val)
+    }
+
+    cleanupAnimations() {
+        // Iterate over existing animations and destroy them
+        Object.keys(this.anims.anims).forEach(key => {
+            console.log(key + 'removed')
+            this.anims.remove(key);
+        });
     }
 
 

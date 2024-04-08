@@ -2,7 +2,7 @@
   <MyInfoPanel v-if="store.my_pokemon && store.show_hud"></MyInfoPanel>
   <EnemyInfoPanel v-if="store.oppo_pokemon && store.show_hud"></EnemyInfoPanel>
   <OptionsMenu></OptionsMenu>
-  <StartingChoice v-if="map_store.choosing_starter"></StartingChoice>
+  <StartingChoice v-if="map_store.choosing_starter && !store.my_pokemon"></StartingChoice>
 
 
 

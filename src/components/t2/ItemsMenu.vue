@@ -78,6 +78,7 @@ const useItem = async function (item, target) {
     };
 
     if (item.type == 'ball') {
+        store.battle_sequence_playing = true
         if (store.battle_type !== 'wild') {
             store.info_text = `Only wild pokemons can be caught...`
             await store.delay(store.info_text.length * store.config.text_speed + 500)
@@ -89,7 +90,8 @@ const useItem = async function (item, target) {
         store.info_text = `${store.player_info.name} uses ${item.name}`
         await store.delay(store.info_text.length * store.config.text_speed + 500)
         if (await store.attemptCatch(store.oppo_pokemon, item)) {
-            //scene resolve logic
+
+            return
         } else {
             store.info_text = `${store.oppo_pokemon.name} won't get caught so easily`
             await store.delay(store.info_text.length * store.config.text_speed + 500)

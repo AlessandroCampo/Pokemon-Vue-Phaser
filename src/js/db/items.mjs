@@ -20,27 +20,27 @@ class Item {
         this.can_be_used_in_battle = can_be_used_in_battle
     }
 
-    drawSprite(scene) {
-        console.log('draw sprite');
-        return new Promise((resolve, reject) => {
-            // Load the image in the scene
-            scene.load.image(this.name, this.img_path);
+    // drawSprite(scene) {
+    //     console.log('draw sprite');
+    //     return new Promise((resolve, reject) => {
+    //         // Load the image in the scene
+    //         scene.load.image(this.name, this.img_path);
 
-            // Get the Loader instance
-            const loader = scene.load;
+    //         // Get the Loader instance
+    //         const loader = scene.load;
 
-            // Attach an event listener for when loading is complete
-            loader.once('complete', () => {
-                // Create the sprite once loading is complete
-                this.sprite = scene.add.image(300, 300, this.name).setScale(0.4);
-                console.log('sprite loaded');
-                resolve(); // Resolve the Promise
-            });
+    //         // Attach an event listener for when loading is complete
+    //         loader.once('complete', () => {
+    //             // Create the sprite once loading is complete
+    //             this.sprite = scene.add.image(300, 300, this.name).setScale(0.4);
+    //             console.log('sprite loaded');
+    //             resolve(); // Resolve the Promise
+    //         });
 
-            // Start loading
-            loader.start();
-        });
-    }
+    //         // Start loading
+    //         loader.start();
+    //     });
+    // }
 
 
 }
@@ -55,25 +55,9 @@ export class Ball extends Item {
 
 
     drawSprite(scene) {
-        console.log('draw sprite');
-        return new Promise((resolve, reject) => {
-            // Load the image in the scene
-            scene.load.image(this.name, this.img_path);
+        this.sprite = scene.add.image(300, 300, this.name).setScale(0.4);
 
-            // Get the Loader instance
-            const loader = scene.load;
 
-            // Attach an event listener for when loading is complete
-            loader.once('complete', () => {
-                // Create the sprite once loading is complete
-                this.sprite = scene.add.image(300, 300, this.name).setScale(0.4);
-                console.log('sprite loaded');
-                resolve(); // Resolve the Promise
-            });
-
-            // Start loading
-            loader.start();
-        });
     }
 
     use() {
@@ -81,8 +65,8 @@ export class Ball extends Item {
     }
 
     async drawAndThrowAnimation(battleScene) {
-        await this.drawSprite(battleScene); // Draw the sprite and wait for it to be loaded
-        await this.throwAnimation(); // Play throw animation
+        this.drawSprite(battleScene);
+        await this.throwAnimation();
     }
 
     async throwAnimation() {
@@ -200,3 +184,5 @@ export const all_items = {
     awakening,
     paralyze_heal
 }
+
+export const all_items_array = [lum_berry, sitrus_berry, poke_ball, potion, mega_ball, awakening, paralyze_heal]
