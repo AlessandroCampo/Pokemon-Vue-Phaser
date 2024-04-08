@@ -8,6 +8,9 @@ import { Pokemons } from './js/db/pokemons.mjs';
 import { all_npcs } from './js/db/npcs.mjs';
 import { Ball, all_items } from './js/db/items.mjs';
 import { trainers } from './js/db/trainers.mjs';
+import { db, auth } from '@/firebase';
+import { getAuth, signInAnonymously, onAuthStateChanged } from "firebase/auth";
+import { doc, setDoc, onSnapshot, getDoc, updateDoc } from 'firebase/firestore'
 
 function deepClone(obj) {
     if (obj === null || typeof obj !== 'object') {
@@ -162,14 +165,15 @@ export const map_store = reactive({
     choosing_starter: false,
     player_initial_coords: { x: 2 * tile_size, y: 22 * tile_size },
     player_position_info: {
-        coords: undefined,
+        coords: { x: 2 * tile_size, y: 22 * tile_size },
         direction: DIRECTION.DOWN,
-        map: undefined
+        map: encounter_map[0]
     },
     first_loading: true,
     player_istance: undefined,
     chracacter_istances: {},
     starter_choices: [deepClone(Pokemons.timburr), deepClone(Pokemons.deino), deepClone(Pokemons.gastly)],
+    fetched_data: {},
     createSceneTransition: async function (scene) {
 
         // const skipSceneTransition = options?.skipSceneTransition || false;
@@ -286,7 +290,86 @@ export const map_store = reactive({
         store.menu_state = 'text'
         store.info_text = 'All of your pokemons are back to perfect health'
         await store.delay(store.info_text.length * store.config.text_speed + 500)
+    },
+    getPositionSaveObj() {
+        let player_x = this.player_position_info.coords.x || null
+        let player_y = this.player_position_info.coords.y || null
+        let map_name = this.player_position_info.map.map_name || null
+        const direction = 'DOWN'
+        const player_position_info_copy = {
+            coords: { x: player_x, y: player_y },
+            map: map_name,
+            direction
+        }
+        return player_position_info_copy
+    },
+    async updateDB() {
+        const playerRef = doc(db, 'Players', this.fetched_data?.uid);
+        const infosToSave = {
+            my_pokemon: store.generateSaveCopy(store.my_pokemon),
+            position: this.getPositionSaveObj()
+        };
+        await updateDoc(playerRef, infosToSave);
+    },
+    async logUser() {
+        await new Promise((resolve, reject) => {
+            signInAnonymously(auth)
+                .then(async (result) => {
+                    const user = result.user;
+                    const docRef = doc(db, 'Players', user.uid);
+
+                    // Check if the document already exists
+                    const docSnapshot = await getDoc(docRef);
+                    if (!docSnapshot.exists()) {
+                        // Document doesn't exist, proceed with saving initial game data
+                        const my_pokemon_copy = store.generateSaveCopy(store.my_pokemon);
+                        await setDoc(docRef, {
+                            uid: user.uid,
+                            my_pokemon: my_pokemon_copy,
+                            username: store.player_info.name,
+                            position: map_store.getPositionSaveObj(),
+                            new_game: map_store.first_loading
+                        });
+                    }
+
+                    console.log("User signed in successfully:", user);
+                    resolve(user);
+                })
+                .catch((error) => {
+                    console.error("Error signing in anonymously:", error);
+                    reject(error);
+                });
+        });
+
+        // Now that user is signed in, wait for auth state change
+        await new Promise((resolve, reject) => {
+            const unsubscribe = onAuthStateChanged(auth, (user) => {
+                if (user) {
+                    // User is signed in, proceed with other operations
+                    const uid = user.uid;
+                    const player_unsub = onSnapshot(doc(db, "Players", uid), (doc) => {
+                        this.fetched_data = doc.data();
+                        this.player_position_info.coords = this.fetched_data.position.coords;
+                        resolve()
+
+                        // Save data if needed
+                        setTimeout(async () => {
+                            await this.updateDB();
+                        }, 10000);
+                    });
+
+                    ; // Resolve the promise once the callback is executed
+                } else {
+                    // User is signed out
+                    // Handle signed out state if needed
+                    reject(new Error("User is signed out"));
+                }
+                unsubscribe(); // Unsubscribe from onAuthStateChanged after the first invocation
+            });
+        });
     }
+
+
 
 
 

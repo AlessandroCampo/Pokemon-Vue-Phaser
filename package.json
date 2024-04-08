@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "express": "^4.19.2",
+    "firebase": "^10.10.0",
     "gsap": "^3.12.5",
     "phaser": "^3.80.1",
     "pinia": "^2.1.7",

@@ -35,7 +35,7 @@ function deepClone(obj) {
 }
 
 export const store = reactive({
-    my_pokemon: undefined,
+    my_pokemon: deepClone(Pokemons.electrike),
     oppo_pokemon: undefined,
     my_bench: [],
     my_items: [],
@@ -1639,6 +1639,27 @@ export const store = reactive({
         this.in_battle = false
         this.battle_scene_instance.cleanupAnimations()
         this.battle_scene_instance.scene.start(SCENE_KEYS.WORLD_SCENE)
+    },
+    generateSaveCopy(obj) {
+        let all_moves = []
+        obj.moves.forEach(move => {
+            all_moves.push({
+                name: move.name,
+                left_pp: move.pp.current
+
+            })
+        })
+        let obj_copy = {
+            name: obj.name,
+            level: obj.level,
+            moves: all_moves || [],
+            ability: obj.abilities[0] || null,
+            status: obj.status || null,
+            fainted: obj.fainted || false,
+            nature: obj.nature || 'Timid',
+            damage: obj.damage || 0
+        }
+        return obj_copy
     }
 
 

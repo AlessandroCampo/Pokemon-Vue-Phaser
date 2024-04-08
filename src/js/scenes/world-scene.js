@@ -45,7 +45,8 @@ export class WorldScene extends Phaser.Scene {
         map_store.player_position_info.map = map_store.current_map
     }
 
-    preload() {
+    async preload() {
+        // 
         map_store.current_map.npcs_locations.forEach((el) => {
             if (!this.textures.exists(el.npc.name)) {
                 this.load.spritesheet(el.npc.name, `/characters/${el.npc.name}.png`, {
@@ -56,7 +57,8 @@ export class WorldScene extends Phaser.Scene {
         });
     }
 
-    create() {
+    async create() {
+
         if (map_store.first_loading) {
             map_store.add_new_message_to_queue(`Welcome to the game, ${store.player_info.name}!`)
             map_store.add_new_message_to_queue(`In this game , pokemons are way less friendly than what you remember, be careful walking around without a strong team`)
@@ -65,7 +67,8 @@ export class WorldScene extends Phaser.Scene {
 
         map_store.world_scene_istance = this
         //dynamically set player position and direction
-        let player_position = map_store.player_position_info.coords ? map_store.player_position_info.coords : map_store.player_initial_coords
+        let player_position = map_store.player_position_info.coords
+        console.log(map_store.fetched_data)
         let player_direction = map_store.player_position_info.direction
 
 

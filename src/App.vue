@@ -16,6 +16,15 @@ import OptionsMenu from './components/OptionsMenu.vue'
 import { store } from './store';
 import { map_store } from './mapStore'
 import StartingChoice from './components/t3/StartingChoice.vue';
+import { getAuth, signInAnonymously, onAuthStateChanged } from "firebase/auth";
+import { doc, setDoc, onSnapshot } from 'firebase/firestore'
+import { auth, db } from './firebase';
+import { onMounted } from 'vue'
+
+onMounted(() => {
+
+});
+
 
 </script>
 
