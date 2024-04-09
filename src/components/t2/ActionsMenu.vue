@@ -89,7 +89,7 @@ const menu_voices = ref([
             } else {
 
                 if (await store.attemptEscape(store.my_pokemon, store.oppo_pokemon)) {
-                    console.log('escaping')
+
                 } else {
                     const ai_selected_move = store.oppo_pokemon.moves[Math.floor(Math.random() * store.oppo_pokemon.moves.length)]
                     const oppo_pokemon_attack = async () => {

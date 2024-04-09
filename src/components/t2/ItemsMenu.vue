@@ -1,7 +1,7 @@
 <template>
     <div class="items-container">
         <div class="item" :class="index == active_voice ? 'active' : ''" v-for="(item, index) in store.my_items"
-            :key="index" @click="useItem(item)" v-show="item?.owned_amount > 0 && item.can_be_used_in_battle">
+            :key="index" v-show="item?.owned_amount > 0 && item.can_be_used_in_battle">
 
             <div class="name-icon">
                 <img :src="item.img_path">
@@ -63,7 +63,7 @@ onBeforeUnmount(() => {
 })
 
 const useItem = async function (item, target) {
-    console.log(item, item instanceof Ball)
+
     if (item.owned_amount <= 0) {
         return
     }

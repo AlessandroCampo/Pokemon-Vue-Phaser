@@ -68,7 +68,7 @@ export class WorldScene extends Phaser.Scene {
         map_store.world_scene_istance = this
         //dynamically set player position and direction
         let player_position = map_store.player_position_info.coords
-        console.log(map_store.fetched_data)
+
         let player_direction = map_store.player_position_info.direction
 
 
@@ -158,13 +158,17 @@ export class WorldScene extends Phaser.Scene {
     async update(time) {
         //listen to menu opens
         if (this.#controls.wasShiftKeyPressed()) {
-            console.log('stopped')
+
             map_store.show_menu = true
         }
 
         if (map_store.show_menu) {
-            console.log('stopped')
+
             this.#player.update(time)
+            return
+        }
+
+        if (map_store.show_inventory_menu || map_store.show_party_menu) {
             return
         }
 

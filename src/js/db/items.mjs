@@ -8,7 +8,7 @@ let oppo_position = {
 }
 
 class Item {
-    constructor({ name, price, effect, description, img_path, owned_amount, sprite, asset_key, can_be_used_in_battle }) {
+    constructor({ name, price, effect, description, img_path, owned_amount, sprite, asset_key, can_be_used_in_battle, consumable, type }) {
         this.name = name
         this.price = price || 0
         this.effect = effect || null
@@ -18,6 +18,8 @@ class Item {
         this.sprite = null
         this.asset_key = asset_key || null
         this.can_be_used_in_battle = can_be_used_in_battle
+        this.consumable = consumable || false
+        this.type = type || null
     }
 
     // drawSprite(scene) {
@@ -46,8 +48,8 @@ class Item {
 }
 
 export class Ball extends Item {
-    constructor({ name, price, effect, description, img_path, catch_multiplier, owned_amount, sprite, asset_key, can_be_used_in_battle }) {
-        super({ name, price, effect, description, img_path, owned_amount, sprite, asset_key, can_be_used_in_battle });
+    constructor({ name, price, effect, description, img_path, catch_multiplier, owned_amount, sprite, asset_key, can_be_used_in_battle, consumable }) {
+        super({ name, price, effect, description, img_path, owned_amount, sprite, asset_key, can_be_used_in_battle, consumable });
 
         this.catch_multiplier = catch_multiplier;
         this.type = 'ball'
@@ -96,11 +98,12 @@ export class Ball extends Item {
 }
 
 export class Potion extends Item {
-    constructor({ name, price, effect, description, img_path, owned_amount, sprite, asset_key, amount, can_be_used_in_battle }) {
-        super({ name, price, effect, description, img_path, owned_amount, sprite, asset_key, amount, can_be_used_in_battle });
+    constructor({ name, price, effect, description, img_path, owned_amount, sprite, asset_key, amount, can_be_used_in_battle, consumable }) {
+        super({ name, price, effect, description, img_path, owned_amount, sprite, asset_key, amount, consumable });
         this.amount = amount
         this.can_be_used_in_battle = true
         this.type = 'potion'
+        this.consumable = true
     }
 
 
@@ -112,15 +115,29 @@ export class Antidote extends Item {
         this.helead_status = helead_status
         this.can_be_used_in_battle = true
         this.type = 'antidote'
+        this.consumable = true
     }
 }
+
+const rare_candy = new Item({
+
+    name: 'Rare Candy',
+    description: 'A candy that is packed with energy. If consumed, it raises a Pokémon’s level by one.',
+    img_path: base_path + 'rare_candy.png',
+    asset_key: 'rare_candy',
+    can_be_used_in_battle: true,
+    consumable: true,
+    type: 'candy'
+})
 
 const lum_berry = new Item({
     name: 'Lum Berry',
     description: 'If a Pokémon holds one of these Berries, it will be able to cure itself of any status condition it may have.',
     img_path: base_path + 'lum_berry.png',
     asset_key: 'lum_berry',
-    can_be_used_in_battle: true
+    can_be_used_in_battle: true,
+    consumable: true,
+    type: 'antidote'
 })
 
 const sitrus_berry = new Potion({
@@ -130,6 +147,8 @@ const sitrus_berry = new Potion({
     asset_key: 'sitrus_berry',
     can_be_used_in_battle: true,
     amount: 0.25,
+    consumable: true,
+    type: 'potion'
 })
 
 const poke_ball = new Ball({
@@ -158,6 +177,7 @@ const potion = new Potion({
     img_path: base_path + 'potion.png',
     amount: 0.25,
     asset_key: 'potion',
+    consumable: true
 })
 
 const paralyze_heal = new Antidote({
@@ -166,6 +186,7 @@ const paralyze_heal = new Antidote({
     img_path: base_path + 'paralyze_heal.png',
     helead_status: 'paralyzed',
     asset_key: 'paralyze_heal',
+    consumable: true
 })
 
 const awakening = new Antidote({
@@ -174,6 +195,7 @@ const awakening = new Antidote({
     img_path: base_path + 'awakening.png',
     helead_status: 'asleep',
     asset_key: 'awakening',
+    consumable: true
 })
 
 export const all_items = {
@@ -182,7 +204,8 @@ export const all_items = {
     poke_ball,
     potion,
     awakening,
-    paralyze_heal
+    paralyze_heal,
+    rare_candy
 }
 
 export const all_items_array = [lum_berry, sitrus_berry, poke_ball, potion, mega_ball, awakening, paralyze_heal]

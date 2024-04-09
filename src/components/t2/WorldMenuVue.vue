@@ -22,13 +22,27 @@ let active_voice = ref(0)
 const menu_voices = [
     {
         label: 'Pokemons',
-        callback: () => {
+        callback: async () => {
+            if (!store.my_pokemon) {
+                store.menu_state = 'text'
+                store.info_text = "You don't have your first pokemon yet, maybe Gwain can help you"
+                await store.delay(store.info_text.length * store.config.text_speed + 500)
+                return
+            }
             map_store.show_party_menu = true
         }
     },
     {
         label: 'Inventory',
-        callback: null
+        callback: async () => {
+            if (store.my_items.length == 0) {
+                store.menu_state = 'text'
+                store.info_text = "You don't have any item yet"
+                await store.delay(store.info_text.length * store.config.text_speed + 500)
+                return
+            }
+            map_store.show_inventory_menu = true
+        }
     },
     {
         label: 'Save',

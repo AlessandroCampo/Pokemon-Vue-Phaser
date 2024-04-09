@@ -96,6 +96,7 @@ const active_pokemon = computed(() => {
 const sub_menu_voices = [
     {
         label: 'SET ACTIVE', callback: () => {
+            console.log('setting active')
             if (show_dialogue.value == null) {
                 return;
             }
@@ -119,7 +120,6 @@ const sub_menu_voices = [
         }
     },
 
-    { label: 'GIVE ITEM', callback: null },
     {
         label: 'CLOSE', callback: () => {
             show_dialogue.value = null
@@ -282,6 +282,7 @@ const backToMenu = function () {
     padding-block: 15px;
     padding-inline: 50px;
     border: 2px solid white;
+    gap: 30px;
     /* border: 5px solid violet; */
 }
 

@@ -39,6 +39,7 @@ export const store = reactive({
     oppo_pokemon: undefined,
     my_bench: [],
     test_bench: [Pokemons.gastly, Pokemons.timburr, Pokemons.ralts, Pokemons.meowth],
+    test_items: [all_items.potion, all_items.poke_ball],
     my_items: [],
     player_info: {
         name: 'Aleks'
@@ -65,6 +66,7 @@ export const store = reactive({
     escape_attempts: 0,
     show_hud: false,
     in_battle: false,
+    level_cap: 15,
 
     useMove: async function (move, caster, target, player_attack) {
 
@@ -1566,8 +1568,7 @@ export const store = reactive({
     getRandomEncounter(map) {
         // Find the encounter map for the given map name
         const mapData = encounter_map.find(entry => entry.map_name === map.map_name);
-        console.log(encounter_map, map)
-        console.log(mapData)
+
         // If the map doesn't exist or has no encounters, return null
         if (!mapData || !mapData.possible_encounters || mapData.possible_encounters.length === 0) {
             return deepClone(Pokemons.zigzagoon);

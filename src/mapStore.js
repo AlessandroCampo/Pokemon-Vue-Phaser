@@ -96,14 +96,21 @@ export let encounter_map = [{
 
 
                         map_store.choosing_starter = true;
+                        if (!store.my_items.some(item => item.name === all_items.rare_candy.name)) {
+                            const rareCandyInstance = deepClone(all_items.rare_candy)
+                            rareCandyInstance.owned_amount = 200
+                            store.my_items.push(rareCandyInstance);
+                        }
+
 
                         if (!store.my_items.some(item => item.name === all_items.poke_ball.name)) {
                             const pokeBallInstance = deepClone(all_items.poke_ball);
-                            pokeBallInstance.owned_amount = 10;
+
+                            pokeBallInstance.owned_amount = 200;
                             store.my_items.push(pokeBallInstance);
                         } else {
-                            const pokeBallIndex = store.my_items.findIndex(item => item.name === all_items.poke_ball.name);
-                            store.my_items[pokeBallIndex].owned_amount += 10;
+                            //     const pokeBallIndex = store.my_items.findIndex(item => item.name === all_items.poke_ball.name);
+                            //     store.my_items[pokeBallIndex].owned_amount += 10;
                         }
 
 
@@ -118,10 +125,10 @@ export let encounter_map = [{
                                     if (this.already_talked_to) {
                                         return
                                     }
-                                    console.log('resolved');
+
                                     unwatch(); // Stop watching after conditions are met
                                     map_store.add_new_message_to_queue(`${store.my_pokemon.name} was a great choice!`);
-                                    map_store.add_new_message_to_queue('Take some Poké Balls as well, build an army and free us from that burden!');
+                                    map_store.add_new_message_to_queue('Take some Poké Balls and Rare Candies as well, use these items build an army and free us from that burden!');
                                     this.already_talked_to = true;
                                     resolve(); // Resolve the promise
                                 } else {
@@ -177,6 +184,7 @@ export const map_store = reactive({
     fetched_data: {},
     show_menu: false,
     show_party_menu: false,
+    show_inventory_menu: false,
     createSceneTransition: async function (scene) {
 
         // const skipSceneTransition = options?.skipSceneTransition || false;
@@ -347,7 +355,7 @@ export const map_store = reactive({
                         });
                     }
 
-                    console.log("User signed in successfully:", user);
+
                     resolve(user);
                 })
                 .catch((error) => {
@@ -391,7 +399,7 @@ export const map_store = reactive({
             if (Object.hasOwnProperty.call(Pokemons, pokemonName)) {
                 const pokemon = Pokemons[pokemonName];
                 if (pokemon.name === pkmn.name) {
-                    console.log("Found the Pokémon:", pokemon);
+
                     const returned_pokemon = deepClone(pokemon)
                     returned_pokemon.damage = pkmn.damage
                     returned_pokemon.level = pkmn.level
@@ -405,7 +413,7 @@ export const map_store = reactive({
                 }
             }
         }
-        console.log("Pokémon not found:", pkmn.name);
+
         return null; // Or handle the case where Pokémon is not found
     },
     retrieveMovesData(moves) {
@@ -422,7 +430,7 @@ export const map_store = reactive({
                 foundMove.pp.current = move.left_pp
             } else {
                 // Handle the case where the move data is not found
-                console.log("Move data not found for:", move.name);
+
             }
         });
 
@@ -430,7 +438,7 @@ export const map_store = reactive({
     },
     retrieveItemsData(items) {
         const retrievedItems = [];
-        items.forEach(item => {
+        items?.forEach(item => {
             const foundItem = Object.values(all_items).find(itemData => itemData.name === item.name);
 
             if (foundItem) {

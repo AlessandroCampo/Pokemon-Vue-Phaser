@@ -32,7 +32,7 @@ const active_voice = ref(0)
 
 
 onMounted(() => {
-    console.log('mounted')
+
     window.addEventListener('keydown', handleMovesInput)
 })
 
@@ -41,9 +41,9 @@ onBeforeUnmount(() => {
 })
 
 const handleMovesInput = async function (e) {
-    console.log(e.key)
+
     if (store.menu_state !== 'switch') {
-        console.log(store.menu_state)
+
         return
     }
 
