@@ -33,7 +33,7 @@
 
 <script setup>
 import { store } from '@/store'
-import { map_store } from '@/mapStore';
+import { map_store } from '@/mapStore.mjs';
 import { ref, onMounted, computed } from 'vue'
 let oppo_pokemon = ref(store.oppo_pokemon)
 

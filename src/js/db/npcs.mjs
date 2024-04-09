@@ -1,6 +1,6 @@
 import { tile_size } from "../scenes/world-scene"
 import { store } from "@/store"
-import { map_store } from "@/mapStore"
+import { map_store } from "@/mapStore.mjs"
 import { all_items } from "./items.mjs"
 
 
@@ -30,9 +30,14 @@ let merchant = {
     frameWidth: 32,
     frameHeight: 48,
     scale: 0.5,
-
-
-
 }
 
-export const all_npcs = { npc_1, npc_2, merchant }
+let guard = {
+    dialouge: ["Hey, where do you think you're going?"],
+    name: 'guard',
+    frameWidth: 32,
+    frameHeight: 48,
+    scale: 0.5,
+}
+
+export const all_npcs = { npc_1, npc_2, merchant, guard }

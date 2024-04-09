@@ -12,7 +12,7 @@
 
 <script setup>
 
-import { map_store } from "@/mapStore"
+import { map_store } from "@/mapStore.mjs"
 import { store } from "@/store"
 import { ref, onMounted, onBeforeUnmount } from 'vue'
 
@@ -77,6 +77,10 @@ const handleMovesInput = async function (e) {
 
     if (!map_store.show_menu) {
 
+        return
+    }
+
+    if (map_store.show_inventory_menu || map_store.show_party_menu || store.forgettign_pokemon) {
         return
     }
 

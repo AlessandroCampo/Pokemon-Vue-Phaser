@@ -76,7 +76,7 @@
 </template>
 
 <script setup>
-import { map_store } from "@/mapStore";
+import { map_store } from "@/mapStore.mjs";
 import { store } from "@/store";
 import { ref, onMounted, onBeforeUnmount, computed } from 'vue'
 

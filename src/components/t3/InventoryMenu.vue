@@ -66,9 +66,9 @@
 </template>
 
 <script setup>
-import { map_store } from "@/mapStore";
+import { map_store } from "@/mapStore.mjs";
 import { store } from "@/store";
-import { ref, onMounted, onBeforeUnmount, computed } from 'vue'
+import { ref, onMounted, onBeforeUnmount, computed, watch } from 'vue'
 
 
 
@@ -84,6 +84,11 @@ const party = computed(() => {
     return [store.my_pokemon, ...store.my_bench];
 });
 
+watch(() => store.info_text, (newVal) => {
+    if (newVal) {
+        menu_info_text.value = newVal;
+    }
+});
 
 const sub_menu_voices = [
     {
@@ -141,7 +146,7 @@ onBeforeUnmount(() => {
 
 const handleMovesInput = async function (e) {
     console.log(e.key)
-    if (!map_store.show_inventory_menu) {
+    if (!map_store.show_inventory_menu || store.forgettign_pokemon) {
         return;
     }
 
@@ -236,7 +241,13 @@ const useItem = async function (item, target) {
             target.level++
             item.owned_amount--
             store.calcStats(target)
+
             menu_info_text.value = `${target.name} has reached level ${target.level}!`
+            let learned_move = await store.checkLearnableMovesOrEvolutions(target)
+            if (learned_move && store.info_text !== '') {
+                await store.delay(500)
+                menu_info_text.value = store.info_text
+            }
             menuReset()
             return
         }

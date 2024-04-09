@@ -7,7 +7,7 @@
 <script setup>
 import { computed, onMounted, ref, watch, onBeforeUnmount } from 'vue';
 import { store } from '@/store';
-import { map_store } from '@/mapStore';
+import { map_store } from '@/mapStore.mjs';
 
 const textQueue = computed(() => store.info_text);
 const renderedText = ref('');

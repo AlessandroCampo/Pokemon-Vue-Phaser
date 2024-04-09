@@ -4,7 +4,7 @@ import { PreloadScene } from './scenes/preload-scene.mjs';
 import { BattleScene } from './scenes/battle-scene.mjs';
 import { Pokemons } from './db/pokemons.mjs';
 import { WorldScene } from './scenes/world-scene';
-import { map_store } from '@/mapStore';
+import { map_store } from '@/mapStore.mjs';
 
 
 

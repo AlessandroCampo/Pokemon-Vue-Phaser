@@ -6,6 +6,8 @@
   <WorldMenuVue v-if="map_store.show_menu"></WorldMenuVue>
   <PartyMenuVue v-if="map_store.show_party_menu"></PartyMenuVue>
   <InventoryMenu v-if="map_store.show_inventory_menu"></InventoryMenu>
+  <MoveForgetVue v-if="store.forgettign_pokemon"></MoveForgetVue>
+
 
 
 
@@ -17,10 +19,12 @@ import EnemyInfoPanel from './components/EnemyInfoPanel.vue'
 import OptionsMenu from './components/OptionsMenu.vue'
 import WorldMenuVue from './components/t2/WorldMenuVue.vue';
 import { store } from './store';
-import { map_store } from './mapStore'
+import { map_store } from './mapStore.mjs'
 import StartingChoice from './components/t3/StartingChoice.vue';
 import PartyMenuVue from './components/t3/PartyMenuVue.vue';
 import InventoryMenu from './components/t3/InventoryMenu.vue';
+import MoveForgetVue from './components/t3/MoveForgetVue.vue';
+
 import { getAuth, signInAnonymously, onAuthStateChanged } from "firebase/auth";
 import { doc, setDoc, onSnapshot } from 'firebase/firestore'
 import { auth, db } from './firebase';

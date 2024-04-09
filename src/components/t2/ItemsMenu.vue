@@ -1,7 +1,7 @@
 <template>
     <div class="items-container">
         <div class="item" :class="index == active_voice ? 'active' : ''" v-for="(item, index) in store.my_items"
-            :key="index" v-show="item?.owned_amount > 0 && item.can_be_used_in_battle">
+            :key="index" v-show="item?.owned_amount > 0">
 
             <div class="name-icon">
                 <img :src="item.img_path">
@@ -65,6 +65,11 @@ onBeforeUnmount(() => {
 const useItem = async function (item, target) {
 
     if (item.owned_amount <= 0) {
+        return
+    }
+    if (!item.can_be_used_in_battle) {
+        console.log('cant be used in battle')
+        store.displayInfoText(`${item.name} cannot be used in battle...`)
         return
     }
 
@@ -149,7 +154,13 @@ const handleMovesInput = async function (e) {
     }
 
     if (e.key == 'Enter') {
+        if (!selected_item.can_be_used_in_battle) {
+            store.menu_state = 'text'
+            await store.displayInfoText(`${selected_item.name} cannot be used in battle...`)
+            store.menu_state = 'items'
+            return
 
+        }
         if (selected_item.type == 'ball') {
             console.log('its a ball')
             await useItem(selected_item);
@@ -226,6 +237,8 @@ const backToMenu = function () {
 }
 
 const targetSelect = function () {
+
+
     targets.value = []
     active_voice.value = null
     store.my_bench.forEach((pkmn) => {

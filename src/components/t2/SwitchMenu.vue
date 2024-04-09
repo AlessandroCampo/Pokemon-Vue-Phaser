@@ -2,12 +2,13 @@
     <div class="bench-container">
         <div class="bench" :class="index == active_voice ? 'active' : ''" v-for="(pokemon, index) in store.my_bench"
             :key="index" @click="switchPokemon(pokemon)">
-            <img :src="`/pokemons/${pokemon.name.toLowerCase()}.gif`" alt="">
+            <img :src="`/pokemons/${pokemon.name.toLowerCase()}.gif`" alt="" class="sprite">
             <div class="type-name">
                 <div>
                     {{ pokemon.name }}
                 </div>
-                <img v-if="pokemon.status" class="status" :src="'/badges/' + pokemon.status + '.png'">
+                <img v-if="pokemon.status" class="status" :src="'/badges/' + pokemon.status + '.png'"
+                    style="height: 20px; position: initial; margin-bottom: 3px;">
                 <!-- <i class="fa-solid" :class="pokemon?.gender == 'male' ? 'fa-mars' : 'fa-venus'"></i> -->
             </div>
             <div class="progress">
@@ -134,7 +135,8 @@ const backToMenu = function () {
     display: flex;
     align-items: center;
     font-size: 1.3em;
-    justify-content: space-between;
+    justify-content: start;
+    gap: 10px;
     width: 150px;
 }
 
@@ -171,7 +173,7 @@ const backToMenu = function () {
     /* border: 5px solid violet; */
 }
 
-img {
+img.sprite {
     height: 50px;
     position: absolute;
     top: 50%;

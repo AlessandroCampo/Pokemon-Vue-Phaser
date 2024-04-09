@@ -24,7 +24,7 @@
 
 <script setup>
 import { ref, onMounted, onBeforeUnmount } from 'vue';
-import { map_store } from '@/mapStore';
+import { map_store } from '@/mapStore.mjs';
 import { store } from '@/store';
 const choices = map_store.starter_choices
 let current_choice = ref(0)

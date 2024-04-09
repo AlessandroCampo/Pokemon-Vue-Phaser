@@ -41,3 +41,4 @@ improve dialogue behavior and skip text logic (maybe only spacebar)
 levelling up, evolving and learning moves
 improve npc interaction
 rare-candy type item
+confirmation prompt (Are you sure you want to forget)

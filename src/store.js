@@ -4,8 +4,8 @@ import { BattleScene } from './js/scenes/battle-scene.mjs';
 import { trainers, Trainer } from './js/db/trainers.mjs';
 import { all_items } from './js/db/items.mjs';
 import { all_moves } from './js/db/moves.mjs';
-import { encounter_map } from './mapStore';
-import { map_store } from './mapStore';
+import { encounter_map } from './mapStore.mjs';
+import { map_store } from './mapStore.mjs';
 import { SCENE_KEYS } from './js/scenes/scene-keys.mjs';
 import { WORLD_ASSETS_KEYS } from './js/scenes/assets-keys.mjs';
 
@@ -67,6 +67,8 @@ export const store = reactive({
     show_hud: false,
     in_battle: false,
     level_cap: 15,
+    forgettign_pokemon: null,
+    learnable_move: null,
 
     useMove: async function (move, caster, target, player_attack) {
 
@@ -680,7 +682,7 @@ export const store = reactive({
         });
     },
 
-    // SECTION FOR AI DECISION MAKING```
+    // SECTION FOR AI DECISION MAKING````○
     calcAiBestMove() {
         let selected_move = undefined;
         let most_damage_move = this.highestAiDmgMove(this.oppo_pokemon);
@@ -1328,10 +1330,6 @@ export const store = reactive({
                     this.calcStats(gainer)
                 }
 
-                // Trigger Vue DOM update
-                // This may vary depending on how your Vue component is structured
-                // You might need to use $forceUpdate or reactive properties
-                // For simplicity, assuming gainer is a reactive object
                 gainer.xp = { ...gainer.xp };
             };
 
@@ -1472,7 +1470,7 @@ export const store = reactive({
         }
         return can_escape;
     },
-    generate_random_trainer() {
+    generate_random_trainer(chosen_name) {
         //cancel later
 
         // trainers can have random pokmeons from a predefined pool
@@ -1548,7 +1546,7 @@ export const store = reactive({
             "Kai"
         ];
 
-        const rand_trainer_name = trainerNames[Math.floor(Math.random() * trainerNames.length)]
+        const rand_trainer_name = chosen_name ? chosen_name : trainerNames[Math.floor(Math.random() * trainerNames.length)]
 
         let random_trainer = new Trainer({
             name: rand_trainer_name,
@@ -1671,6 +1669,36 @@ export const store = reactive({
             owned_amount: item.owned_amount
         }
         return item_copy
+    },
+    async checkLearnableMovesOrEvolutions(pkmn) {
+        return new Promise(resolve => {
+            pkmn.learnable_moves.forEach(async (move, index) => {
+                if (move.at_level <= pkmn.level) {
+                    if (pkmn.moves.length < 4) {
+                        pkmn.moves.push(move.move)
+                        pkmn.learnable_moves.splice(index, 1)
+                        console.log(move)
+                        this.info_text = `${pkmn.name} has learned ${move.move.name}`
+                        resolve(true)
+                    } else {
+                        pkmn.learnable_moves.splice(index, 1)
+                        this.forgettign_pokemon = pkmn
+                        this.learnable_move = move.move
+                        resolve(true)
+                    }
+                } else {
+                    resolve(false)
+                }
+            })
+        })
+    },
+    async forgetMove(pkmn, learnable_move) {
+
+    },
+    async displayInfoText(text) {
+        this.info_text = text
+        await this.delay(this.info_text.length * this.config.text_speed + 500)
+        return
     }
 
 

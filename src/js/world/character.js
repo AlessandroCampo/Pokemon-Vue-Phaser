@@ -1,7 +1,7 @@
 import { DIRECTION } from "../utils/Controls.mjs";
 import { tile_size } from "../scenes/world-scene";
 import { getTargetPosition } from "../utils/GridUtils.mjs";
-import { map_store } from "@/mapStore";
+import { map_store } from "@/mapStore.mjs";
 
 
 export class Character {
@@ -191,5 +191,9 @@ export class Character {
         })
 
         return collides_with_character
+    }
+
+    getPosition() {
+        return { x: this._phaserGameObject.x, y: this._phaserGameObject.y }
     }
 }

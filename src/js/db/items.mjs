@@ -111,7 +111,7 @@ export class Potion extends Item {
 
 export class Antidote extends Item {
     constructor({ name, price, effect, description, img_path, owned_amount, sprite, asset_key, helead_status, can_be_used_in_battle }) {
-        super({ name, price, effect, description, img_path, owned_amount, sprite, asset_key, can_be_used_in_battle });
+        super({ name, price, effect, description, img_path, owned_amount, sprite, asset_key });
         this.helead_status = helead_status
         this.can_be_used_in_battle = true
         this.type = 'antidote'
@@ -125,7 +125,7 @@ const rare_candy = new Item({
     description: 'A candy that is packed with energy. If consumed, it raises a Pokémon’s level by one.',
     img_path: base_path + 'rare_candy.png',
     asset_key: 'rare_candy',
-    can_be_used_in_battle: true,
+    can_be_used_in_battle: false,
     consumable: true,
     type: 'candy'
 })
@@ -205,7 +205,8 @@ export const all_items = {
     potion,
     awakening,
     paralyze_heal,
-    rare_candy
+    rare_candy,
+    mega_ball
 }
 
 export const all_items_array = [lum_berry, sitrus_berry, poke_ball, potion, mega_ball, awakening, paralyze_heal]

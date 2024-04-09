@@ -3,7 +3,7 @@ import { SCENE_KEYS } from './scene-keys.mjs'
 import { BATTLE_ASSET_KEYS, BATTLE_BACKGROUND_ASSET_KEYS } from './assets-keys.mjs'
 import { Pokemons } from '../db/pokemons.mjs'
 import { store } from '@/store'
-import { map_store } from '@/mapStore'
+import { map_store } from '@/mapStore.mjs'
 import { all_items, all_items_array } from '../db/items.mjs'
 // import SceneTransition from ''
 
@@ -46,8 +46,8 @@ export class BattleScene extends Phaser.Scene {
             console.log(member, member.sprite)
         })
         if (store.battle_type == 'trainer') {
-            this.load.image(`trainer_${store.oppo_trainer.name}`, `/trainers/${store.oppo_trainer.name}.    
-            png`)
+            console.log(store.oppo_trainer.name)
+            this.load.image(`trainer_${store.oppo_trainer.name}`, `/trainers/${store.oppo_trainer.name}.png`)
             console.log(store.oppo_trainer.name)
             store.oppo_bench.forEach((member) => {
                 store.calcStats(member)

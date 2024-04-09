@@ -52,7 +52,9 @@ export let encounter_map = [{
     npcs_locations: [
         {
             npc: { ...all_npcs.merchant },
-            position: { x: 272, y: 304 - tile_size },
+            position: {
+                x: 272, y: 304 - tile_size
+            },
             battler: false,
             already_talked_to: false,
             event: async function () {
@@ -63,8 +65,8 @@ export let encounter_map = [{
                     store.info_text = 'Oh, you have no Pokemons yet, never mind'
                     await store.delay(store.info_text.length * store.config.text_speed + 500)
                 }
+            },
 
-            }
         },
         {
             npc: { ...all_npcs.npc_1 },
@@ -76,6 +78,17 @@ export let encounter_map = [{
                 map_store.handleBossBattle(trainers.roxanne)
                 map_store.world_scene_istance.startBossBattle()
             },
+
+        },
+        {
+            npc: { ...all_npcs.guard },
+            position: { x: 320, y: 240 - tile_size },
+            path: null,
+            battler: true,
+            event: null,
+            frame: 8,
+            direction: DIRECTION.RIGHT
+
 
         },
         {
@@ -103,8 +116,8 @@ export let encounter_map = [{
                         }
 
 
-                        if (!store.my_items.some(item => item.name === all_items.poke_ball.name)) {
-                            const pokeBallInstance = deepClone(all_items.poke_ball);
+                        if (!store.my_items.some(item => item.name === all_items.mega_ball.name)) {
+                            const pokeBallInstance = deepClone(all_items.mega_ball);
 
                             pokeBallInstance.owned_amount = 200;
                             store.my_items.push(pokeBallInstance);
@@ -273,11 +286,11 @@ export const map_store = reactive({
         store.menu_state = 'text'
         store.oppo_pokemon = store.getRandomEncounter(this.current_map)
     },
-    handleTrainerBattle() {
+    handleTrainerBattle(trainer_name) {
         store.in_battle = true
         store.battle_type = 'trainer'
         store.menu_state = 'text'
-        store.oppo_trainer = store.generate_random_trainer()
+        store.oppo_trainer = store.generate_random_trainer(trainer_name)
         store.oppo_pokemon = store.oppo_trainer.lead
         store.oppo_bench = store.oppo_trainer.bench
     },
@@ -290,11 +303,11 @@ export const map_store = reactive({
         store.oppo_bench = store.oppo_trainer.bench
     },
     async healAllPokemons() {
-        store.my_pokemon.hp.effective = store.my_pokemon.hp.current
+        store.my_pokemon.hp.current = store.my_pokemon.hp.max
         store.my_pokemon.status = null
         store.my_pokemon.damage = 0
         store.my_bench.forEach((mon) => {
-            mon.hp.effective = mon.hp.current
+            mon.hp.current = mon.hp.max
             mon.status = null
             mon.damage = 0
         })
@@ -408,7 +421,8 @@ export const map_store = reactive({
                     returned_pokemon.xp.total = pkmn.current_xp
                     returned_pokemon.status = pkmn.status
                     returned_pokemon.moves = this.retrieveMovesData(pkmn.moves)
-
+                    returned_pokemon.hp.current = returned_pokemon.hp.max - pkmn.damage
+                    store.calcStats(returned_pokemon)
                     return returned_pokemon;
                 }
             }

@@ -16,7 +16,7 @@ import ItemsMenu from "./t2/ItemsMenu.vue";
 import TextPanel from './t2/TextPanel.vue'
 import { ref, onMounted, watch } from 'vue'
 import { store } from "@/store";
-import { map_store } from "@/mapStore";
+import { map_store } from "@/mapStore.mjs";
 
 
 

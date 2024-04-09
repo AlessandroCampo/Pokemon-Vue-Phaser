@@ -4,9 +4,9 @@ import { BATTLE_ASSET_KEYS, BATTLE_BACKGROUND_ASSET_KEYS, BUILDING_ASSET_KEYS, C
 import { Pokemons } from '../db/pokemons.mjs'
 import { io } from "socket.io-client";
 import { store } from '@/store'
-import { map_store } from '@/mapStore';
+import { map_store } from '@/mapStore.mjs';
 import { DataUtils } from '../utils/DataUtills.mjs';
-import { encounter_map } from '@/mapStore';
+import { encounter_map } from '@/mapStore.mjs';
 import { all_items_array } from '../db/items.mjs';
 
 

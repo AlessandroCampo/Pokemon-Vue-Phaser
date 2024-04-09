@@ -27,8 +27,8 @@ export class NPC extends Character {
             },
             name: config.name,
             position: config.position,
-
-            scale: config.scale || 0.4
+            scale: config.scale || 0.4,
+            direction: config.direction || DIRECTION.DOWN
 
         });
         this.assetKey = config.assetKey
@@ -43,6 +43,7 @@ export class NPC extends Character {
         this.battler = config.battler || false
         this.no_delay_movement = config.no_delay_movement || false
         this.obj_ref = config.obj_ref
+        // this.direction = config.direction
     }
 
     update(time) {
@@ -52,60 +53,106 @@ export class NPC extends Character {
         }
         super.update(time);
 
-
-
-        if (this.last_movement_time < time) {
-
-            let character_direction = DIRECTION.NONE;
-            let next_position = this.path[this.current_path_index + 1];
-            let final_position = this.path[this.path.length - 1]
-            let starting_position = this.path[0]
-            //FIXME - npc movement doenst correctly reach any starting and final
-
-            // Check if the NPC has reached the end of the path
-            if (next_position === undefined) {
-                const POSITION_THRESHOLD = 30;
-
-                if (
-                    (Math.abs(this._phaserGameObject.x - final_position.x) > POSITION_THRESHOLD ||
-                        Math.abs(this._phaserGameObject.y - final_position.y) > POSITION_THRESHOLD)
-                ) {
-                    // NPC is not close enough to the final position, continue moving forward
-                    this.current_path_index = this.path.length - 1;
-                    next_position = final_position;
-
-                } else {
-                    // NPC is close enough to the final position, start walking back
-                    this.current_path_index = 0;
-                    next_position = starting_position;
-                }
-
-            } else {
-                this.current_path_index++;
-            }
-
-            // Determine the direction based on the next position
-            if (next_position.x > this._phaserGameObject.x) {
-                character_direction = DIRECTION.RIGHT;
-            } else if (next_position.x < this._phaserGameObject.x) {
-                character_direction = DIRECTION.LEFT;
-            } else if (next_position.y < this._phaserGameObject.y) {
-                character_direction = DIRECTION.UP;
-            } else if (next_position.y > this._phaserGameObject.y) {
-                character_direction = DIRECTION.DOWN;
-            }
-
-            // Move the character in the determined direction
-            this.moveCharacter(character_direction)
-            if (!this.no_delay_movement) {
-                this.last_movement_time = time + Phaser.Math.Between(1000, 3000)
-            }
-
+        let next_position = this.path[this.current_path_index + 1];
+        if (next_position === undefined) {
+            next_position = this.path[0]
+        } else {
+            this.current_path_index++
         }
+
+        let character_direction = DIRECTION.NONE
+
+        // Determine the direction based on the next position
+        if (next_position.x > this._phaserGameObject.x) {
+            character_direction = DIRECTION.RIGHT;
+        } else if (next_position.x < this._phaserGameObject.x) {
+            character_direction = DIRECTION.LEFT;
+        } else if (next_position.y < this._phaserGameObject.y) {
+            character_direction = DIRECTION.UP;
+        } else if (next_position.y > this._phaserGameObject.y) {
+            character_direction = DIRECTION.DOWN;
+        }
+
+        // Move the character in the determined direction
+        this.moveCharacter(character_direction)
+        // if (!this.no_delay_movement) {
+        //     this.last_movement_time = time + Phaser.Math.Between(1000, 3000)
+        // }
+
+        // if (this.last_movement_time < time || this.battler) {
+
+        //     let character_direction = DIRECTION.NONE;
+        //     let next_position = this.path[this.current_path_index + 1];
+        //     console.log(next_position)
+        //     let final_position = this.path[this.path.length - 1]
+        //     let starting_position = this.path[0]
+        //     //FIXME - npc movement doenst correctly reach any starting and final
+
+        //     // Check if the NPC has reached the end of the path
+        //     // if (next_position === undefined) {
+        //     //     const POSITION_THRESHOLD = 80
+        //     //     if (
+        //     //         (Math.abs(this._phaserGameObject.x - final_position.x) > POSITION_THRESHOLD ||
+        //     //             Math.abs(this._phaserGameObject.y - final_position.y) > POSITION_THRESHOLD)
+        //     //     ) {
+        //     //         // NPC is not close enough to the final position, continue moving forward
+        //     //         this.current_path_index = this.path.length - 1;
+        //     //         next_position = final_position;
+
+        //     //     } else {
+        //     //         // NPC is close enough to the final position, start walking back
+
+        //     //         this.current_path_index = 0;
+        //     //         next_position = starting_position;
+        //     //     }
+
+        //     // } else {
+        //     //     this.current_path_index++;
+        //     // }
+
+        //     // Determine the direction based on the next position
+        //     if (next_position.x > this._phaserGameObject.x) {
+        //         character_direction = DIRECTION.RIGHT;
+        //     } else if (next_position.x < this._phaserGameObject.x) {
+        //         character_direction = DIRECTION.LEFT;
+        //     } else if (next_position.y < this._phaserGameObject.y) {
+        //         character_direction = DIRECTION.UP;
+        //     } else if (next_position.y > this._phaserGameObject.y) {
+        //         character_direction = DIRECTION.DOWN;
+        //     }
+
+        //     // Move the character in the determined direction
+        //     this.moveCharacter(character_direction)
+        //     // if (!this.no_delay_movement) {
+        //     //     this.last_movement_time = time + Phaser.Math.Between(1000, 3000)
+        //     // }
+
+        // }
     }
 
 
+    // setDirection(direction) {
 
+    //     switch (direction) {
+    //         case 'UP':
+    //             this._phaserGameObject.setFrame(this._idleFrameConfig.UP)
+    //             break;
+    //         case 'DOWN':
+    //             this._phaserGameObject.setFrame(this._idleFrameConfig.DOWN)
+    //             break;
+    //         case 'RIGHT':
+    //             console.log('here')
+    //             this._phaserGameObject.setFrame(this._idleFrameConfig.RIGHT)
+    //             break;
+    //         case 'LEFT':
+    //             this._phaserGameObject.setFrame(this._idleFrameConfig.LEFT)
+    //             break;
+
+    //         default:
+
+    //             break;
+    //     }
+    // }
 
 
     facePlayer(direction) {
@@ -164,6 +211,7 @@ export class NPC extends Character {
         if (!this.battler) {
             return false;
         }
+
 
         let distance_threshold = 5
         const distanceX = Math.abs(player_position.x - this._phaserGameObject.x) / tile_size;

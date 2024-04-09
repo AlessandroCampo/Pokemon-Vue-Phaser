@@ -5,10 +5,11 @@ import { SCENE_KEYS } from "./scene-keys.mjs";
 import Phaser from "phaser";
 import { DIRECTION } from "../utils/Controls.mjs";
 import { store } from "@/store";
-import { map_store } from "@/mapStore";
+import { map_store } from "@/mapStore.mjs";
 import { getTargetPosition } from "../utils/GridUtils.mjs";
 import { NPC } from "../world/npc";
 import { DataUtils } from "../utils/DataUtills.mjs";
+
 
 export const tile_size = 16
 
@@ -178,10 +179,10 @@ export class WorldScene extends Phaser.Scene {
             this.#player.update(time)
             return
         }
-        if (this.npc_battle_started) {
-            this.#player.update(time)
-            return
-        }
+        // if (this.npc_battle_started) {
+        //     this.#player.update(time)
+        //     return
+        // }
         const selected_direction = this.#controls.getDirectionKeyPressedDown()
         if (selected_direction !== DIRECTION.NONE) {
             this.#player.moveCharacter(selected_direction)
@@ -206,20 +207,25 @@ export class WorldScene extends Phaser.Scene {
 
         })
         if (npc_wants_battle) {
-            npc_wants_battle.path = [target_position]
+
+            npc_wants_battle.path = [this.#player.getPosition()]
+            console.log(target_position)
             npc_wants_battle.no_delay_movement = true
             npc_wants_battle.battler = false
             npc_wants_battle.obj_ref.battler = false
             this.npc_battle_started = true
             this.#player.can_move = false
             this.#player.faceNpc(npc_wants_battle._direction)
+            npc_wants_battle.update(time)
             // npc_wants_battle.facePlayer(this.#player.direction)
             this.#player.in_battle = true
 
             if (npc_wants_battle.dialogue) {
                 map_store.add_new_message_to_queue(npc_wants_battle.dialogue[0])
             }
-            this.startTrainerBattle()
+            console.log(npc_wants_battle)
+            this.startTrainerBattle(npc_wants_battle.obj_ref.npc.name)
+
 
 
 
@@ -363,24 +369,30 @@ export class WorldScene extends Phaser.Scene {
 
     createNPCS(map) {
         // const npcLayers = map.getObjectLayerNames().filter((layer_name) => layer_name.includes('NPC'))
+
         map_store.current_map.npcs_locations.forEach((el) => {
             const npc_istance = new NPC({
                 scene: this,
                 position: el.position,
-                direction: DIRECTION.DOWN,
                 path: el.path || null,
-                frame: 0,
+                frame: el.frame,
                 assetKey: el.npc.name,
                 dialogue: el.npc.dialouge,
                 scale: el.npc.scale,
                 event: el.event || null,
                 battler: el.battler || null,
-                obj_ref: el
-            })
+                obj_ref: el,
 
+            })
+            if (npc_istance.battler) {
+                npc_istance.no_delay_movement = true
+            }
             this.npcs.push(npc_istance)
 
+            npc_istance._direction = el.direction
+            console.log(npc_istance.direction)
             npc_istance.update()
+
 
 
         })
@@ -454,13 +466,14 @@ export class WorldScene extends Phaser.Scene {
 
     }
 
-    startTrainerBattle() {
+    startTrainerBattle(name) {
+        console.log(name)
         setTimeout(() => {
             this.cameras.main.fadeOut(2000)
             this.cameras.main.once(Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE, () => {
                 store.info_text = ''
                 map_store.text_queue = []
-                map_store.handleTrainerBattle()
+                map_store.handleTrainerBattle(name)
                 this.scene.start(SCENE_KEYS.BATTLE_SCENE);
             })
         }, 1500)
