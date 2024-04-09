@@ -16,8 +16,16 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: "Bangers", system-ui;
 
+
+}
+
+html {
+    font-family: "Bangers", system-ui;
+}
+
+.different-font {
+    font-family: "Gluten", cursive;
 }
 
 /* Scoped styles for the enemy's HP bar */

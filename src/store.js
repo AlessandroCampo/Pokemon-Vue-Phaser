@@ -38,6 +38,7 @@ export const store = reactive({
     my_pokemon: null,
     oppo_pokemon: undefined,
     my_bench: [],
+    test_bench: [Pokemons.gastly, Pokemons.timburr, Pokemons.ralts, Pokemons.meowth],
     my_items: [],
     player_info: {
         name: 'Aleks'
@@ -1439,9 +1440,7 @@ export const store = reactive({
         let wild_is_slower = wild_pkmn.speed.effective <= my_pkmn.speed.effective;
         this.escape_attempts++;
         store.menu_state = 'text'
-        if (my_pkmn.abilities.includes('Run Away')) {
-            return true
-        }
+
 
         if (wild_is_slower) {
             can_escape = true;
@@ -1455,6 +1454,9 @@ export const store = reactive({
             if (can_escape) {
                 this.escape_attempts = 0;
             }
+        }
+        if (my_pkmn.abilities.includes('Run Away')) {
+            can_escape = true
         }
         if (can_escape) {
             this.battle_sequence_playing = true

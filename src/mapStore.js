@@ -176,6 +176,7 @@ export const map_store = reactive({
     starter_choices: [deepClone(Pokemons.timburr), deepClone(Pokemons.deino), deepClone(Pokemons.gastly)],
     fetched_data: {},
     show_menu: false,
+    show_party_menu: false,
     createSceneTransition: async function (scene) {
 
         // const skipSceneTransition = options?.skipSceneTransition || false;
@@ -366,9 +367,12 @@ export const map_store = reactive({
                         this.player_position_info.coords = this.fetched_data.position.coords;
                         store.my_pokemon = this.retrivePokemonData(this.fetched_data.my_pokemon)
                         resolve()
+
                         this.fetched_data.my_bench.forEach((mon) => {
                             store.my_bench.push(this.retrivePokemonData(mon))
                         })
+
+
                         store.my_items = this.retrieveItemsData(this.fetched_data.my_items)
                     });
 

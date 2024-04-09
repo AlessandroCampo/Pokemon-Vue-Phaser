@@ -40,5 +40,5 @@ SAVING DATA
 improve dialogue behavior and skip text logic (maybe only spacebar)
 levelling up, evolving and learning moves
 imrpove npc interaction
-
+rare-candy type item
 bug: animations go faster after catch

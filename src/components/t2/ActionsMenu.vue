@@ -87,8 +87,9 @@ const menu_voices = ref([
                 await store.delay(store.info_text.length * store.config.text_speed + 500)
                 store.menu_state = 'options'
             } else {
+
                 if (await store.attemptEscape(store.my_pokemon, store.oppo_pokemon)) {
-                    // end battle scene logic 
+                    console.log('escaping')
                 } else {
                     const ai_selected_move = store.oppo_pokemon.moves[Math.floor(Math.random() * store.oppo_pokemon.moves.length)]
                     const oppo_pokemon_attack = async () => {

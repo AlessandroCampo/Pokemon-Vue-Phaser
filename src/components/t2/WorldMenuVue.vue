@@ -22,7 +22,9 @@ let active_voice = ref(0)
 const menu_voices = [
     {
         label: 'Pokemons',
-        callback: null
+        callback: () => {
+            map_store.show_party_menu = true
+        }
     },
     {
         label: 'Inventory',
@@ -95,7 +97,7 @@ const handleMovesInput = async function (e) {
     right: 0;
     top: 50%;
     transform: translateY(-50%);
-    z-index: 500;
+    z-index: 10;
     flex-direction: column;
     font-size: 3em;
     gap: 1em;

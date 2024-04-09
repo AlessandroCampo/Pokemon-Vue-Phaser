@@ -121,8 +121,11 @@ class Pokemon {
     }
 
     setPropScale() {
+        //TODO - fix sprite scales
+        let player_controlled_multiplier = this.player_controlled ? 0.8
 
-        let player_controlled_multiplier = this.player_controlled ? 0.9 : 0.4;
+
+            : 0.4;
 
         // Set the scale of the sprite
         this.sprite.setScale(player_controlled_multiplier);
