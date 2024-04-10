@@ -1,7 +1,7 @@
 import { allAnimations } from "./animations.mjs"
 
 class Move {
-    constructor({ name, type, category, power, accuracy, pp, makes_contact, description, animation, effects, priority, targets }) {
+    constructor({ name, type, category, power, accuracy, pp, makes_contact, description, animation, effects, priority, targets, sound }) {
         this.name = name
         this.type = type
         this.category = category || 'Physical'
@@ -14,6 +14,7 @@ class Move {
         this.effects = effects || null
         this.priority = priority || 1
         this.targets = targets || true
+        this.sound = sound || null
     }
 }
 
@@ -247,7 +248,7 @@ const self_destruct = new Move({
 })
 
 const recover = new Move({
-    name: 'Recover ',
+    name: 'Recover',
     category: 'status',
     type: 'normal',
     power: null,
@@ -264,7 +265,7 @@ const recover = new Move({
 
 
 const dobule_team = new Move({
-    name: 'Double Team ',
+    name: 'Double Team',
     category: 'status',
     type: 'normal',
     power: null,
@@ -297,7 +298,7 @@ const smoke_screen = new Move({
 
 const supersonic = new Move({
 
-    name: 'Supersonic ',
+    name: 'Supersonic',
     category: 'status',
     type: 'normal',
     power: null,
@@ -384,7 +385,7 @@ const ember = new Move({
 // GRASS TYPE
 
 const leafage = new Move({
-    name: 'Leafage ',
+    name: 'Leafage',
     category: 'physical',
     type: 'grass',
     power: 4000,
@@ -504,7 +505,7 @@ const draining_kiss = new Move({
 })
 
 const moonlight = new Move({
-    name: 'Moonlight ',
+    name: 'Moonlight',
     category: 'status',
     type: 'psychic',
     power: null,
@@ -588,7 +589,7 @@ const rock_smash = new Move({
 })
 
 const bulk_up = new Move({
-    name: 'Bulk up',
+    name: 'Bulk Up',
     category: 'status',
     type: 'fighting',
     power: null,

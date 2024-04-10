@@ -1,6 +1,6 @@
 import { Controls } from "../utils/Controls.mjs";
 import { Player } from "../world/player";
-import { WORLD_ASSETS_KEYS } from "./assets-keys.mjs";
+import { AUDIO_ASSETS_KEY, WORLD_ASSETS_KEYS } from "./assets-keys.mjs";
 import { SCENE_KEYS } from "./scene-keys.mjs";
 import Phaser from "phaser";
 import { DIRECTION } from "../utils/Controls.mjs";
@@ -72,7 +72,10 @@ export class WorldScene extends Phaser.Scene {
 
         let player_direction = map_store.player_position_info.direction
 
-
+        this.sound.play(AUDIO_ASSETS_KEY.WORLD, {
+            loop: true,
+            volume: 0.05
+        })
         // this.cameras.main.setBounds(0, 0, 1280, 2176)
         // const x = 24
         // const y = 52

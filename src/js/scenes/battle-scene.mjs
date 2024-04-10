@@ -1,6 +1,6 @@
 import Phaser, { Textures } from 'phaser'
 import { SCENE_KEYS } from './scene-keys.mjs'
-import { BATTLE_ASSET_KEYS, BATTLE_BACKGROUND_ASSET_KEYS } from './assets-keys.mjs'
+import { AUDIO_ASSETS_KEY, BATTLE_ASSET_KEYS, BATTLE_BACKGROUND_ASSET_KEYS } from './assets-keys.mjs'
 import { Pokemons } from '../db/pokemons.mjs'
 import { store } from '@/store'
 import { map_store } from '@/mapStore.mjs'
@@ -31,9 +31,15 @@ export class BattleScene extends Phaser.Scene {
             frameWidth: store.oppo_pokemon.images.front.frameWidth,
             frameHeight: store.oppo_pokemon.images.front.frameHeight,
         })
+        store.my_pokemon.moves.forEach((move) => {
+            this.load.audio(move.name, `/sounds/moves/${move.name}.mp3`)
+        })
         this.load.spritesheet(store.my_pokemon.images.back.key, store.my_pokemon.images.back.path, {
             frameWidth: store.my_pokemon.images.back.frameWidth,
             frameHeight: store.my_pokemon.images.back.frameHeight,
+        })
+        store.oppo_pokemon.moves.forEach((move) => {
+            this.load.audio(move.name, `/sounds/moves/${move.name}.mp3`)
         })
         store.my_bench.forEach((member) => {
             member.resetStats()
@@ -43,7 +49,9 @@ export class BattleScene extends Phaser.Scene {
                 frameWidth: member.images.back.frameWidth,
                 frameHeight: member.images.back.frameHeight,
             })
-            console.log(member, member.sprite)
+            member.moves.forEach((move) => {
+                this.load.audio(move.name, `/sounds/moves/${move.name}.mp3`)
+            })
         })
         if (store.battle_type == 'trainer') {
             console.log(store.oppo_trainer.name)
@@ -56,12 +64,20 @@ export class BattleScene extends Phaser.Scene {
                     frameWidth: member.images.front.frameWidth,
                     frameHeight: member.images.front.frameHeight,
                 })
+                member.moves.forEach((move) => {
+                    this.load.audio(move.name, `/sounds/moves/${move.name}.mp3`)
+                })
             })
 
         }
 
     }
     async create() {
+        this.sound.stopAll()
+        this.sound.play(AUDIO_ASSETS_KEY.BATTLE, {
+            loop: true,
+            volume: 0.05
+        })
         if (store.battle_type == 'wild') {
             store.info_text = `A wild ${store.oppo_pokemon.name} appears! Get ready to fight for your life!`
         } else if (store.battle_type == 'trainer') {

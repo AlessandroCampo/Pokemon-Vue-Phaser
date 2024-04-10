@@ -42,3 +42,4 @@ levelling up, evolving and learning moves
 improve npc interaction
 rare-candy type item
 confirmation prompt (Are you sure you want to forget)
+options, todo, title screen, audio, move audio effect, pokemon evolution

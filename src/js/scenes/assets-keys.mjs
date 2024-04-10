@@ -33,3 +33,10 @@ export const DATA_ASSET_KEYS = Object.freeze({
     ANIMATIONS: 'animations'
 })
 
+export const AUDIO_ASSETS_KEY = Object.freeze({
+    TITLE: 'title',
+    WORLD: 'world',
+    BATTLE: 'battle',
+    FLEE: 'flee'
+})
+

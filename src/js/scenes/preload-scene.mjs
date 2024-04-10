@@ -1,6 +1,6 @@
 import Phaser from 'phaser'
 import { SCENE_KEYS } from './scene-keys.mjs'
-import { BATTLE_ASSET_KEYS, BATTLE_BACKGROUND_ASSET_KEYS, BUILDING_ASSET_KEYS, CHARACTER_ASSET_KEYS, DATA_ASSET_KEYS, WORLD_ASSETS_KEYS } from './assets-keys.mjs'
+import { AUDIO_ASSETS_KEY, BATTLE_ASSET_KEYS, BATTLE_BACKGROUND_ASSET_KEYS, BUILDING_ASSET_KEYS, CHARACTER_ASSET_KEYS, DATA_ASSET_KEYS, WORLD_ASSETS_KEYS } from './assets-keys.mjs'
 import { Pokemons } from '../db/pokemons.mjs'
 import { io } from "socket.io-client";
 import { store } from '@/store'
@@ -83,6 +83,13 @@ export class PreloadScene extends Phaser.Scene {
             this.load.image(`${map.map_name.toUpperCase()}_FOREGROUND`, `/maps/${map.map_name}-foreground.png`)
             this.load.tilemapTiledJSON(`${map.map_name.toUpperCase()}_JSON`, `/json/${map.map_name}.json`)
         })
+
+        // LOAD AUDIO ASSETS
+
+        this.load.audio(AUDIO_ASSETS_KEY.WORLD, 'sounds/And-the-Journey-Begins.wav');
+        this.load.audio(AUDIO_ASSETS_KEY.TITLE, 'sounds/Title-Theme.wav');
+        this.load.audio(AUDIO_ASSETS_KEY.BATTLE, 'sounds/Decisive-Battle.wav');
+        this.load.audio(AUDIO_ASSETS_KEY.FLEE, 'sounds/flee.wav');
 
 
 

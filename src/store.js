@@ -187,6 +187,10 @@ export const store = reactive({
         if (move.animation && this.config.play_move_animation) {
             await move.animation(caster.sprite, caster.player_controlled)
         }
+        // if move has sound, play it
+        this.battle_scene_instance.sound.play(move.name, {
+            volume: 0.2
+        })
 
         //Account for crhit chance
         let crhit = false

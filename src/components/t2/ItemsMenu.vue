@@ -84,6 +84,12 @@ const useItem = async function (item, target) {
 
     if (item.type == 'ball') {
         store.battle_sequence_playing = true
+        if (store.my_bench.length >= 4) {
+            store.info_text = `You cannot have more than 5 pokemons in your team at the moment`
+            await store.delay(store.info_text.length * store.config.text_speed + 500)
+            store.menu_state = 'items'
+            return
+        }
         if (store.battle_type !== 'wild') {
             store.info_text = `Only wild pokemons can be caught...`
             await store.delay(store.info_text.length * store.config.text_speed + 500)
