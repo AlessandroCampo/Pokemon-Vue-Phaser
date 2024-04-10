@@ -388,7 +388,7 @@ const leafage = new Move({
     name: 'Leafage',
     category: 'physical',
     type: 'grass',
-    power: 4000,
+    power: 40,
     accuracy: 100,
     pp: {
         max: 40,
