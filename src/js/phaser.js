@@ -12,7 +12,7 @@ const screen_width = window.screen.width
 const screen_height = window.screen.height
 
 async function initializeGame() {
-    await map_store.logUser();
+    // await map_store.logUser();
 
     // Initialize game once user is logged in
     const game = new Phaser.Game({

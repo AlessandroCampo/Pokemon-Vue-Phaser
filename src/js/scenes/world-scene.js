@@ -5,7 +5,7 @@ import { SCENE_KEYS } from "./scene-keys.mjs";
 import Phaser from "phaser";
 import { DIRECTION } from "../utils/Controls.mjs";
 import { store } from "@/store";
-import { map_store } from "@/mapStore.mjs";
+import { encounter_map, map_store } from "@/mapStore.mjs";
 import { getTargetPosition } from "../utils/GridUtils.mjs";
 import { NPC } from "../world/npc";
 import { DataUtils } from "../utils/DataUtills.mjs";
@@ -60,6 +60,7 @@ export class WorldScene extends Phaser.Scene {
 
     async create() {
 
+        this.sound.stopAll()
         if (map_store.first_loading) {
             map_store.add_new_message_to_queue(`Welcome to the game, ${store.player_info.name}!`)
             map_store.add_new_message_to_queue(`In this game , pokemons are way less friendly than what you remember, be careful walking around without a strong team`)
@@ -83,6 +84,7 @@ export class WorldScene extends Phaser.Scene {
         // this.cameras.main.centerOn(x, y)
 
         const map = this.make.tilemap({ key: `${map_store.current_map.map_name.toUpperCase()}_JSON` })
+        console.log(map)
 
         const collision_tiles = map.addTilesetImage('collision', WORLD_ASSETS_KEYS.START_COLLISION)
         const collision_layer = map.createLayer('Collision', collision_tiles, 0, 0)
@@ -102,13 +104,19 @@ export class WorldScene extends Phaser.Scene {
 
 
         const has_encounter_layer = map.getLayer('Encounter') !== null;
+        console.log(map.getLayer('Encounter'))
         if (has_encounter_layer) {
 
             const encounter_tile = map.addTilesetImage('encounter', WORLD_ASSETS_KEYS.START_ENCOUNTER_ZONE)
             this.encounter_layer = map.createLayer('Encounter', encounter_tile, 0, 0)
-            this.encounter_layer.setAlpha(0.1).setDepth(3)
+            this.encounter_layer.setAlpha(0.0).setDepth(3)
         }
 
+        //transition layer
+        const has_transition_layer = map.getObjectLayer('Scene-Transitions') !== null
+        if (has_transition_layer) {
+            this.transition_layer = map.getObjectLayer('Scene-Transitions');
+        }
 
 
 
@@ -132,7 +140,11 @@ export class WorldScene extends Phaser.Scene {
                 spriteGridMovementFinishedCallback: () => {
                     this.handlePlayerMovementUpdate()
                 },
-                collidingCharacters: this.npcs
+                collidingCharacters: this.npcs,
+                transition_layer: this.transition_layer,
+                transition_callback: (name, id, is_building) => {
+                    this.handleTransitionCallback(name, id, is_building)
+                }
 
             }
         )
@@ -252,7 +264,7 @@ export class WorldScene extends Phaser.Scene {
             return
         }
 
-        const isInEncounterZone = this.encounter_layer.getTileAtWorldXY(this.#player.sprite.x, this.#player.sprite.y, true).index !== -1
+        const isInEncounterZone = this?.encounter_layer?.getTileAtWorldXY(this.#player.sprite.x, this.#player.sprite.y, true)?.index !== -1
         if (!isInEncounterZone) {
             return
         }
@@ -491,5 +503,39 @@ export class WorldScene extends Phaser.Scene {
                 this.scene.start(SCENE_KEYS.BATTLE_SCENE);
             })
         }, 1500)
+    }
+
+    handleTransitionCallback(name, id, is_building) {
+        this.#controls.lockInput = true
+        const map = this.make.tilemap({ key: `${name.toUpperCase()}_JSON` })
+
+
+        const transition_obj_layer = map.getObjectLayer('Scene-Transitions');
+
+        const transition_object = transition_obj_layer.objects.find((object) => {
+            const temp_transition_name = object.properties.find((property) => property.name === 'connects_to').value
+            const temp_transition_id = object.properties.find((property) => property.name === 'entrance_id').value
+
+            return temp_transition_id == id && temp_transition_name == map_store.player_position_info.map.map_name
+        })
+        console.log(transition_object)
+        let x = transition_object?.x
+        let y = transition_object?.y - tile_size
+
+        if (this.#player.direction == DIRECTION.UP) {
+            y -= tile_size
+        }
+        if (this.#player.direction == DIRECTION.DOWN) {
+            y += tile_size
+        }
+
+        map_store.player_position_info.coords = { x, y }
+
+        let new_map = encounter_map.find((map) => {
+            return map.map_name == name
+        })
+        map_store.player_position_info.map = new_map
+        map_store.current_map = new_map
+        this.scene.start(SCENE_KEYS.WORLD_SCENE)
     }
 }

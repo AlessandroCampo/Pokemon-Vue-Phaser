@@ -1,11 +1,15 @@
 import { CHARACTER_ASSET_KEYS } from "../scenes/assets-keys.mjs";
 import { Character } from "./character";
 import { DIRECTION } from "../utils/Controls.mjs";
+import { getTargetPosition } from "../utils/GridUtils.mjs";
+import { tile_size } from "../scenes/world-scene";
 
 export class Player extends Character {
     _directionQueue = []
     in_battle
     is_talking
+    transition_layer
+    transition_callback
 
     constructor(config) {
         super({
@@ -22,6 +26,8 @@ export class Player extends Character {
         });
         this.in_battle = false
         this.is_talking = false
+        this.transition_layer = config.transition_layer
+        this.transition_callback = config.transition_callback
 
     }
 
@@ -36,6 +42,29 @@ export class Player extends Character {
             // Start moving in the specified direction
             super.moveCharacter(direction);
             this.updateAnimation(direction);
+        }
+
+        if (!this.isMoving) {
+            const targetPosition = getTargetPosition({ x: this._phaserGameObject.x, y: this._phaserGameObject.y }, this._direction)
+
+            const nearby_transition = this.transition_layer.objects.find((object) => {
+                return object.x === targetPosition.x && object.y - tile_size === targetPosition.y
+            })
+            console.log(targetPosition)
+            console.log(nearby_transition)
+            if (!nearby_transition) {
+                return
+            }
+
+            const transition_name = nearby_transition.properties.find((property) => property.name === 'connects_to').value
+            const transition_id = nearby_transition.properties.find((property) => property.name === 'entrance_id').value
+            let is_building_transition = nearby_transition.properties.find((property) => property.name === 'is_building')?.value
+            if (!is_building_transition) {
+                is_building_transition = false
+            }
+            this.transition_callback(transition_name, transition_id, is_building_transition)
+
+
         }
     }
 

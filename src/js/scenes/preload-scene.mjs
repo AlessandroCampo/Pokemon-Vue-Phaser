@@ -38,25 +38,25 @@ export class PreloadScene extends Phaser.Scene {
         // socket.connect()
         // socket.emit('join_room', 'test_room')
         // socket.emit('starting_pokemon', my_pokemon)
-
+        map_store.preload_scene_istance = this
 
         all_items_array.forEach((item) => {
             this.load.image(item.name, item.img_path);
         })
 
         this.load.image(BATTLE_BACKGROUND_ASSET_KEYS.FOREST_NIGHT, '/backgrounds/background-1-night.jpg')
-        if (store.battle_type == 'trainer') {
-            store.oppo_trainer = store.generate_random_trainer()
-            store.oppo_pokemon = store.oppo_trainer.lead
-            store.oppo_bench = store.oppo_trainer.bench
+        // if (store.battle_type == 'trainer') {
+        //     store.oppo_trainer = store.generate_random_trainer()
+        //     store.oppo_pokemon = store.oppo_trainer.lead
+        //     store.oppo_bench = store.oppo_trainer.bench
 
-        }
-        if (store.my_pokemon) {
-            this.load.spritesheet(store.my_pokemon.images.back.key, store.my_pokemon.images.back.path, {
-                frameWidth: store.my_pokemon.images.back.frameWidth,
-                frameHeight: store.my_pokemon.images.back.frameHeight,
-            })
-        }
+        // }
+        // if (store.my_pokemon) {
+        //     this.load.spritesheet(store.my_pokemon.images.back.key, store.my_pokemon.images.back.path, {
+        //         frameWidth: store.my_pokemon.images.back.frameWidth,
+        //         frameHeight: store.my_pokemon.images.back.frameHeight,
+        //     })
+        // }
 
         // load all from team
         for (let i = 0;i < store.my_bench.length;i++) {
@@ -82,12 +82,13 @@ export class PreloadScene extends Phaser.Scene {
             this.load.image(`${map.map_name.toUpperCase()}_BACKGROUND`, `/maps/${map.map_name}.png`)
             this.load.image(`${map.map_name.toUpperCase()}_FOREGROUND`, `/maps/${map.map_name}-foreground.png`)
             this.load.tilemapTiledJSON(`${map.map_name.toUpperCase()}_JSON`, `/json/${map.map_name}.json`)
+            console.log(`${map.map_name.toUpperCase()}_JSON`)
         })
 
         // LOAD AUDIO ASSETS
 
         this.load.audio(AUDIO_ASSETS_KEY.WORLD, 'sounds/And-the-Journey-Begins.wav');
-        this.load.audio(AUDIO_ASSETS_KEY.TITLE, 'sounds/Title-Theme.wav');
+        this.load.audio(AUDIO_ASSETS_KEY.TITLE, 'sounds/Title-Theme.mp3');
         this.load.audio(AUDIO_ASSETS_KEY.BATTLE, 'sounds/Decisive-Battle.wav');
         this.load.audio(AUDIO_ASSETS_KEY.FLEE, 'sounds/flee.wav');
 
@@ -109,9 +110,13 @@ export class PreloadScene extends Phaser.Scene {
 
     }
     create() {
-
+        this.sound.play(AUDIO_ASSETS_KEY.TITLE, {
+            loop: true,
+            volume: 0.05
+        })
         this.createAnimations()
-        this.scene.start(SCENE_KEYS.WORLD_SCENE)
+
+        // this.scene.start(SCENE_KEYS.WORLD_SCENE)
     }
 
     createAnimations() {

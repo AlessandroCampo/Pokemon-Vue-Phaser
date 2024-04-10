@@ -428,7 +428,7 @@ let deino = new Pokemon({
     description: "It nests deep inside a cave. Food there is scarce, so Deino will sink its teeth into anything that moves and attempt to eat it.",
     types: ['dark', 'dragon'],
     moves: [deepClone(all_moves.focus_energy), deepClone(all_moves.tackle), deepClone(all_moves.dragon_breath)],
-    learnable_moves: [{ at_level: 8, move: { ...all_moves.bite } }, { at_level: 12, move: { ...all_moves.roar } }, { at_level: 15, move: { ...all_moves.headbutt } }],
+    learnable_moves: [{ at_level: 8, move: { ...all_moves.bite } }, { at_level: 15, move: { ...all_moves.headbutt } }],
     abilities: ['Hustle'],
     growth_rate: 'Medium Slow',
     height: 0.8,

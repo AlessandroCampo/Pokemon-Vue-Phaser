@@ -1646,6 +1646,9 @@ export const store = reactive({
         this.battle_scene_instance.scene.start(SCENE_KEYS.WORLD_SCENE)
     },
     generateSaveCopy(obj) {
+        if (!obj) {
+            return null
+        }
         let all_moves = []
         obj.moves.forEach(move => {
             all_moves.push({

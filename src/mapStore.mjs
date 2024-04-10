@@ -40,15 +40,6 @@ function deepClone(obj) {
 
 export let encounter_map = [{
     map_name: 'start',
-    possible_encounters: [
-        { pokemon: Pokemons.meowth, chance: 0.1 },
-        { pokemon: Pokemons.poochyena, chance: 0.2 },
-        { pokemon: Pokemons.ralts, chance: 0.05 },
-        { pokemon: Pokemons.wingull, chance: 0.2 },
-        { pokemon: Pokemons.zigzagoon, chance: 0.3 },
-        { pokemon: Pokemons.electrike, chance: 0.15 }
-    ],
-    level_average: 3,
     npcs_locations: [
         {
             npc: { ...all_npcs.merchant },
@@ -56,6 +47,7 @@ export let encounter_map = [{
                 x: 272, y: 304 - tile_size
             },
             battler: false,
+            path: null,
             already_talked_to: false,
             event: async function () {
                 if (store.my_pokemon) {
@@ -88,12 +80,29 @@ export let encounter_map = [{
             event: null,
             frame: 8,
             direction: DIRECTION.RIGHT
-
-
         },
+
+
+    ],
+    possible_encounters: [],
+    indoor: false
+},
+{
+    map_name: 'building-1',
+    possible_encounters: [
+    ],
+    npcs_locations: [
+    ],
+    indoor: true
+},
+{
+    map_name: 'building-2',
+    possible_encounters: [
+    ],
+    npcs_locations: [
         {
             npc: { ...all_npcs.npc_2 },
-            position: { x: 48, y: 320 - tile_size },
+            position: { x: 144, y: 80 - tile_size },
             path: null,
             battler: false,
             already_talked_to: false,
@@ -160,24 +169,49 @@ export let encounter_map = [{
             }
 
         },
-
-    ],
-    indoor: false
-},
-{
-    map_name: 'building-1',
-    possible_encounters: [
-    ],
-    npcs_locations: [
     ],
     indoor: true
-}
+},
+{
+    map_name: 'route-1',
+    npcs_locations: [
+        {
+            npc: { ...all_npcs.guard },
+            position: { x: 32, y: 80 - tile_size },
+            path: null,
+            battler: true,
+            event: null,
+            frame: 0,
+            direction: DIRECTION.DOWN
+        },
+        {
+            npc: { ...all_npcs.guard },
+            position: { x: 432, y: 48 - tile_size },
+            path: null,
+            battler: true,
+            event: null,
+            frame: 0,
+            direction: DIRECTION.DOWN
+        }
+    ],
+    possible_encounters: [
+        { pokemon: Pokemons.meowth, chance: 0.1 },
+        { pokemon: Pokemons.poochyena, chance: 0.2 },
+        { pokemon: Pokemons.ralts, chance: 0.05 },
+        { pokemon: Pokemons.wingull, chance: 0.2 },
+        { pokemon: Pokemons.zigzagoon, chance: 0.3 },
+        { pokemon: Pokemons.electrike, chance: 0.15 }
+    ],
+    level_average: 3,
+    indoor: false
+},
 
 
 ];
 
 export const map_store = reactive({
-    walking_speed: 100,
+    walking_speed: 200
+    ,
     text_queue: [],
     all_messages_read: true,
     encounter_frequency: 0.1,
@@ -190,6 +224,11 @@ export const map_store = reactive({
         direction: DIRECTION.DOWN,
         map: encounter_map[0]
     },
+    player_initial_position: {
+        coords: { x: 2 * tile_size, y: 22 * tile_size },
+        direction: DIRECTION.DOWN,
+        map: encounter_map[0]
+    },
     first_loading: true,
     player_istance: undefined,
     chracacter_istances: {},
@@ -198,6 +237,8 @@ export const map_store = reactive({
     show_menu: false,
     show_party_menu: false,
     show_inventory_menu: false,
+    show_title_scene: true,
+    preload_scene_istance: undefined,
     createSceneTransition: async function (scene) {
 
         // const skipSceneTransition = options?.skipSceneTransition || false;
@@ -315,16 +356,17 @@ export const map_store = reactive({
         store.info_text = 'All of your pokemons are back to perfect health'
         await store.delay(store.info_text.length * store.config.text_speed + 500)
     },
-    getPositionSaveObj() {
-        let player_x = this.player_position_info.coords.x || null
-        let player_y = this.player_position_info.coords.y || null
-        let map_name = this.player_position_info.map.map_name || null
+    getPositionSaveObj(new_game) {
+        let player_x = new_game ? this.player_initial_position.coords.x : this.player_position_info.coords.x
+        let player_y = new_game ? this.player_initial_position.coords.y : this.player_position_info.coords.y
+        let map_name = new_game ? 'start' : this.player_position_info.map.map_name
         const direction = 'DOWN'
         const player_position_info_copy = {
             coords: { x: player_x, y: player_y },
             map: map_name,
             direction
         }
+
         return player_position_info_copy
     },
     async updateDB() {
@@ -345,7 +387,7 @@ export const map_store = reactive({
         };
         await updateDoc(playerRef, infosToSave);
     },
-    async logUser() {
+    async logUser(new_game) {
         await new Promise((resolve, reject) => {
             signInAnonymously(auth)
                 .then(async (result) => {
@@ -354,17 +396,17 @@ export const map_store = reactive({
 
                     // Check if the document already exists
                     const docSnapshot = await getDoc(docRef);
-                    if (!docSnapshot.exists()) {
+                    if (!docSnapshot.exists() || new_game) {
                         // Document doesn't exist, proceed with saving initial game data
-                        const my_pokemon_copy = store.generateSaveCopy(store.my_pokemon);
+                        const my_pokemon_copy = store.generateSaveCopy(store.my_pokemon) || null;
                         await setDoc(docRef, {
                             uid: user.uid,
                             my_pokemon: my_pokemon_copy,
                             username: store.player_info.name,
-                            position: map_store.getPositionSaveObj(),
+                            position: map_store.getPositionSaveObj(new_game),
                             my_bench: [],
                             my_items: [],
-                            new_game: map_store.first_loading
+
                         });
                     }
 
@@ -372,6 +414,7 @@ export const map_store = reactive({
                     resolve(user);
                 })
                 .catch((error) => {
+                    window.alert("You don't have any saved data")
                     console.error("Error signing in anonymously:", error);
                     reject(error);
                 });
@@ -384,8 +427,14 @@ export const map_store = reactive({
 
                     const uid = user.uid;
                     const player_unsub = onSnapshot(doc(db, "Players", uid), (doc) => {
+
                         this.fetched_data = doc.data();
+                        let saved_map = encounter_map.find((map) => {
+                            return map.map_name == this.fetched_data.position.map
+                        })
                         this.player_position_info.coords = this.fetched_data.position.coords;
+                        this.player_position_info.map = saved_map
+                        this.current_map = saved_map
                         store.my_pokemon = this.retrivePokemonData(this.fetched_data.my_pokemon)
                         resolve()
 
@@ -405,6 +454,16 @@ export const map_store = reactive({
                 unsubscribe();
             });
         });
+    },
+    async startNewGame() {
+        store.my_pokemon = null
+        store.my_bench = []
+        store.my_items = []
+        store.level_cap = 15
+        store.player_info.name = prompt("Whats  your name")
+        this.player_position_info = { ...this.player_initial_position }
+        await map_store.logUser(true);
+
     },
     retrivePokemonData(pkmn) {
         if (!pkmn) return null

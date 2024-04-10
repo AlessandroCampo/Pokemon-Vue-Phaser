@@ -80,7 +80,7 @@ export class Character {
         const idleFrame = this._phaserGameObject.anims.currentAnim?.frames[0].frame.name;
         this._phaserGameObject.anims.stop()
         if (idleFrame == 0) {
-            this._phaserGameObject.setFrame(this.getIdleFrame()[0])
+            this._phaserGameObject.setFrame(this?.getIdleFrame())
         }
         if (!idleFrame) {
             return

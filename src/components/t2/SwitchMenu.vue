@@ -1,7 +1,7 @@
 <template>
     <div class="bench-container">
         <div class="bench" :class="index == active_voice ? 'active' : ''" v-for="(pokemon, index) in store.my_bench"
-            :key="index" @click="switchPokemon(pokemon)">
+            :key="index">
             <img :src="`/pokemons/${pokemon.name.toLowerCase()}.gif`" alt="" class="sprite">
             <div class="type-name">
                 <div>
