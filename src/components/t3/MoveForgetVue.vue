@@ -6,7 +6,7 @@
                     v-for="(move, index) in store.forgettign_pokemon.moves" :key="move.name" :style="{
                         backgroundColor: getMoveBackgroundColor(move.type)
 
-                    }" @click="store.useMove(move, store.forgettign_pokemon, store.oppo_pokemon)">
+                    }">
                     <div class="type-name">
                         <img :src="`/icons/${move.type}.png`" alt="" class="icon">
                         <div>
@@ -75,7 +75,7 @@ import { ref, onMounted, onBeforeUnmount } from 'vue'
 const active_voice = ref(0)
 
 onMounted(() => {
-    console.log('mounted')
+
     window.addEventListener('keydown', handleMovesInput)
 })
 

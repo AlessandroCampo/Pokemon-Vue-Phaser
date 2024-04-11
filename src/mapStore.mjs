@@ -96,6 +96,40 @@ export let encounter_map = [{
     indoor: true
 },
 {
+    map_name: 'pokestop',
+    possible_encounters: [
+
+    ],
+    npcs_locations: [
+        {
+            npc: { ...all_npcs.nurse },
+            position: { x: 128, y: 80 - tile_size },
+            path: null,
+            battler: false,
+            event: async function () {
+                if (store.my_pokemon) {
+                    await map_store.healAllPokemons()
+                } else {
+                    store.menu_state = 'text'
+                    store.info_text = 'Oh, you have no Pokemons yet, never mind'
+                    await store.delay(store.info_text.length * store.config.text_speed + 500)
+                }
+            },
+            frame: 0,
+            direction: DIRECTION.DOWN
+        }
+    ],
+    indoor: true
+},
+{
+    map_name: 'city',
+    possible_encounters: [
+    ],
+    npcs_locations: [
+    ],
+    indoor: false
+},
+{
     map_name: 'building-2',
     possible_encounters: [
     ],
@@ -196,11 +230,13 @@ export let encounter_map = [{
     ],
     possible_encounters: [
         { pokemon: Pokemons.meowth, chance: 0.1 },
+
         { pokemon: Pokemons.poochyena, chance: 0.2 },
         { pokemon: Pokemons.ralts, chance: 0.05 },
         { pokemon: Pokemons.wingull, chance: 0.2 },
         { pokemon: Pokemons.zigzagoon, chance: 0.3 },
-        { pokemon: Pokemons.electrike, chance: 0.15 }
+        { pokemon: Pokemons.electrike, chance: 0.1 },
+        { pokemon: Pokemons.starly, chance: 0.05 },
     ],
     level_average: 3,
     indoor: false
@@ -232,7 +268,7 @@ export const map_store = reactive({
     first_loading: true,
     player_istance: undefined,
     chracacter_istances: {},
-    starter_choices: [deepClone(Pokemons.timburr), deepClone(Pokemons.deino), deepClone(Pokemons.starly)],
+    starter_choices: [deepClone(Pokemons.timburr), deepClone(Pokemons.deino), deepClone(Pokemons.gastly)],
     fetched_data: {},
     show_menu: false,
     show_party_menu: false,

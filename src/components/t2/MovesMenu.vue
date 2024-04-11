@@ -4,7 +4,7 @@
             :key="move.name" :style="{
                 backgroundColor: getMoveBackgroundColor(move.type)
 
-            }" @click="store.useMove(move, store.my_pokemon, store.oppo_pokemon)">
+            }">
             <div class="type-name">
                 <img :src="`/icons/${move.type}.png`" alt="">
                 <div>
@@ -51,7 +51,7 @@ onBeforeUnmount(() => {
 })
 
 const handleMovesInput = async function (e) {
-    console.log('clicked')
+
 
     if (store.menu_state !== 'moves') {
 
@@ -59,7 +59,7 @@ const handleMovesInput = async function (e) {
     }
 
     if (e.key == 'Enter') {
-        console.log('enter')
+
         store.battle_events = [];
         // Determine AI decision and selected moves
         const ai_decided_swap = store.aiWantsSwap();
@@ -145,12 +145,12 @@ const handleMovesInput = async function (e) {
     else if (e.key == 'ArrowUp') {
         active_voice.value--
         if (active_voice.value < 0) active_voice.value = store.my_pokemon.moves.length - 1
-        console.log(active_move.value.name)
+
     } else if (e.key == 'ArrowDown') {
         active_voice.value++
         if (active_voice.value > store.my_pokemon.moves.length - 1) active_voice.value = 0
     } else if (e.key == 'y') {
-        console.log(e.key)
+
         show_details.value = !show_details.value
     }
     else {

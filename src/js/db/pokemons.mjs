@@ -112,9 +112,6 @@ class Pokemon {
 
         // Create and configure sprite
         let starting_offset = this.player_controlled ? -500 : +500;
-        if (this.levitates) {
-            position.y -= 20
-        }
         this.sprite = scene.add.sprite(position.x + starting_offset, position.y + 10, asset_key);
         this.sprite.setOrigin(0.5, 1); // Set anchor to bottom center
         this.setPropScale()
@@ -505,7 +502,7 @@ let gastly = new Pokemon({
     description: "Its body is made of gas. Despite lacking substance, it can envelop an opponent of any size and cause suffocation.",
     types: ['ghost', 'poison'],
     moves: [deepClone(all_moves.confuse_ray), deepClone(all_moves.lick), deepClone(all_moves.hypnosis)],
-    learnable_moves: [],
+    learnable_moves: [{ at_level: 8, move: { ...all_moves.protect } }, { at_level: 12, move: { ...all_moves.confusion } }],
     abilities: ['Levitate'],
     growth_rate: 'Medium Slow',
     height: 1.3,

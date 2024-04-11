@@ -40,4 +40,13 @@ let guard = {
     scale: 0.5,
 }
 
-export const all_npcs = { npc_1, npc_2, merchant, guard }
+
+let nurse = {
+    dialouge: ['Hey, I will heal all  of your pokemons, wait a second'],
+    name: 'nurse',
+    frameWidth: 32,
+    frameHeight: 48,
+    scale: 0.5,
+}
+
+export const all_npcs = { npc_1, npc_2, merchant, guard, nurse }

@@ -51,15 +51,15 @@ export class BattleScene extends Phaser.Scene {
                 frameHeight: member.images.back.frameHeight,
             })
 
-            console.log(member.sprite)
+
             member.moves.forEach((move) => {
                 this.load.audio(move.name, `/sounds/moves/${move.name}.mp3`)
             })
         })
         if (store.battle_type == 'trainer') {
-            console.log(store.oppo_trainer.name)
+
             this.load.image(`trainer_${store.oppo_trainer.name}`, `/trainers/${store.oppo_trainer.name}.png`)
-            console.log(store.oppo_trainer.name)
+
             store.oppo_bench.forEach((member) => {
                 store.calcStats(member)
                 member.player_controlled = false
@@ -119,7 +119,7 @@ export class BattleScene extends Phaser.Scene {
         store.my_bench.forEach((member, index) => {
 
 
-            console.log(member.name)
+
             member.drawSprite(this);
             let new_anim_key = `ally_${member.name}_${index}_anim`;
             createAnimation(new_anim_key, this.anims.generateFrameNumbers(member.images.back.key, { start: 0, end: member.images.back.frames - 1 }), 20);
@@ -194,7 +194,7 @@ export class BattleScene extends Phaser.Scene {
     }
 
     async changeOpponentPokemonSprite(newPokemon) {
-        console.log(newPokemon)
+
         // when a pokemon is switched out, all his stats are restored, and he heals from confusion if he is
         store.oppo_pokemon.resetStats()
         store.oppo_pokemon.confused = false
@@ -224,7 +224,7 @@ export class BattleScene extends Phaser.Scene {
     cleanupAnimations() {
         // Iterate over existing animations and destroy them
         Object.keys(this.anims.anims).forEach(key => {
-            console.log(key + 'removed')
+
             this.anims.remove(key);
         });
     }

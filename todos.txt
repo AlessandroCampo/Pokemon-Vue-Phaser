@@ -46,3 +46,14 @@ options, todo, title screen, audio, move audio effect, pokemon evolution
 check evolution and  learned moves after battle
 
 trainers reset after save and teaching moves tow ild pokemon  fix protect bug
+bug: double attack after second flee attempt failed
+pokemons duplicating in battle bench
+Pokemon switched after faint by AI doenst reflect infotext
+remove click support, check move details
+intro scene 
+imrpove ui 
+improve maps
+buy\sell items
+store pokemons
+move animations?
+recycle common buildings

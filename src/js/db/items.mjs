@@ -63,7 +63,7 @@ export class Ball extends Item {
     }
 
     use() {
-        console.log(`Throw ${this.name} at a Pokémon to catch it.`);
+
     }
 
     async drawAndThrowAnimation(battleScene) {

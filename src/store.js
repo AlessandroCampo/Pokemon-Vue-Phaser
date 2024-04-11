@@ -88,7 +88,7 @@ export const store = reactive({
     learnable_move: null,
 
     useMove: async function (move, caster, target, player_attack) {
-
+        this.info_text = ''
         this.menu_state = 'text';
         //return  early if pokemon  is fainted
         if (caster.fainted || target.fainted) return
@@ -461,7 +461,7 @@ export const store = reactive({
         pokemon.sp_atk.effective = pokemon.sp_atk.current
         pokemon.sp_def.effective = pokemon.sp_def.current
         pokemon.speed.effective = pokemon.speed.current
-        console.log(pokemon)
+
     },
 
     calcDamage: function (move, caster, target, crhit, not_simulation) {
@@ -1512,7 +1512,7 @@ export const store = reactive({
         //cancel later
 
         // trainers can have random pokmeons from a predefined pool
-        const possible_trainer_pokemons = [Pokemons.zigzagoon, Pokemons.ralts, Pokemons.wingull, Pokemons.poochyena, Pokemons.electrike, Pokemons.meowth]
+        const possible_trainer_pokemons = [Pokemons.zigzagoon, Pokemons.ralts, Pokemons.wingull, Pokemons.poochyena, Pokemons.electrike, Pokemons.meowth, Pokemons.starly]
         //trainers pokemons can hold random items
         const possible_trainer_items = [all_items.lum_berry, all_items.sitrus_berry]
         const my_pokemons = [];
@@ -1534,6 +1534,9 @@ export const store = reactive({
         random_trainer_lead.level = Math.floor(Math.random() * 3) + my_pokemons_avg_level - 2;
         for (let i = 0;i < store.my_bench.length;i++) {
             let rand_pokemon = deepClone(possible_trainer_pokemons[Math.floor(Math.random() * possible_trainer_pokemons.length)])
+            if (!rand_pokemon) {
+                rand_pokemon = deepClone(Pokemons.zigzagoon)
+            }
 
             rand_pokemon.level = Math.floor(Math.random() * 3) + my_pokemons_avg_level - 2;
             random_trainer_bench.push(rand_pokemon)
@@ -1719,7 +1722,7 @@ export const store = reactive({
                     if (pkmn.moves.length < 4) {
                         pkmn.moves.push(move.move)
                         pkmn.learnable_moves.splice(index, 1)
-                        console.log(move)
+
                         this.info_text = `${pkmn.name} has learned ${move.move.name}`
                         resolve(true)
                     } else {

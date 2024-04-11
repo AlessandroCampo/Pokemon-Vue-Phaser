@@ -50,11 +50,11 @@ onBeforeUnmount(() => {
 })
 
 const handleMovesInput = async function (e) {
-    console.log(e.key)
+
 
     if (e.key == 'Enter') {
         if (!show_start_menu.value) {
-            console.log('yo')
+
             show_start_menu.value = true
             return
         } else {
@@ -66,9 +66,9 @@ const handleMovesInput = async function (e) {
         active_voice.value--
         if (active_voice.value < 0) {
             active_voice.value = menu_voices.length - 1
-            console.log('-1')
+
         }
-        console.log(active_voice.value)
+
 
     } else if (e.key == 'ArrowDown') {
         active_voice.value++

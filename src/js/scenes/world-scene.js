@@ -84,10 +84,11 @@ export class WorldScene extends Phaser.Scene {
         // this.cameras.main.centerOn(x, y)
 
         const map = this.make.tilemap({ key: `${map_store.current_map.map_name.toUpperCase()}_JSON` })
-        console.log(map)
+
 
         const collision_tiles = map.addTilesetImage('collision', WORLD_ASSETS_KEYS.START_COLLISION)
         const collision_layer = map.createLayer('Collision', collision_tiles, 0, 0)
+        console.log(collision_layer)
 
         // create layr for interactive objects, if level has one
         const has_sign_layer = map.getObjectLayer('Sign') !== null;
@@ -104,7 +105,7 @@ export class WorldScene extends Phaser.Scene {
 
 
         const has_encounter_layer = map.getLayer('Encounter') !== null;
-        console.log(map.getLayer('Encounter'))
+
         if (has_encounter_layer) {
 
             const encounter_tile = map.addTilesetImage('encounter', WORLD_ASSETS_KEYS.START_ENCOUNTER_ZONE)
@@ -208,7 +209,7 @@ export class WorldScene extends Phaser.Scene {
             }
 
         }
-        if (this.#controls.wasSpaceKeyPressed() && !this.#player.isMoving) {
+        if (this.#controls.wasEnterKeyPressed() && !this.#player.isMoving) {
             this.handlePlayerInteraction()
         }
         this.#player.update(time)
@@ -224,7 +225,7 @@ export class WorldScene extends Phaser.Scene {
         if (npc_wants_battle) {
 
             npc_wants_battle.path = [this.#player.getPosition()]
-            console.log(target_position)
+
             npc_wants_battle.no_delay_movement = true
             npc_wants_battle.battler = false
             npc_wants_battle.obj_ref.battler = false
@@ -238,7 +239,7 @@ export class WorldScene extends Phaser.Scene {
             if (npc_wants_battle.dialogue) {
                 map_store.add_new_message_to_queue(npc_wants_battle.dialogue[0])
             }
-            console.log(npc_wants_battle)
+
             this.startTrainerBattle(npc_wants_battle.obj_ref.npc.name)
 
 
@@ -292,6 +293,7 @@ export class WorldScene extends Phaser.Scene {
     async handlePlayerInteraction() {
         const { x, y } = this.#player.sprite;
         const target_position = getTargetPosition({ x, y }, this.#player.direction);
+        console.log(target_position)
 
 
 
@@ -316,6 +318,11 @@ export class WorldScene extends Phaser.Scene {
         }
 
         const nearbyNPC = this.npcs.find((npc) => {
+            console.log(npc)
+            if (npc.assetKey === 'nurse') {
+                console.log(npc.sprite.y)
+                return npc.sprite.x === target_position.x && npc.sprite.y === target_position.y - 32
+            }
             return npc.sprite.x === target_position.x && npc.sprite.y === target_position.y
         })
         if (nearbyNPC) {
@@ -405,7 +412,7 @@ export class WorldScene extends Phaser.Scene {
             this.npcs.push(npc_istance)
 
             npc_istance._direction = el.direction
-            console.log(npc_istance.direction)
+
             npc_istance.update()
 
 
@@ -482,7 +489,7 @@ export class WorldScene extends Phaser.Scene {
     }
 
     startTrainerBattle(name) {
-        console.log(name)
+
         setTimeout(() => {
             this.cameras.main.fadeOut(2000)
             this.cameras.main.once(Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE, () => {
@@ -518,9 +525,10 @@ export class WorldScene extends Phaser.Scene {
 
             return temp_transition_id == id && temp_transition_name == map_store.player_position_info.map.map_name
         })
-        console.log(transition_object)
+        console.log(name, id)
         let x = transition_object?.x
         let y = transition_object?.y - tile_size
+        console.log(transition_object)
 
         if (this.#player.direction == DIRECTION.UP) {
             y -= tile_size

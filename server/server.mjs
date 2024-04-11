@@ -11,7 +11,7 @@ const io = new Server(httpServer, {
 });
 
 io.on("connection", (socket) => {
-    console.log(`Socket connected: ${socket.id}`);
+
 
     socket.on('starting_pokemon', (pokemon) => {
         // Emit the event to all sockets in the room except the emitting socket
@@ -19,7 +19,7 @@ io.on("connection", (socket) => {
     });
 
     socket.on('join_room', (room) => {
-        console.log(`Socket ${socket.id} joining room: ${room}`);
+
         socket.join(room);
         socket.room = room;
     });

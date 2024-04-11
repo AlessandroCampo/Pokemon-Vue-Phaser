@@ -54,7 +54,7 @@ let selecting_target = ref(false)
 //TODO, ITEM USAGE
 
 onMounted(() => {
-    console.log('mounted')
+
     window.addEventListener('keydown', handleMovesInput)
 })
 
@@ -68,7 +68,7 @@ const useItem = async function (item, target) {
         return
     }
     if (!item.can_be_used_in_battle) {
-        console.log('cant be used in battle')
+
         store.displayInfoText(`${item.name} cannot be used in battle...`)
         return
     }
@@ -168,12 +168,12 @@ const handleMovesInput = async function (e) {
 
         }
         if (selected_item.type == 'ball') {
-            console.log('its a ball')
+
             await useItem(selected_item);
         } else {
-            console.log('thats not a ball')
+
             let target = await targetSelect()
-            console.log(target)
+
             if (target) {
                 await useItem(selected_item, target);
             }

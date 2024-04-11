@@ -82,7 +82,7 @@ export class PreloadScene extends Phaser.Scene {
             this.load.image(`${map.map_name.toUpperCase()}_BACKGROUND`, `/maps/${map.map_name}.png`)
             this.load.image(`${map.map_name.toUpperCase()}_FOREGROUND`, `/maps/${map.map_name}-foreground.png`)
             this.load.tilemapTiledJSON(`${map.map_name.toUpperCase()}_JSON`, `/json/${map.map_name}.json`)
-            console.log(`${map.map_name.toUpperCase()}_JSON`)
+
         })
 
         // LOAD AUDIO ASSETS

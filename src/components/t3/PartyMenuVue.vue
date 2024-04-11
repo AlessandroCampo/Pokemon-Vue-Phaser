@@ -99,7 +99,7 @@ const active_pokemon = computed(() => {
 const sub_menu_voices = [
     {
         label: 'SET ACTIVE', callback: () => {
-            console.log('setting active')
+
             if (show_dialogue.value == null) {
                 return;
             }
@@ -131,7 +131,7 @@ const sub_menu_voices = [
 ]
 
 onMounted(() => {
-    console.log('mounted')
+
     window.addEventListener('keydown', handleMovesInput)
 })
 

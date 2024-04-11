@@ -104,7 +104,6 @@ const sub_menu_voices = [
             }
             let target = await targetSelect()
 
-            console.log(chosen_item.name, target.name)
 
             if (target) {
                 useItem(chosen_item, target)
@@ -121,7 +120,7 @@ const sub_menu_voices = [
             let chosen_item = store.my_items[active_voice.value]
             let target = await targetSelect()
 
-            console.log(chosen_item.name, target.name)
+
 
             if (target) {
                 giveItem(chosen_item, target)
@@ -136,7 +135,7 @@ const sub_menu_voices = [
 ]
 
 onMounted(() => {
-    console.log('mounted')
+
     window.addEventListener('keydown', handleMovesInput)
 })
 
@@ -145,7 +144,7 @@ onBeforeUnmount(() => {
 })
 
 const handleMovesInput = async function (e) {
-    console.log(e.key)
+
     if (!map_store.show_inventory_menu || store.forgettign_pokemon) {
         return;
     }
@@ -177,7 +176,7 @@ const handleMovesInput = async function (e) {
     } else if (e.key == 'ArrowDown') {
         if (show_dialogue.value == null) {
             active_voice.value++;
-            console.log(active_voice.value)
+
             if (active_voice.value > store.my_items.length - 1) active_voice.value = 0;
         } else {
             sub_menu_active_voice.value++;
@@ -276,7 +275,7 @@ const giveItem = function (item, target) {
 
 const targetSelect = function () {
     // active_voice.value = null
-    console.log(party.value)
+
     window.removeEventListener('keydown', handleMovesInput)
 
     return new Promise(resolve => {

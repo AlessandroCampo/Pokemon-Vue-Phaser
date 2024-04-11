@@ -331,7 +331,7 @@ const water_gun = new Move({
 })
 
 const withdraw = new Move({
-    name: 'Withdraw ',
+    name: 'Withdraw',
     category: 'status',
     type: 'water',
     power: null,
