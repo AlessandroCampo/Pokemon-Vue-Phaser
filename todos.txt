@@ -43,6 +43,6 @@ improve npc interaction
 rare-candy type item
 confirmation prompt (Are you sure you want to forget)
 options, todo, title screen, audio, move audio effect, pokemon evolution
-
+check evolution and  learned moves after battle
 
 trainers reset after save and teaching moves tow ild pokemon  fix protect bug

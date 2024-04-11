@@ -243,11 +243,19 @@ const useItem = async function (item, target) {
             store.calcStats(target)
 
             menu_info_text.value = `${target.name} has reached level ${target.level}!`
-            let learned_move = await store.checkLearnableMovesOrEvolutions(target)
+            let evolved = await store.checkPossibleEvolution(target)
+            if (evolved) {
+                store.evolvePokemon(target, target.evolution.into)
+            }
+
+            let learned_move = await store.checkLearnableMoves(target)
+
             if (learned_move && store.info_text !== '') {
                 await store.delay(500)
                 menu_info_text.value = store.info_text
             }
+
+
             menuReset()
             return
         }

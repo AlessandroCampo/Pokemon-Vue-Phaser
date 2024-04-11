@@ -232,7 +232,7 @@ export const map_store = reactive({
     first_loading: true,
     player_istance: undefined,
     chracacter_istances: {},
-    starter_choices: [deepClone(Pokemons.timburr), deepClone(Pokemons.deino), deepClone(Pokemons.gastly)],
+    starter_choices: [deepClone(Pokemons.timburr), deepClone(Pokemons.deino), deepClone(Pokemons.starly)],
     fetched_data: {},
     show_menu: false,
     show_party_menu: false,

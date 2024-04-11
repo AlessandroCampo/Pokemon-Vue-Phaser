@@ -112,6 +112,9 @@ class Pokemon {
 
         // Create and configure sprite
         let starting_offset = this.player_controlled ? -500 : +500;
+        if (this.levitates) {
+            position.y -= 20
+        }
         this.sprite = scene.add.sprite(position.x + starting_offset, position.y + 10, asset_key);
         this.sprite.setOrigin(0.5, 1); // Set anchor to bottom center
         this.setPropScale()
@@ -721,7 +724,7 @@ let torchic = new Pokemon({
             frames: 40
         }
     },
-    held_item: all_items.lum_berry,
+    held_item: null,
     sounds: 'assets/sounds/torchic-cry.ogg'
 });
 
@@ -794,7 +797,7 @@ let treecko = new Pokemon({
             frames: 25
         }
     },
-    held_item: all_items.lum_berry,
+    held_item: null,
     sounds: 'assets/sounds/treeko-cry.ogg'
 });
 
@@ -1606,6 +1609,155 @@ let electrike = new Pokemon({
     stat_total: 290
 });
 
+let staravia = new Pokemon({
+    name: "Staravia",
+    description: "Recognizing their own weakness, they always live in a group. When alone, a Staravia cries noisily.",
+    types: ['flying'],
+    height: 0.6,
+    weight: 15.5,
+    moves: [],
+    learnable_moves: [],
+    abilities: ['Keen Eye'],
+    growth_rate: 'Medium Slow',
+    level: 14,
+    catch_rate: 120,
+    pokemon_number: 397,
+    hp: {
+        base: 55,
+        max: 55,
+        current: 55
+    },
+    xp: {
+        base: 119,
+        total: 0
+    },
+    atk: {
+        base: 75,
+        current: 75,
+        effective: 75,
+        stage: 0
+    },
+    def: {
+        base: 50,
+        current: 50,
+        effective: 50,
+        stage: 0
+    },
+    sp_atk: {
+        base: 40,
+        current: 40,
+        effective: 40,
+        stage: 0
+    },
+    sp_def: {
+        base: 40,
+        current: 40,
+        effective: 40,
+        stage: 0
+    },
+    speed: {
+        base: 80,
+        current: 80,
+        effective: 80,
+        stage: 0
+    },
+    images: {
+        front: {
+            path: base_path + 'staravia-front.png',
+            key: 'staravia-front',
+            frameWidth: 335,
+            frameHeight: 310,
+            frames: 10
+        },
+        back: {
+            path: base_path + 'staravia-back.png',
+            key: 'staravia-back',
+            frameWidth: 433,
+            frameHeight: 410,
+            frames: 10
+        }
+    },
+    sounds: 'assets/sounds/staravia-cry.ogg',
+    held_item: null,
+    stat_total: 340,
+    leviates: true
+});
+
+let starly = new Pokemon({
+    name: "Starly",
+    description: "They flock around mountains and fields, chasing after bug Pokémon. Their singing is noisy and annoying.",
+    types: ['flying'],
+    height: 0.3,
+    weight: 2,
+    moves: [deepClone(all_moves.growl), deepClone(all_moves.quick_attack), deepClone(all_moves.tackle)],
+    learnable_moves: [{ at_level: 9, move: { ...all_moves.wing_attack } }, { at_level: 13, move: { ...all_moves.dobule_team } }],
+    abilities: ['Keen Eye'],
+    growth_rate: 'Medium Slow',
+    level: 5,
+    catch_rate: 255,
+    pokemon_number: 396,
+    evolution: { at_level: 14, into: deepClone(staravia) },
+    hp: {
+        base: 40,
+        max: 40,
+        current: 40
+    },
+    xp: {
+        base: 49,
+        total: 0
+    },
+    atk: {
+        base: 55,
+        current: 55,
+        effective: 55,
+        stage: 0
+    },
+    def: {
+        base: 30,
+        current: 30,
+        effective: 30,
+        stage: 0
+    },
+    sp_atk: {
+        base: 30,
+        current: 30,
+        effective: 30,
+        stage: 0
+    },
+    sp_def: {
+        base: 30,
+        current: 30,
+        effective: 30,
+        stage: 0
+    },
+    speed: {
+        base: 60,
+        current: 60,
+        effective: 60,
+        stage: 0
+    },
+    images: {
+        front: {
+            path: base_path + 'starly-front.png',
+            key: 'starly-front',
+            frameWidth: 249,
+            frameHeight: 310,
+            frames: 15
+        },
+        back: {
+            path: base_path + 'starly-back.png',
+            key: 'starly-back',
+            frameWidth: 334,
+            frameHeight: 410,
+            frames: 15
+        }
+    },
+    sounds: 'assets/sounds/starly-cry.ogg',
+    held_item: null,
+    stat_total: 245,
+    leviates: true
+});
+
 export const Pokemons = {
-    treecko, torchic, mudkip, aggron, nosepass, lunatone, lileep, wingull, ralts, zigzagoon, poochyena, electrike, meowth, timburr, gastly, deino
+    treecko, torchic, mudkip, aggron, nosepass, lunatone, lileep, wingull, ralts, zigzagoon, poochyena, electrike, meowth, timburr, gastly, deino, starly, staravia
 }

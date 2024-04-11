@@ -91,6 +91,8 @@ export class PreloadScene extends Phaser.Scene {
         this.load.audio(AUDIO_ASSETS_KEY.TITLE, 'sounds/Title-Theme.mp3');
         this.load.audio(AUDIO_ASSETS_KEY.BATTLE, 'sounds/Decisive-Battle.wav');
         this.load.audio(AUDIO_ASSETS_KEY.FLEE, 'sounds/flee.wav');
+        this.load.audio('evolution-sound', 'sounds/evolution.mp3');
+
 
 
 

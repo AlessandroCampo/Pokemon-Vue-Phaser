@@ -43,6 +43,9 @@
         </div>
         <div class="active-info different-font">
             <span><strong>Name</strong>: {{ active_pokemon?.name }}</span>
+            <p>
+                {{ active_pokemon?.description }}
+            </p>
             <span><strong>Level</strong>: {{ active_pokemon?.level }}</span>
             <span><strong>Height</strong>: {{ active_pokemon?.height }}m</span>
             <span><strong>Weight</strong>: {{ active_pokemon?.height }}kg</span>

@@ -178,7 +178,7 @@ export class WorldScene extends Phaser.Scene {
             map_store.show_menu = true
         }
 
-        if (map_store.show_menu) {
+        if (map_store.show_menu || store.forgettign_pokemon) {
 
             this.#player.update(time)
             return

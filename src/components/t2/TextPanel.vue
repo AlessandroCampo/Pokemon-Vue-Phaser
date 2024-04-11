@@ -117,7 +117,7 @@ function showOptionsMenu(e) {
     width: 100vw;
     position: absolute;
     padding: 50px;
-    z-index: 3;
+    z-index: 4;
     bottom: 0%;
     background-color: rgba(18, 18, 18, 0.5);
     color: white;

@@ -30,9 +30,10 @@ import { getAuth, signInAnonymously, onAuthStateChanged } from "firebase/auth";
 import { doc, setDoc, onSnapshot } from 'firebase/firestore'
 import { auth, db } from './firebase';
 import { onMounted } from 'vue'
+import gsap from 'gsap'
 
 onMounted(() => {
-
+  store.menu_state = 'hidden'
 });
 
 

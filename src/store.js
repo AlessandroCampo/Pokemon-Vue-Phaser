@@ -7,9 +7,10 @@ import { all_moves } from './js/db/moves.mjs';
 import { encounter_map } from './mapStore.mjs';
 import { map_store } from './mapStore.mjs';
 import { SCENE_KEYS } from './js/scenes/scene-keys.mjs';
-import { WORLD_ASSETS_KEYS } from './js/scenes/assets-keys.mjs';
+import gsap from 'gsap';
+import { AUDIO_ASSETS_KEY, WORLD_ASSETS_KEYS } from './js/scenes/assets-keys.mjs';
 
-function deepClone(obj) {
+export function deepClone(obj) {
     if (obj === null || typeof obj !== 'object') {
         return obj;
     }
@@ -33,6 +34,22 @@ function deepClone(obj) {
 
     return clone;
 }
+
+function deepMerge(target, source) {
+    for (let key in source) {
+        if (source[key] instanceof Object) {
+            if (Array.isArray(source[key])) {
+                target[key] = source[key].map(item => deepClone(item));
+            } else {
+                target[key] = deepMerge(target[key] || {}, source[key]);
+            }
+        } else {
+            target[key] = source[key];
+        }
+    }
+    return target;
+}
+
 
 export const store = reactive({
     my_pokemon: null,
@@ -444,6 +461,7 @@ export const store = reactive({
         pokemon.sp_atk.effective = pokemon.sp_atk.current
         pokemon.sp_def.effective = pokemon.sp_def.current
         pokemon.speed.effective = pokemon.speed.current
+        console.log(pokemon)
     },
 
     calcDamage: function (move, caster, target, crhit, not_simulation) {
@@ -687,7 +705,7 @@ export const store = reactive({
         });
     },
 
-    // SECTION FOR AI DECISION MAKING````○
+    // SECTION FOR AI DECISION MAKING````○`
     calcAiBestMove() {
         let selected_move = undefined;
         let most_damage_move = this.highestAiDmgMove(this.oppo_pokemon);
@@ -1693,7 +1711,8 @@ export const store = reactive({
         }
         return item_copy
     },
-    async checkLearnableMovesOrEvolutions(pkmn) {
+    async checkLearnableMoves(pkmn) {
+
         return new Promise(resolve => {
             pkmn.learnable_moves.forEach(async (move, index) => {
                 if (move.at_level <= pkmn.level) {
@@ -1715,13 +1734,99 @@ export const store = reactive({
             })
         })
     },
-    async forgetMove(pkmn, learnable_move) {
+    async checkPossibleEvolution(pkmn) {
+        if (pkmn.evolution && pkmn.evolution.at_level <= pkmn.level) {
+            let old_pokemon = { ...pkmn }
+            let new_pkmn = pkmn.evolution.into
+            await this.playPokemonEvolutonScene(old_pokemon, new_pkmn)
+            return true
+        } else {
+            return false
+        }
+    },
+    async playPokemonEvolutonScene(old_pokemon, evolved_pokemon) {
+        map_store.show_inventory_menu = false
+        map_store.show_menu = false
+        return new Promise(async resolve => {
+            let evolution_scene = document.createElement('div')
+            let app = document.getElementById('app')
+            let pokemon_img = new Image()
+            store.menu_state = 'text'
+            store.info_text = `Wait...${old_pokemon.name} is evolving...`
 
+            map_store.world_scene_istance.sound.stopAll();
+            map_store.world_scene_istance.sound.play('evolution-sound', {
+                loop: false,
+                volume: 0.1
+            })
+            pokemon_img.src = `public/pokemons/${old_pokemon.name}.gif`
+            gsap.set(pokemon_img, { scale: 1.5 })
+            evolution_scene.classList.add('evolution-scene')
+            app.append(evolution_scene)
+            evolution_scene.append(pokemon_img)
+            await this.delay(2000)
+            gsap.to(pokemon_img, {
+                scale: 0.1,
+                duration: 0.7,
+                repeat: 16,
+                filter: 'brightness(5)',
+                yoyo: true,
+                onComplete: () => {
+                    pokemon_img.src = `public/pokemons/${evolved_pokemon.name}.gif`;
+                    gsap.to(pokemon_img, {
+                        scale: 1.5,
+                        duration: 5,
+                        filter: 'brightness(1)',
+                        yoyo: true,
+                        onComplete: () => {
+                            store.info_text = `Congratulaions, your ${old_pokemon.name} evolved into ${evolved_pokemon.name}`
+                            setTimeout(() => {
+                                map_store.world_scene_istance.sound.stopAll();
+                                map_store.world_scene_istance.sound.play(AUDIO_ASSETS_KEY.WORLD, {
+                                    loop: false,
+                                    volume: 0.1
+                                })
+                                store.menu_state = 'hidden'
+                                store.info_text = ''
+                                evolution_scene.remove()
+                                resolve()
+                            }, 4500)
+                        }
+
+
+                    });
+                },
+
+            });
+        })
     },
     async displayInfoText(text) {
         this.info_text = text
         await this.delay(this.info_text.length * this.config.text_speed + 500)
         return
+    },
+    evolvePokemon(pkmn, evolution) {
+        let old_pokemon = { ...pkmn }
+
+
+        pkmn = deepMerge(pkmn, evolution)
+        pkmn.level = old_pokemon.level
+        pkmn.status = old_pokemon.status
+        pkmn.moves = old_pokemon.moves
+        pkmn.xp.total = old_pokemon.xp.total
+        pkmn.learnable_moves = evolution.learnable_moves
+        pkmn.nature = old_pokemon.nature
+        pkmn.held_item = old_pokemon.held_item
+        pkmn.hp = evolution.hp
+        pkmn.atk = evolution.atk
+        pkmn.def = evolution.def
+        pkmn.sp_atk = evolution.sp_atk
+        pkmn.sp_def = evolution.sp_def
+        pkmn.damage = old_pokemon.damage
+
+        this.calcStats(pkmn)
+
+
     }
 
 
