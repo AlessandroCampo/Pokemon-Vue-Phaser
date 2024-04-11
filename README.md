@@ -34,7 +34,9 @@ npm install
 ```
 
 3. **Start the game**: Once the dependencies are installed, you can start the game by running:
-npm start
+```bash
+npm run dev
+```
 then open your web browser and navigate to the suggested localhost
 
 ### Controls
