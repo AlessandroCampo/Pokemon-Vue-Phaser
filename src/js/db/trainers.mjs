@@ -47,13 +47,13 @@ export class Trainer {
 }
 
 // const blue = new Trainer({
-//     name: 'Blue',
+//     name: 'Bluse',
 //     lead: Pokemons.aggron,
 //     bench: [Pokemons.treecko, Pokemons.mudkip]
 // })
 
 const roxanne = new Trainer({
-    name: 'Roxanne',
+    name: 'Rayneera',
     lead: Pokemons.nosepass,
     bench: [Pokemons.lunatone, Pokemons.lileep, Pokemons.nosepass],
     position: {
