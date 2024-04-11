@@ -454,7 +454,7 @@ const hypnosis = new Move({
 })
 
 const confusion = new Move({
-    name: 'Confusion ',
+    name: 'Confusion',
     category: 'special',
     type: 'psychic',
     power: 50,

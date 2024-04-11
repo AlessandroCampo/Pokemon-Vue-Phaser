@@ -1059,6 +1059,10 @@ export const store = reactive({
         return status_applied
     },
     apply_confusion: async function (effect, target) {
+        let random_chance = Math.floor(Math.random() * 100)
+        if (effect.chance <= random_chance) {
+            return false
+        }
         let applied_confusion = false
         if (!target.confused) {
             applied_confusion = true
