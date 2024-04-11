@@ -218,7 +218,10 @@ export class WorldScene extends Phaser.Scene {
         })
 
         const npc_wants_battle = this.npcs.find((npc) => {
-            //TODO - fix for all the positions, add method
+            if (!store.my_pokemon) {
+                return false
+            }
+
             return npc.spottedPlayer(target_position)
 
         })

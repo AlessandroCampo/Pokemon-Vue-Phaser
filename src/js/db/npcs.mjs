@@ -5,7 +5,7 @@ import { all_items } from "./items.mjs"
 
 
 let npc_1 = {
-    dialouge: ['You dare coming to my house with an army of pokemons?'],
+    dialouge: [],
     name: 'NPC_1',
     frameWidth: 64,
     frameHeight: 64,

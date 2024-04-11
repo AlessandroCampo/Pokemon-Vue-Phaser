@@ -57,3 +57,4 @@ buy\sell items
 store pokemons
 move animations?
 recycle common buildings
+fix npc double messages or not talking again

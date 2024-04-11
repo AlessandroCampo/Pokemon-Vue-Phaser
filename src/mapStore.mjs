@@ -67,8 +67,14 @@ export let encounter_map = [{
             battler: false,
             boss: true,
             event: async function () {
-                map_store.handleBossBattle(trainers.roxanne)
-                map_store.world_scene_istance.startBossBattle()
+                if (store.my_pokemon) {
+                    map_store.text_queue.push('You dare coming to me with an army of Pokèmons?')
+                    map_store.handleBossBattle(trainers.roxanne)
+                    map_store.world_scene_istance.startBossBattle()
+                } else {
+                    map_store.text_queue.push('This is not a place for kids, just go away')
+                }
+
             },
 
         },

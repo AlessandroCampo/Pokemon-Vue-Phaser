@@ -60,7 +60,7 @@ const roxanne = new Trainer({
         x: 950,
         y: 320
     },
-    scale: 0.15,
+    scale: 0.3,
     squad_level: 15,
     moveset: []
 
