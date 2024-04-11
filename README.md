@@ -3,8 +3,8 @@
 
 ## Screenshots
 
-![Screenshot 1](screenshots/screenshot1.png)
-![Screenshot 2](screenshots/screenshot2.png)
+![Screenshot 1](public/screenshots/screenshot1.png)
+![Screenshot 2](public/screenshots/screenshot2.png)
 
 ## Introduction
 
@@ -23,9 +23,9 @@ To play the game locally, follow these steps:
 1. **Clone the Repository**: Clone the project repository from GitHub to your local machine. Open your terminal and run the following command:
 
   ```bash
-git clone https://github.com/yourusername/pokemon-bloody-red.git
+git clone https://github.com/AlessandroCampo/Pokemon-Vue-Phaser.git
 ```
-# Replace yourusername with your GitHub username.
+
 
 2. **Navigate to the Project Directory**: Change your current directory to the cloned project directory:
 
