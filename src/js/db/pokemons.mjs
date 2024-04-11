@@ -106,9 +106,7 @@ class Pokemon {
 
     }
     drawSprite(scene) {
-        if (scene.children.exists(this.sprite)) {
-            return;
-        }
+
         let position = this.player_controlled ? ally_position : oppo_position;
         let asset_key = this.player_controlled ? this.images.front.key : this.images.back.key;
 
@@ -176,7 +174,7 @@ class Pokemon {
                 // scale: 0,
                 duration: dur,
                 y: position.y + 30,
-                x: position.x - 400 * multiplier,
+                x: position.x - 450 * multiplier,
                 onComplete: () => {
                     resolve()
                 }

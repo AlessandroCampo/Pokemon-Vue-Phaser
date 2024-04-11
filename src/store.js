@@ -139,6 +139,7 @@ export const store = reactive({
                     last_move_had_protect = true
                 }
             })
+
             if (current_move_has_protect && last_move_had_protect) {
 
                 move.accuracy *= 0.66
@@ -754,6 +755,15 @@ export const store = reactive({
             }
         }
 
+        // if move doenst have more pp, use more dmg move or a random one with pp
+        if (selected_move.pp.current <= 0) {
+            selected_move = most_damage_move.move;
+            if (selected_move.pp.current <= 0) {
+                selected_move = this.oppo_pokemon.moves.find((move) => {
+                    return move.pp.current > 0
+                })
+            }
+        }
         return selected_move;
     },
     highestAiDmgMove(pkmn) {
@@ -1430,8 +1440,10 @@ export const store = reactive({
 
             this.info_text = `${this.oppo_pokemon.name} has been caught`
             await this.delay(this.info_text.length * this.config.text_speed + 1000)
-            let oppo_copy = { ...this.oppo_pokemon }
-            this.my_bench.push(oppo_copy)
+            //this is done due to bug of caught pokemon not having methods
+            let oppo_copy = this.generateSaveCopy(store.oppo_pokemon)
+
+            this.my_bench.push(map_store.retrivePokemonData(oppo_copy))
             this.endBattle()
         } else {
             ball.sprite.destroy()

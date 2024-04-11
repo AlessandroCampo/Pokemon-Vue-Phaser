@@ -42,6 +42,7 @@ export class BattleScene extends Phaser.Scene {
             this.load.audio(move.name, `/sounds/moves/${move.name}.mp3`)
         })
         store.my_bench.forEach((member) => {
+
             member.resetStats()
             store.calcStats(member)
             member.player_controlled = true
@@ -49,6 +50,8 @@ export class BattleScene extends Phaser.Scene {
                 frameWidth: member.images.back.frameWidth,
                 frameHeight: member.images.back.frameHeight,
             })
+
+            console.log(member.sprite)
             member.moves.forEach((move) => {
                 this.load.audio(move.name, `/sounds/moves/${move.name}.mp3`)
             })
@@ -95,7 +98,6 @@ export class BattleScene extends Phaser.Scene {
         backgroundImage.setScale(scaleX, scaleY);
         store.oppo_pokemon.drawSprite(this)
         store.my_pokemon.drawSprite(this)
-        console.log(store.my_pokemon.sprite)
         store.oppo_pokemon.images.front.animation_key = enemy_starter_animation_key
         store.my_pokemon.images.back.animation_key = ally_starter_animation_key
         const createAnimation = (key, frames, frameRate) => {
@@ -116,12 +118,14 @@ export class BattleScene extends Phaser.Scene {
 
         store.my_bench.forEach((member, index) => {
 
-            member.drawSprite(this, true)
 
-
+            console.log(member.name)
+            member.drawSprite(this);
             let new_anim_key = `ally_${member.name}_${index}_anim`;
             createAnimation(new_anim_key, this.anims.generateFrameNumbers(member.images.back.key, { start: 0, end: member.images.back.frames - 1 }), 20);
-            member.images.back.animation_key = new_anim_key;
+
+            member.images.back.animation_key = new_anim_key
+
         });
 
         if (store.battle_type == 'trainer') {
@@ -146,7 +150,7 @@ export class BattleScene extends Phaser.Scene {
         if (!store.oppo_pokemon.sprite.anims.isPlaying) {
             store.oppo_pokemon.sprite.play(enemy_starter_animation_key);
         }
-        if (!store.my_pokemon.sprite.anims.isPlaying) {
+        if (!store.my_pokemon?.sprite?.anims.isPlaying) {
             store.my_pokemon.sprite.play(ally_starter_animation_key);
         }
 

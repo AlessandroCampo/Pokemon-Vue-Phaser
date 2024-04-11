@@ -56,6 +56,7 @@ const handleMovesInput = async function (e) {
         const ai_best_move = store.calcAiBestMove()
 
         store.battle_events.push(async () => {
+            console.log(store.my_bench[active_voice.value])
             await store.battle_scene_instance.changeAllyPokemonSprite(store.my_bench[active_voice.value])
         });
 

@@ -45,4 +45,4 @@ confirmation prompt (Are you sure you want to forget)
 options, todo, title screen, audio, move audio effect, pokemon evolution
 
 
-trainers reset after save and teaching moves tow ild pokemon
+trainers reset after save and teaching moves tow ild pokemon  fix protect bug
