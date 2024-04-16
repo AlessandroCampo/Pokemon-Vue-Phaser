@@ -1,20 +1,13 @@
 
 multiplayer battle
 Details UI (Pokemons stats  and moves)
-calc experience gains, levels plus, evolutions, possible learned moves
 double_battles
 
 
 
 MAKE EVENT PRIORITY SMARTER
-bag, items, pokemona nd menu ifno
 
-possible bug: ai thinking hes at threat of kill when enemy pokemon is asleep or frozen
 
-catching logic, run away logic
-
-wild mons -2 or -3 level, random moveset between learnable moves up to that level, trainers -1 -2, boss fixed level
-moves, learned moves, trainer pokemonns and moves
 
 rules: 
 
@@ -27,23 +20,15 @@ no healing in battle
 if faint, dead
 cannot esacpe dungeon\gym (or trainers get reset)
 abilities are not randomized
-make
-
-pps are not unique(Need to deeper clone moves)
 
 
-// create a function to interpeate events coming from npcs, handle moving npcs (and automove in case of battle)
+
 // refactor npc logic
 
-NPC EVENTS OTHER THAN battle
-SAVING DATA 
-improve dialogue behavior and skip text logic (maybe only spacebar)
-levelling up, evolving and learning moves
+
+
 improve npc interaction
-rare-candy type item
 confirmation prompt (Are you sure you want to forget)
-options, todo, title screen, audio, move audio effect, pokemon evolution
-check evolution and  learned moves after battle
 
 trainers reset after save and teaching moves tow ild pokemon  fix protect bug
 bug: double attack after second flee attempt failed
@@ -58,3 +43,6 @@ store pokemons
 move animations?
 recycle common buildings
 fix npc double messages or not talking again
+improve UI and tile graphic 
+locked doors 
+stop npcs from double taking

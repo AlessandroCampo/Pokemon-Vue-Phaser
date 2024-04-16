@@ -43,6 +43,8 @@ export class NPC extends Character {
         this.battler = config.battler || false
         this.no_delay_movement = config.no_delay_movement || false
         this.obj_ref = config.obj_ref
+        this.id = config.id
+        this.defeated = config.defeated || false
         // this.direction = config.direction
     }
 

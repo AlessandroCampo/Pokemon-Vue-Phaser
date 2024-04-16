@@ -61,6 +61,7 @@ export let encounter_map = [{
 
         },
         {
+            id: 0,
             npc: { ...all_npcs.npc_1 },
             position: { x: 368, y: 160 - tile_size },
             path: null,
@@ -79,6 +80,7 @@ export let encounter_map = [{
 
         },
         {
+            id: 1,
             npc: { ...all_npcs.guard },
             position: { x: 320, y: 240 - tile_size },
             path: null,
@@ -93,6 +95,7 @@ export let encounter_map = [{
     possible_encounters: [],
     indoor: false
 },
+
 {
     map_name: 'building-1',
     possible_encounters: [
@@ -136,11 +139,20 @@ export let encounter_map = [{
     indoor: false
 },
 {
+    map_name: 'test-map',
+    possible_encounters: [
+    ],
+    npcs_locations: [
+    ],
+    indoor: false
+},
+{
     map_name: 'building-2',
     possible_encounters: [
     ],
     npcs_locations: [
         {
+            id: 2,
             npc: { ...all_npcs.npc_2 },
             position: { x: 144, y: 80 - tile_size },
             path: null,
@@ -216,6 +228,7 @@ export let encounter_map = [{
     map_name: 'route-1',
     npcs_locations: [
         {
+            id: 3,
             npc: { ...all_npcs.guard },
             position: { x: 32, y: 80 - tile_size },
             path: null,
@@ -225,6 +238,7 @@ export let encounter_map = [{
             direction: DIRECTION.DOWN
         },
         {
+            id: 4,
             npc: { ...all_npcs.guard },
             position: { x: 432, y: 48 - tile_size },
             path: null,
@@ -369,11 +383,12 @@ export const map_store = reactive({
         store.menu_state = 'text'
         store.oppo_pokemon = store.getRandomEncounter(this.current_map)
     },
-    handleTrainerBattle(trainer_name) {
+    handleTrainerBattle(trainer_name, id) {
         store.in_battle = true
         store.battle_type = 'trainer'
         store.menu_state = 'text'
         store.oppo_trainer = store.generate_random_trainer(trainer_name)
+        store.oppo_trainer.id = id
         store.oppo_pokemon = store.oppo_trainer.lead
         store.oppo_bench = store.oppo_trainer.bench
     },
@@ -425,7 +440,8 @@ export const map_store = reactive({
             my_pokemon: store.generateSaveCopy(store.my_pokemon),
             my_bench: my_bench_copy,
             my_items: my_inventory_copy,
-            position: this.getPositionSaveObj()
+            position: this.getPositionSaveObj(),
+            defeated_npcs: store.defeated_npcs
         };
         await updateDoc(playerRef, infosToSave);
     },
@@ -448,6 +464,7 @@ export const map_store = reactive({
                             position: map_store.getPositionSaveObj(new_game),
                             my_bench: [],
                             my_items: [],
+                            defeated_npcs: [],
 
                         });
                     }
@@ -483,9 +500,8 @@ export const map_store = reactive({
                         this.fetched_data.my_bench.forEach((mon) => {
                             store.my_bench.push(this.retrivePokemonData(mon))
                         })
-
-
                         store.my_items = this.retrieveItemsData(this.fetched_data.my_items)
+                        store.defeated_npcs = this.fetched_data.defeated_npcs
                     });
 
 
@@ -501,6 +517,7 @@ export const map_store = reactive({
         store.my_pokemon = null
         store.my_bench = []
         store.my_items = []
+        store.defeated_npcs = []
         store.level_cap = 15
         store.player_info.name = prompt("Whats  your name")
         this.player_position_info = { ...this.player_initial_position }

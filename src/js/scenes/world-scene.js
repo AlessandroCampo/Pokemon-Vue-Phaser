@@ -118,7 +118,7 @@ export class WorldScene extends Phaser.Scene {
         if (has_transition_layer) {
             this.transition_layer = map.getObjectLayer('Scene-Transitions');
         }
-
+        console.log(map_store.current_map)
 
 
         this.add.image(0, 0, `${map_store.current_map.map_name.toUpperCase()}_BACKGROUND`, 0).setOrigin(0).setScale(map_scale)
@@ -218,7 +218,7 @@ export class WorldScene extends Phaser.Scene {
         })
 
         const npc_wants_battle = this.npcs.find((npc) => {
-            if (!store.my_pokemon) {
+            if (!store.my_pokemon || npc.defeated == true) {
                 return false
             }
 
@@ -243,7 +243,7 @@ export class WorldScene extends Phaser.Scene {
                 map_store.add_new_message_to_queue(npc_wants_battle.dialogue[0])
             }
 
-            this.startTrainerBattle(npc_wants_battle.obj_ref.npc.name)
+            this.startTrainerBattle(npc_wants_battle.obj_ref.npc.name, npc_wants_battle.id)
 
 
 
@@ -396,6 +396,8 @@ export class WorldScene extends Phaser.Scene {
         // const npcLayers = map.getObjectLayerNames().filter((layer_name) => layer_name.includes('NPC'))
 
         map_store.current_map.npcs_locations.forEach((el) => {
+            let npc_already_defeated = store.defeated_npcs.some(id => id === el.id);
+
             const npc_istance = new NPC({
                 scene: this,
                 position: el.position,
@@ -406,7 +408,9 @@ export class WorldScene extends Phaser.Scene {
                 scale: el.npc.scale,
                 event: el.event || null,
                 battler: el.battler || null,
+                id: el.id || null,
                 obj_ref: el,
+                defeated: npc_already_defeated
 
             })
             if (npc_istance.battler) {
@@ -491,14 +495,14 @@ export class WorldScene extends Phaser.Scene {
 
     }
 
-    startTrainerBattle(name) {
+    startTrainerBattle(name, id) {
 
         setTimeout(() => {
             this.cameras.main.fadeOut(2000)
             this.cameras.main.once(Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE, () => {
                 store.info_text = ''
                 map_store.text_queue = []
-                map_store.handleTrainerBattle(name)
+                map_store.handleTrainerBattle(name, id)
                 this.scene.start(SCENE_KEYS.BATTLE_SCENE);
             })
         }, 1500)

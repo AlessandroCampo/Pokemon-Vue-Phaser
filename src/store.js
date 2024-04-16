@@ -63,6 +63,7 @@ export const store = reactive({
     },
     oppo_trainer: trainers.roxanne,
     oppo_bench: [],
+    defeated_npcs: [],
     menu_state: 'text',
     info_text: ``,
     additional_info_text: null,
@@ -1123,6 +1124,7 @@ export const store = reactive({
                     await this.battle_scene_instance.changeOpponentPokemonSprite(this.bestAfterFaint())
                 } else {
                     this.info_text = `${this.oppo_pokemon.name} died and you won the battle ${this.battle_type == 'trainer' ? 'against ' + this.oppo_trainer.name : ''}`;
+                    this.defeated_npcs.push(this.oppo_trainer.id)
                     await this.delay(this.info_text.length * this.config.text_speed + 500);
                     // window.location.reload()
 
