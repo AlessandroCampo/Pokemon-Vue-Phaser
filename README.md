@@ -68,7 +68,11 @@ Right now, you can encounter the following pokemons on the map: Zigzagoon, Elect
 
 ## Credits
 
-I want to thank all of the artists I got the game assets from browsing online (will list all of them) and Scott Westover for the amazing educational content for Phaser3, where I got a lot of knowledge to start working on my first Phaser project.
+I want to thank all of the artists I got the game assets from browsing online and Scott Westover for the amazing educational content for Phaser3, where I got a lot of knowledge to start working on my first Phaser project.
+
+Character sprites by [Aveontrainer](https://www.deviantart.com/aveontrainer)
+Maps by [Phyromatical](https://www.deviantart.com/phyromatical)
+Battle Backgrounds by [PoenixOfLight92](https://www.deviantart.com/phoenixoflight92)
 
 Tutorial playlist: [Phaser 3 Tutorial Playlist](https://www.youtube.com/playlist?list=PLmcXe0-sfoSgq-pyXrFx0GZjHbvoVUW8t)
 

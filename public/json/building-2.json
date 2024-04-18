@@ -141,7 +141,6 @@
         {
          "draworder":"topdown",
          "id":9,
-         "locked":true,
          "name":"Scene-Transitions",
          "objects":[
                 {
@@ -153,7 +152,7 @@
                         {
                          "name":"connects_to",
                          "type":"string",
-                         "value":"start"
+                         "value":"start-new"
                         }, 
                         {
                          "name":"entrance_id",
@@ -164,6 +163,11 @@
                          "name":"is_building",
                          "type":"bool",
                          "value":true
+                        }, 
+                        {
+                         "name":"is_locked",
+                         "type":"bool",
+                         "value":false
                         }],
                  "rotation":0,
                  "type":"entrance",
@@ -181,7 +185,7 @@
                         {
                          "name":"connects_to",
                          "type":"string",
-                         "value":"start"
+                         "value":"start-new"
                         }, 
                         {
                          "name":"entrance_id",
@@ -192,6 +196,11 @@
                          "name":"is_building",
                          "type":"bool",
                          "value":true
+                        }, 
+                        {
+                         "name":"is_locked",
+                         "type":"bool",
+                         "value":false
                         }],
                  "rotation":0,
                  "type":"entrance",
@@ -202,7 +211,7 @@
                 }],
          "opacity":1,
          "type":"objectgroup",
-         "visible":false,
+         "visible":true,
          "x":0,
          "y":0
         }, 
@@ -220,7 +229,7 @@
                  "type":"",
                  "visible":true,
                  "width":16,
-                 "x":152,
+                 "x":144,
                  "y":80
                 }],
          "opacity":1,

@@ -9,13 +9,13 @@ let npc_1 = {
     name: 'NPC_1',
     frameWidth: 64,
     frameHeight: 64,
-    scale: 0.35,
+    scale: 0.5,
 
 
 }
 
 let npc_2 = {
-    dialouge: ['This town will have no peace until someone defeats Duke Reyneera...'],
+    dialouge: [],
     name: 'NPC_2',
     frameWidth: 32,
     frameHeight: 48,

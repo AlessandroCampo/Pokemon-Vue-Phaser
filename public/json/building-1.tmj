@@ -152,7 +152,7 @@
                         {
                          "name":"connects_to",
                          "type":"string",
-                         "value":"start"
+                         "value":"start-new"
                         }, 
                         {
                          "name":"entrance_id",
@@ -180,7 +180,7 @@
                         {
                          "name":"connects_to",
                          "type":"string",
-                         "value":"start"
+                         "value":"start-new"
                         }, 
                         {
                          "name":"entrance_id",

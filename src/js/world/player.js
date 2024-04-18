@@ -18,10 +18,10 @@ export class Player extends Character {
             origin: { x: 0, y: 0.2 },
             idleFrameConfig: {
                 DOWN: 0,
-                UP: 36,
+                UP: 12,
                 NONE: 0,
-                LEFT: 12,
-                RIGHT: 24
+                LEFT: 4,
+                RIGHT: 8
             }
         });
         this.in_battle = false
@@ -56,13 +56,15 @@ export class Player extends Character {
                 return
             }
 
-            const transition_name = nearby_transition.properties.find((property) => property.name === 'connects_to').value
-            const transition_id = nearby_transition.properties.find((property) => property.name === 'entrance_id').value
+            const transition_name = nearby_transition.properties.find((property) => property.name === 'connects_to')?.value
+            const transition_id = nearby_transition.properties.find((property) => property.name === 'entrance_id')?.value
             let is_building_transition = nearby_transition.properties.find((property) => property.name === 'is_building')?.value
+            let is_locked = nearby_transition.properties.find((property) => property.name === 'is_locked')?.value
             if (!is_building_transition) {
                 is_building_transition = false
             }
-            this.transition_callback(transition_name, transition_id, is_building_transition)
+            console.log(is_locked)
+            this.transition_callback(transition_name, transition_id, is_building_transition, is_locked)
 
 
         }

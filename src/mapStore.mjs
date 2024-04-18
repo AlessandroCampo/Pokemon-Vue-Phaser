@@ -13,6 +13,8 @@ import { getAuth, signInAnonymously, onAuthStateChanged } from "firebase/auth";
 import { doc, setDoc, onSnapshot, getDoc, updateDoc } from 'firebase/firestore'
 import { all_moves } from './js/db/moves.mjs';
 
+
+
 function deepClone(obj) {
     if (obj === null || typeof obj !== 'object') {
         return obj;
@@ -95,6 +97,12 @@ export let encounter_map = [{
     possible_encounters: [],
     indoor: false
 },
+{
+    map_name: 'start-new',
+    npcs_locations: [],
+    possible_encounters: [],
+    indoor: false
+},
 
 {
     map_name: 'building-1',
@@ -139,7 +147,7 @@ export let encounter_map = [{
     indoor: false
 },
 {
-    map_name: 'test-map',
+    map_name: 'tintignac',
     possible_encounters: [
     ],
     npcs_locations: [
@@ -159,13 +167,16 @@ export let encounter_map = [{
             battler: false,
             already_talked_to: false,
             event: async function () {
+
                 if (!this.already_talked_to && !store.my_pokemon) {
                     return new Promise(async resolve => {
                         if (this.already_talked_to || map_store.choosing_starter) return
                         // map_store.add_new_message_to_queue();
                         store.menu_state = 'text'
+                        store.info_text = 'This town will have no peace until someone defeats Duke Reyneera...';
+                        await store.delay(store.info_text.length * store.config.text_speed + 500)
                         store.info_text = 'Take one of my Pokémon, train him until it\'s strong enough to face her'
-                        await store.delay(2000);
+                        await store.delay(store.info_text.length * store.config.text_speed + 500)
                         store.info_text = ''
 
 
@@ -204,6 +215,7 @@ export let encounter_map = [{
                                     map_store.add_new_message_to_queue(`${store.my_pokemon.name} was a great choice!`);
                                     map_store.add_new_message_to_queue('Take some Poké Balls and Rare Candies as well, use these items build an army and free us from that burden!');
                                     this.already_talked_to = true;
+
                                     resolve(); // Resolve the promise
                                 } else {
                                     // Continue waiting until my_pokemon is defined
@@ -225,7 +237,7 @@ export let encounter_map = [{
     indoor: true
 },
 {
-    map_name: 'route-1',
+    map_name: 'route-1-new',
     npcs_locations: [
         {
             id: 3,
@@ -270,18 +282,19 @@ export const map_store = reactive({
     ,
     text_queue: [],
     all_messages_read: true,
+    event_on_cooldown: false,
     encounter_frequency: 0.1,
     current_map: encounter_map[0],
     world_scene_istance: undefined,
     choosing_starter: false,
-    player_initial_coords: { x: 2 * tile_size, y: 22 * tile_size },
+    player_initial_coords: { x: 26 * tile_size, y: 25 * tile_size },
     player_position_info: {
-        coords: { x: 2 * tile_size, y: 22 * tile_size },
+        coords: { x: 26 * tile_size, y: 25 * tile_size },
         direction: DIRECTION.DOWN,
         map: encounter_map[0]
     },
     player_initial_position: {
-        coords: { x: 2 * tile_size, y: 22 * tile_size },
+        coords: { x: 26 * tile_size, y: 25 * tile_size },
         direction: DIRECTION.DOWN,
         map: encounter_map[0]
     },
@@ -416,7 +429,7 @@ export const map_store = reactive({
     getPositionSaveObj(new_game) {
         let player_x = new_game ? this.player_initial_position.coords.x : this.player_position_info.coords.x
         let player_y = new_game ? this.player_initial_position.coords.y : this.player_position_info.coords.y
-        let map_name = new_game ? 'start' : this.player_position_info.map.map_name
+        let map_name = new_game ? 'start-new' : this.player_position_info.map.map_name
         const direction = 'DOWN'
         const player_position_info_copy = {
             coords: { x: player_x, y: player_y },

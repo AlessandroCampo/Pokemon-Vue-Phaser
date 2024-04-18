@@ -105,9 +105,11 @@ export class PreloadScene extends Phaser.Scene {
 
 
 
-        this.load.spritesheet(CHARACTER_ASSET_KEYS.PLAYER, `/characters/hero_walking.png`, {
+        this.load.spritesheet(CHARACTER_ASSET_KEYS.PLAYER, `/characters/player1.png`, {
+            // frameWidth: 32,
+            // frameHeight: 46,
             frameWidth: 32,
-            frameHeight: 46,
+            frameHeight: 48,
         })
 
     }

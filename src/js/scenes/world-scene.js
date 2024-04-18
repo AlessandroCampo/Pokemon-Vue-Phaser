@@ -33,6 +33,7 @@ export class WorldScene extends Phaser.Scene {
     npc_battle_started
     area
     is_indoor
+    displaying_info
     constructor() {
         super({
             key: SCENE_KEYS.WORLD_SCENE
@@ -43,6 +44,7 @@ export class WorldScene extends Phaser.Scene {
         this.npcs = []
         this.wildMonsterEcountered = false;
         this.npc_battle_started = false
+        this.displaying_info = false
         map_store.player_position_info.map = map_store.current_map
     }
 
@@ -143,8 +145,8 @@ export class WorldScene extends Phaser.Scene {
                 },
                 collidingCharacters: this.npcs,
                 transition_layer: this.transition_layer,
-                transition_callback: (name, id, is_building) => {
-                    this.handleTransitionCallback(name, id, is_building)
+                transition_callback: (name, id, is_building, is_locked) => {
+                    this.handleTransitionCallback(name, id, is_building, is_locked)
                 }
 
             }
@@ -202,7 +204,7 @@ export class WorldScene extends Phaser.Scene {
         const selected_direction = this.#controls.getDirectionKeyPressedDown()
         if (selected_direction !== DIRECTION.NONE) {
             this.#player.moveCharacter(selected_direction)
-            if (!this.npc_battle_started && !this.#player.is_talking) {
+            if (!this.npc_battle_started && !this.#player.is_talking && !this.displaying_info) {
                 store.info_text = ''
                 map_store.text_queue = []
                 store.menu_state = 'hidden'
@@ -296,7 +298,7 @@ export class WorldScene extends Phaser.Scene {
     async handlePlayerInteraction() {
         const { x, y } = this.#player.sprite;
         const target_position = getTargetPosition({ x, y }, this.#player.direction);
-        console.log(target_position)
+
 
 
 
@@ -321,9 +323,9 @@ export class WorldScene extends Phaser.Scene {
         }
 
         const nearbyNPC = this.npcs.find((npc) => {
-            console.log(npc)
+
             if (npc.assetKey === 'nurse') {
-                console.log(npc.sprite.y)
+
                 return npc.sprite.x === target_position.x && npc.sprite.y === target_position.y - 32
             }
             return npc.sprite.x === target_position.x && npc.sprite.y === target_position.y
@@ -519,16 +521,28 @@ export class WorldScene extends Phaser.Scene {
         }, 1500)
     }
 
-    handleTransitionCallback(name, id, is_building) {
+    async handleTransitionCallback(name, id, is_building, is_locked) {
+        if (is_locked) {
+            this.displaying_info = true
+            store.menu_state = 'text'
+            store.info_text = 'The door is locked...'
+            console.log(store.info_text)
+            await (store.delay(500))
+            this.displaying_info = false
+            return
+        }
         this.#controls.lockInput = true
+
         const map = this.make.tilemap({ key: `${name.toUpperCase()}_JSON` })
 
 
         const transition_obj_layer = map.getObjectLayer('Scene-Transitions');
+        console.log(transition_obj_layer)
+
 
         const transition_object = transition_obj_layer.objects.find((object) => {
-            const temp_transition_name = object.properties.find((property) => property.name === 'connects_to').value
-            const temp_transition_id = object.properties.find((property) => property.name === 'entrance_id').value
+            const temp_transition_name = object.properties.find((property) => property.name === 'connects_to')?.value
+            const temp_transition_id = object.properties.find((property) => property.name === 'entrance_id')?.value
 
             return temp_transition_id == id && temp_transition_name == map_store.player_position_info.map.map_name
         })
