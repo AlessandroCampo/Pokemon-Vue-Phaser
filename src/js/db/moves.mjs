@@ -1,7 +1,7 @@
 import { allAnimations } from "./animations.mjs"
 
 class Move {
-    constructor({ name, type, category, power, accuracy, pp, makes_contact, description, animation, effects, priority, targets, sound }) {
+    constructor({ name, type, category, power, accuracy, pp, makes_contact, description, animation, effects, priority, targets, sound, repetitions }) {
         this.name = name
         this.type = type
         this.category = category || 'Physical'
@@ -15,7 +15,29 @@ class Move {
         this.priority = priority || 1
         this.targets = targets || true
         this.sound = sound || null
+        this.repetitions = repetitions || 1
     }
+}
+
+const bulletSeedHits = function () {
+    // Define the probabilities and corresponding number of hits
+    const probabilities = [3 / 8, 3 / 8, 1 / 8, 1 / 8];
+    const hits = [2, 3, 4, 5];
+
+    // Generate a random number between 0 and 1
+    const rand = Math.random();
+
+    // Calculate the cumulative probability
+    let cumulativeProbability = 0;
+    for (let i = 0;i < probabilities.length;i++) {
+        cumulativeProbability += probabilities[i];
+        if (rand < cumulativeProbability) {
+            return hits[i]; // Return the corresponding number of hits
+        }
+    }
+
+    // This line should never be reached, but just in case
+    return hits[hits.length - 1];
 }
 
 // NORMAL TYPE MOVES
@@ -147,6 +169,22 @@ const growl = new Move({
     animation: null,
     description: 'The user growls in an endearing way, making opposing Pokémon less wary. This lowers their Attack stats.',
     effects: [{ type: 'modify_stat', target_stat: 'atk', target: 'enemy', stages: -1, target_stat_label: 'attack' }]
+})
+
+const growth = new Move({
+    name: 'Growth',
+    category: 'status',
+    type: 'normal',
+    power: null,
+    accuracy: 1000,
+    pp: {
+        max: 20,
+        current: 20
+    },
+    makes_contact: false,
+    animation: null,
+    description: 'The user’s body grows all at once, boosting the Attack and Sp. Atk stats.',
+    effects: [{ type: 'modify_stat', target_stat: 'atk', target: 'ally', stages: +1, target_stat_label: 'attack' }, { type: 'modify_stat', target_stat: 'sp_atk', target: 'ally', stages: +1, target_stat_label: 'special attack' }]
 })
 
 const howl = new Move({
@@ -400,6 +438,23 @@ const leafage = new Move({
     effects: null
 })
 
+const absorb = new Move({
+    name: 'Absorb',
+    category: 'special',
+    type: 'grass',
+    power: 20,
+    accuracy: 100,
+    pp: {
+        max: 25,
+        current: 25
+    },
+    makes_contact: false,
+    animation: null,
+    description: 'A nutrient-draining attack. The user’s HP is restored by up to half the damage taken by the target.',
+    effects: [{ type: 'drain', target: 'ally', amount: 0.5 }]
+
+})
+
 const mega_drain = new Move({
     name: 'Mega Drain',
     category: 'special',
@@ -432,6 +487,57 @@ const giga_drain = new Move({
     description: 'A nutrient-draining attack. The user’s HP is restored by up to half the damage taken by the target.',
     effects: [{ type: 'drain', target: 'ally', amount: 0.5 }]
 
+})
+
+const stun_spore = new Move({
+    name: 'Stun Spore',
+    category: 'status',
+    type: 'electric',
+    power: null,
+    accuracy: 75,
+    pp: {
+        max: 30,
+        current: 30
+    },
+    makes_contact: false,
+    animation: null,
+    description: 'The user scatters a cloud of numbing powder that paralyzes the target.',
+    effects: [{ type: 'apply_status', applied_status: 'paralyzed', target: 'enemy', chance: 100 }]
+
+})
+
+const synthesis = new Move({
+    name: 'Synthesis',
+    category: 'status',
+    type: 'grass',
+    power: null,
+    accuracy: 200,
+    pp: {
+        max: 5,
+        current: 5
+    },
+    makes_contact: false,
+    animation: null,
+    description: 'The user restores its own HP. The amount of HP regained varies with the weather.',
+    effects: [{ type: 'heal', amount: 0.25 }]
+})
+
+
+const bullet_seed = new Move({
+    name: 'Bullet Seed',
+    category: 'physical',
+    type: 'grass',
+    power: 25,
+    accuracy: 100,
+    pp: {
+        max: 30,
+        current: 30
+    },
+    makes_contact: false,
+    animation: null,
+    description: 'The user forcefully shoots seeds at the target two to five times in a row.',
+    effects: null,
+    repetitions: bulletSeedHits()
 })
 
 //PSYCHIC TYPE
@@ -539,7 +645,24 @@ const seismic_toss = new Move({
 })
 
 const low_kick = new Move({
-    name: 'Low Kick',
+    name: 'Double Kick',
+    category: 'physical',
+    type: 'fighting',
+    power: 30,
+    accuracy: 100,
+    pp: {
+        max: 30,
+        current: 30
+    },
+    makes_contact: true,
+    animation: null,
+    description: 'The user attacks by kicking the target twice in a row using two feet.',
+    effects: null,
+    repetitions: 2
+})
+
+const double_kick = new Move({
+    name: 'Double Kick',
     category: 'physical',
     type: 'fighting',
     power: 1,
@@ -750,6 +873,23 @@ const sludge_bomb = new Move({
 
 })
 
+const poison_sting = new Move({
+    name: 'Poison Sting',
+    category: 'physical',
+    type: 'poison',
+    power: 15,
+    accuracy: 100,
+    pp: {
+        max: 35,
+        current: 35
+    },
+    makes_contact: false,
+    animation: null,
+    description: '	The user stabs the target with a poisonous stinger to inflict damage. This may also poison the target.',
+    effects: [{ type: 'apply_status', applied_status: 'poisoned', target: 'enemy', chance: 30 }]
+
+})
+
 //FLYING MOVES
 
 const wing_attack = new Move({
@@ -767,6 +907,76 @@ const wing_attack = new Move({
     description: 'The target is struck with large, imposing wings spread wide to inflict damage.',
     effects: null
 })
+
+const gust = new Move({
+    name: 'Gust',
+    category: 'special',
+    type: 'flying',
+    power: 40,
+    accuracy: 100,
+    pp: {
+        max: 35,
+        current: 35
+    },
+    makes_contact: false,
+    animation: null,
+    description: 'A gust of wind is whipped up by wings and launched at the target to inflict damage.',
+    effects: null
+})
+
+const peck = new Move({
+    name: 'Peck',
+    category: 'physical',
+    type: 'flying',
+    power: 35,
+    accuracy: 100,
+    pp: {
+        max: 35,
+        current: 35
+    },
+    makes_contact: true,
+    animation: null,
+    description: 'The target is jabbed with a sharply pointed beak or horn.',
+    effects: null
+})
+//BUG MOVES
+
+const bug_bite = new Move({
+    name: 'Bug Bite',
+    category: 'physical',
+    type: 'bug',
+    power: 60,
+    accuracy: 100,
+    pp: {
+        max: 20,
+        current: 20
+    },
+    makes_contact: true,
+    animation: null,
+    description: 'The user attacks by biting the target. If the target is holding a Berry, the user eats it and gains its effect.',
+    effects: null
+})
+
+
+
+const string_shot = new Move({
+    name: 'String Shot',
+    category: 'status',
+    type: 'bug',
+    power: null,
+    accuracy: 95,
+    pp: {
+        max: 40,
+        current: 40
+    },
+    makes_contact: true,
+    animation: null,
+    description: 'The user blows silk from its mouth that binds opposing Pokémon and harshly lowers their Speed stats.',
+    effects: [{ type: 'modify_stat', target_stat: 'speed', target: 'enemy', stages: -2, target_stat_label: 'speed' }],
+})
+
+
+//logic for  berry interaction
 
 // DARK MOVES
 
@@ -874,6 +1084,23 @@ const lick = new Move({
     effects: [{ type: 'applied_status', applied_status: 'paralyzed', target: 'enemy', chance: 30 }]
 })
 
+const astonish = new Move({
+    name: 'Astonish',
+    category: 'physical',
+    type: 'ghost',
+    power: 30,
+    accuracy: 100,
+    pp: {
+        max: 15,
+        current: 15
+    },
+    makes_contact: true,
+    animation: null,
+    description: 'The user attacks the target by crying out in a startling fashion. This may also make the target flinch.',
+    effects: [{ type: 'apply_flinch', applied_status: 'flinch', target: 'enemy', chance: 30 }]
+})
+
+
 export const all_moves = {
     tackle,
     growl,
@@ -924,6 +1151,18 @@ export const all_moves = {
     lick,
     confuse_ray,
     bulk_up,
-    low_kick
+    low_kick,
+    gust,
+    bug_bite,
+    poison_sting,
+    stun_spore,
+    string_shot,
+    peck,
+    double_kick,
+    bullet_seed,
+    absorb,
+    growth,
+    synthesis,
+    astonish
 
 }

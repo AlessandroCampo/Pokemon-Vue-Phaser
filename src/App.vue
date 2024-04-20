@@ -7,6 +7,8 @@
   <PartyMenuVue v-if="map_store.show_party_menu"></PartyMenuVue>
   <InventoryMenu v-if="map_store.show_inventory_menu"></InventoryMenu>
   <MoveForgetVue v-if="store.forgettign_pokemon"></MoveForgetVue>
+  <ShopMenuVue v-if="map_store.show_shop_menu"></ShopMenuVue>
+
 
   <TitleSceneVue v-if="map_store.show_title_scene"></TitleSceneVue>
 
@@ -25,6 +27,7 @@ import PartyMenuVue from './components/t3/PartyMenuVue.vue';
 import InventoryMenu from './components/t3/InventoryMenu.vue';
 import MoveForgetVue from './components/t3/MoveForgetVue.vue';
 import TitleSceneVue from './components/TitleSceneVue.vue';
+import ShopMenuVue from './components/t3/ShopMenuVue.vue';
 
 import { getAuth, signInAnonymously, onAuthStateChanged } from "firebase/auth";
 import { doc, setDoc, onSnapshot } from 'firebase/firestore'

@@ -1,6 +1,12 @@
 <template>
+
     <div class="text-panel">
-        {{ renderedText }}
+        <img :src="`/public/characters/portraits/${map_store.talking_npc?.name}.png`" alt=""
+            v-show="map_store.talking_npc">
+        <span>
+            {{ renderedText }}
+        </span>
+
     </div>
 </template>
 
@@ -115,8 +121,8 @@ function showOptionsMenu(e) {
 <style scoped>
 .text-panel {
     width: 100vw;
+    height: 15vh;
     position: absolute;
-    padding: 50px;
     z-index: 4;
     bottom: 0%;
     background-color: rgba(18, 18, 18, 0.5);
@@ -126,5 +132,9 @@ function showOptionsMenu(e) {
     justify-content: center;
     font-size: 2.5em;
 
+}
+
+img {
+    height: 150px;
 }
 </style>

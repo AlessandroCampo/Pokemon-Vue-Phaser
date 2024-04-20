@@ -9,6 +9,7 @@ import { map_store } from './mapStore.mjs';
 import { SCENE_KEYS } from './js/scenes/scene-keys.mjs';
 import gsap from 'gsap';
 import { AUDIO_ASSETS_KEY, WORLD_ASSETS_KEYS } from './js/scenes/assets-keys.mjs';
+import { all_npcs } from './js/db/npcs.mjs';
 
 export function deepClone(obj) {
     if (obj === null || typeof obj !== 'object') {
@@ -87,6 +88,7 @@ export const store = reactive({
     level_cap: 15,
     forgettign_pokemon: null,
     learnable_move: null,
+    my_money: 3000,
 
     useMove: async function (move, caster, target, player_attack) {
         this.info_text = ''
@@ -211,34 +213,51 @@ export const store = reactive({
             volume: 0.2
         })
 
-        //Account for crhit chance
+        //some moves can hit twice
         let crhit = false
-        const crhit_chance = Math.random() * 100
-        if (crhit_chance < caster.crhit_chance) {
-            crhit = true
-        }
-        let damage = this.calcDamage(move, caster, target, crhit, true);
+        let damage
+        for (let i = 0;i < move.repetitions;i++) {
+            //Account for crhit chance
 
-
-        // Apply damage if its a damaging move
-        if (move.power) {
-            // check damage prevention effects, if found return early
-
-            if (target.abilities.includes('Sturdy') && target.hp.current == target.hp.max && damage >= target.hp.max) {
-                damage = damage - 1
-                await this.applyDamage(target, damage);
-                this.info_text = `${target.name}'s Sturdy ability prevented him from going down in a single hit`
-                await this.delay(this.info_text.length * this.config.text_speed + 500);
-
-            } else {
-                await this.applyDamage(target, damage);
-                if (this.additional_info_text) {
-                    this.info_text = this.additional_info_text
-                    await this.delay(this.info_text.length * this.config.text_speed + 500);
-                }
-                this.additional_info_text = null
+            const crhit_chance = Math.random() * 100
+            if (crhit_chance < caster.crhit_chance) {
+                crhit = true
             }
-        } if (move.effects) {
+            damage = this.calcDamage(move, caster, target, crhit, true);
+
+
+            // Apply damage if its a damaging move
+            if (move.power) {
+                // check damage prevention effects, if found return early
+
+                if (target.abilities.includes('Sturdy') && target.hp.current == target.hp.max && damage >= target.hp.max) {
+                    damage = damage - 1
+                    await this.applyDamage(target, damage);
+                    this.info_text = `${target.name}'s Sturdy ability prevented him from going down in a single hit`
+                    await this.delay(this.info_text.length * this.config.text_speed + 500);
+
+                } else {
+                    await this.applyDamage(target, damage);
+                    if (this.additional_info_text) {
+                        this.info_text = this.additional_info_text
+                        await this.delay(this.info_text.length * this.config.text_speed + 500);
+                    }
+                    this.additional_info_text = null
+                }
+            }
+        }
+
+        if (move.repetitions > 1) {
+            this.info_text = `${move.name} has hit ${move.repetitions} times!`
+            await this.delay(this.info_text.length * this.config.text_speed + 500);
+        }
+
+
+
+
+
+
+        if (move.effects) {
             for (const effect of move.effects) {
                 if (effect.type == 'modify_stat') {
                     let move_target = effect.target == 'enemy' ? target : caster
@@ -315,6 +334,10 @@ export const store = reactive({
                 await this.delay(this.info_text.length * this.config.text_speed + 500)
             }
 
+            //check boost stat on hit
+
+
+
             // check if any super effective text needs to be displayed
 
             if (this.checkSuperEffectiveInfo(move, target)) {
@@ -324,10 +347,17 @@ export const store = reactive({
             }
 
             // check contact abilities
-            if (move.makes_contact && target.ability == 'Static') {
+            if (move.makes_contact && !caster.status && (target.abilities.includes('Static') || target.abilities.includes('Effect Spore'))) {
                 let apply_eff_chance = Math.random() < 0.3
                 if (apply_eff_chance) {
-                    caster.status == 'paralyzed'
+                    if (target.abilities.includes('Static')) {
+                        caster.status = 'paralyzed'
+                    } else if (target.abilities.includes('Effect Spore')) {
+                        const possible_statuses = ['paralyzed', 'asleep', 'poisoned']
+                        const random_index = Math.floor(Math.random() * 3)
+                        caster.status = possible_statuses[random_index]
+                    }
+
                 }
             }
 
@@ -497,7 +527,7 @@ export const store = reactive({
         if (caster.status == 'burned' && move.category == 'physical' && !caster.abilities.includes('Guts')) {
             damage_equation *= 0.5
         }
-        if (caster_pinched && ((caster.abilities.includes('Overgrow') && move.type == 'grass') || (caster.abilities.includes('Torrent') && move.type == 'water') || (caster.abilities.includes('Blaze') && move.type == 'fire'))) {
+        if (caster_pinched && ((caster.abilities.includes('Overgrow') && move.type == 'grass') || (caster.abilities.includes('Swarm') && move.type == 'bug') || (caster.abilities.includes('Torrent') && move.type == 'water') || (caster.abilities.includes('Blaze') && move.type == 'fire'))) {
 
             damage_equation *= 1.5
             // only display dialogue text if calc damage wants performed for a simulation
@@ -1036,6 +1066,16 @@ export const store = reactive({
         }
     },
     apply_status: async function (effect, target, caster) {
+        //some types cannot be affected by certain status effects
+        if (effect.applied_status == 'poisoned' && (target.types.includes('poison') || target.types.includes('steel'))) {
+            return false
+        }
+        if (effect.applied_status == 'paralyzed' && (target.types.includes('electric'))) {
+            return false
+        }
+        if (effect.applied_status == 'burned' && (target.types.includes('fire'))) {
+            return false
+        }
         let random_chance = Math.floor(Math.random() * 100)
         let status_applied = false
         if (effect.chance >= random_chance) {
@@ -1123,8 +1163,12 @@ export const store = reactive({
                     await this.delay(this.info_text.length * this.config.text_speed + 500);
                     await this.battle_scene_instance.changeOpponentPokemonSprite(this.bestAfterFaint())
                 } else {
-                    this.info_text = `${this.oppo_pokemon.name} died and you won the battle ${this.battle_type == 'trainer' ? 'against ' + this.oppo_trainer.name : ''}`;
-                    this.defeated_npcs.push(this.oppo_trainer.id)
+                    this.info_text = `${this.oppo_pokemon.name} died and you won the battle ${this.battle_type == 'trainer' ? 'against ' + this.oppo_trainer.name + 'and you earned 50$' : ''}`;
+                    if (this.battle_type == 'trainer') {
+                        this.defeated_npcs.push(this.oppo_trainer.id)
+                        this.my_money += 50
+                    }
+
                     await this.delay(this.info_text.length * this.config.text_speed + 500);
                     // window.location.reload()
 
@@ -1407,12 +1451,20 @@ export const store = reactive({
         }
     },
     checkDamagePrevent(move, caster, target) {
-        if (move.type == 'ground' && target.abilities.includes('Levitate') || move.type == 'water' && target.abilities.includes('Storm Drain') || move.type == 'ground' && target.types.includes('Flying')) {
+        if (move.type == 'ground' && target.abilities.includes('Levitate') || move.type == 'water' && target.abilities.includes('Storm Drain') || move.type == 'ground' && target.types.includes('Flying') || move.type == 'grass' && target.abilities.includes('Sap Sipper')) {
             this.additional_info_text = `${target.name}'s is uneffected  by ${move.name}`
 
             if (target.abilities.includes('Storm Drain')) {
                 let fake_effect = {
-                    type: 'modify_stat', target_stat: 'sp_attack', target: 'ally', stages: +1, target_stat_label: 'special attack'
+                    type: 'modify_stat', target_stat: 'sp_atk', target: 'ally', stages: +1, target_stat_label: 'special attack'
+                }
+                this.modifyStat(fake_effect, target)
+                this.additional_info_text = `${target.name}'s ${fake_effect.target_stat_label} rose thanks to ${target.abilities[0]}`
+            }
+
+            if (target.abilities.includes('Sap Sipper')) {
+                let fake_effect = {
+                    type: 'modify_stat', target_stat: 'atk', target: 'ally', stages: +1, target_stat_label: 'attack'
                 }
                 this.modifyStat(fake_effect, target)
                 this.additional_info_text = `${target.name}'s ${fake_effect.target_stat_label} rose thanks to ${target.abilities[0]}`
@@ -1590,6 +1642,19 @@ export const store = reactive({
         ];
 
         const rand_trainer_name = chosen_name ? chosen_name : trainerNames[Math.floor(Math.random() * trainerNames.length)]
+        //bandaid for trainer_scale
+        let trainer_scale = 0.12
+
+        switch (chosen_name) {
+            case 'bug catcher':
+                trainer_scale = 0.3
+                break;
+            case 'guard':
+                trainer_scale = 0.12
+                break;
+            default:
+                trainer_scale = 0.12
+        }
 
         let random_trainer = new Trainer({
             name: rand_trainer_name,
@@ -1599,7 +1664,7 @@ export const store = reactive({
                 x: 950,
                 y: 320
             },
-            scale: 0.23,
+            scale: trainer_scale,
             squad_level: null,
             moveset: null
         })
@@ -1832,6 +1897,11 @@ export const store = reactive({
         this.calcStats(pkmn)
 
 
+    },
+    shop_event: async function (listing) {
+        map_store.show_shop_menu = true
+        map_store.current_shop_listing = listing
+        map_store.talking_npc = all_npcs.merchant
     }
 
 

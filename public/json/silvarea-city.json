@@ -56,7 +56,7 @@
          "name":"Livello tile 1",
          "opacity":1,
          "type":"tilelayer",
-         "visible":false,
+         "visible":true,
          "width":35,
          "x":0,
          "y":0
@@ -476,7 +476,7 @@
                         {
                          "name":"connects_to",
                          "type":"string",
-                         "value":"silvarea-city-market"
+                         "value":"silvarea-city-shop"
                         }, 
                         {
                          "name":"entrance_id",
@@ -491,7 +491,7 @@
                         {
                          "name":"is_locked",
                          "type":"bool",
-                         "value":true
+                         "value":false
                         }],
                  "rotation":0,
                  "type":"entrance",

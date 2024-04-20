@@ -48,7 +48,7 @@ Use the backspace key to quit current menus or open the main menu in the world s
 
 ## Plot
 
-In this fantasy world, pokemons are used as creatures to fight wars and politically control lands; therefore, it's illegal to own them and train them, as it's considered subversive behavior towards the regime. Therefore, as the main character, you will be engaged in battles by each guard you meet. Unlike regular pokemon games, if a pokemon faints in battle, it's considered dead and will not be available again. If all of your pokemons die, the window will instantly reload, and you will be back to the previous save point.
+In this fantasy world, pokemons are used as creatures to fight wars and politically control lands; therefore, it's illegal to own them and train them, as it's considered subversive behavior towards the regime. Therefore, as the main character, you will be engaged in battles by each guard you meet. Unlike regular pokemon games, if a pokemon faints in battle, it's considered dead and will not be available again. If all of your pokemons die, the window will instantly reload, and you will be back to the previous save point. Your goal is to defeated the 7 lords (villain gym leaders).
 
 ## Game Documentation
 
@@ -64,7 +64,12 @@ All of Reyneera's pokemons hold a Sitrus Berry and are set at level 15. You're n
 
 All other regular trainers will have a team of random pokemons (among the encounterable ones) with random moves, equal to the length of your team.
 
-Right now, you can encounter the following pokemons on the map: Zigzagoon, Electrike, Ralts, Starly, Meowth, Wingull, Poochyena.
+Right now, you can encounter the following pokemons on the map: 
+Route 1: Poochyena, Wingull, Zigszagoon,  Electricke
+Route 2: Starly,Meowth, Wingull,  Ralts, Zigszagoon, Electricke
+Route 3: Tirtouga, Clauncher, Wingull, Ducklett,
+Silvarea: Kricketune, Beautifly, Foongus, Deerling
+Cave: Cranidos, Larvitar, Aaron, Onyx
 
 ## Credits
 

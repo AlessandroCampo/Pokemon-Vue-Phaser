@@ -1,6 +1,6 @@
 <template>
     <div class="menu-container">
-        <div class="bench-container">
+        <div class="bench-container" v-show="store.my_pokemon">
             <div class="bench" :class="{
                 'active': index == active_target && selecting_target,
                 'lead': index == 0
@@ -101,6 +101,14 @@ const sub_menu_voices = [
                 menu_info_text.value = `${chosen_item.name} can't be used right now`
                 menuReset()
                 return
+            }
+            if (chosen_item.type == 'repel') {
+                menu_info_text.value = `${chosen_item.name} has been used, and will reduce the chance of encountering wild pokèmons`
+                map_store.repel_steps_left += chosen_item.amount
+                console.log(chosen_item, map_store.repel_steps_left)
+                menuReset()
+                return
+
             }
             let target = await targetSelect()
 
@@ -210,10 +218,10 @@ const useItem = async function (item, target) {
         } else {
 
             item.owned_amount--
-            let healing_amount = target.hp.max * item.amount * -1
+            let healing_amount = Math.floor(target.hp.max * item.amount * -1)
             await store.applyDamage(target, healing_amount)
             store.menu_state = 'text'
-            menu_info_text.value = `${target.name} has recovered ${healing_amount} HP`
+            menu_info_text.value = `${target.name} has recovered ${healing_amount * +1} HP`
             menuReset()
 
         }

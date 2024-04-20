@@ -40,324 +40,467 @@ function deepClone(obj) {
     return clone;
 }
 
-export let encounter_map = [{
-    map_name: 'start',
-    npcs_locations: [
-        {
-            npc: { ...all_npcs.merchant },
-            position: {
-                x: 272, y: 304 - tile_size
-            },
-            battler: false,
-            path: null,
-            already_talked_to: false,
-            event: async function () {
-                if (store.my_pokemon) {
-                    await map_store.healAllPokemons()
-                } else {
-                    store.menu_state = 'text'
-                    store.info_text = 'Oh, you have no Pokemons yet, never mind'
-                    await store.delay(store.info_text.length * store.config.text_speed + 500)
-                }
-            },
-
-        },
-        {
-            id: 0,
-            npc: { ...all_npcs.npc_1 },
-            position: { x: 368, y: 160 - tile_size },
-            path: null,
-            battler: false,
-            boss: true,
-            event: async function () {
-                if (store.my_pokemon) {
-                    map_store.text_queue.push('You dare coming to me with an army of Pokèmons?')
-                    map_store.handleBossBattle(trainers.roxanne)
-                    map_store.world_scene_istance.startBossBattle()
-                } else {
-                    map_store.text_queue.push('This is not a place for kids, just go away')
-                }
-
-            },
-
-        },
-        {
-            id: 1,
-            npc: { ...all_npcs.guard },
-            position: { x: 320, y: 240 - tile_size },
-            path: null,
-            battler: false,
-            event: null,
-            frame: 8,
-            direction: DIRECTION.RIGHT
-        },
 
 
-    ],
-    possible_encounters: [],
-    indoor: false
-},
-{
-    map_name: 'start-new',
-    npcs_locations: [],
-    possible_encounters: [],
-    indoor: false
-},
 
-{
-    map_name: 'building-1',
-    possible_encounters: [
-    ],
-    npcs_locations: [
-    ],
-    indoor: true
-},
-{
-    map_name: 'pokestop',
-    possible_encounters: [
+export let encounter_map = [
 
-    ],
-    npcs_locations: [
-        {
-            npc: { ...all_npcs.nurse },
-            position: { x: 128, y: 80 - tile_size },
-            path: null,
-            battler: false,
-            event: async function () {
-                if (store.my_pokemon) {
-                    await map_store.healAllPokemons()
-                } else {
-                    store.menu_state = 'text'
-                    store.info_text = 'Oh, you have no Pokemons yet, never mind'
-                    await store.delay(store.info_text.length * store.config.text_speed + 500)
-                }
-            },
-            frame: 0,
-            direction: DIRECTION.DOWN
-        }
-    ],
-    indoor: true
-},
-{
-    map_name: 'partumia',
-    possible_encounters: [
-    ],
-    npcs_locations: [
-    ],
-    indoor: false
-},
-{
-    map_name: 'tintignac',
-    possible_encounters: [
-    ],
-    npcs_locations: [
-    ],
-    indoor: false
-},
-{
-    map_name: 'building-2',
-    possible_encounters: [
-    ],
-    npcs_locations: [
-        {
-            id: 2,
-            npc: { ...all_npcs.npc_2 },
-            position: { x: 144, y: 80 - tile_size },
-            path: null,
-            battler: false,
-            already_talked_to: false,
-            event: async function () {
+    {
+        map_name: 'start-new',
+        npcs_locations: [],
+        possible_encounters: [],
+        indoor: false
+    },
 
-                if (!this.already_talked_to && !store.my_pokemon) {
-                    return new Promise(async resolve => {
-                        if (this.already_talked_to || map_store.choosing_starter) return
-                        // map_store.add_new_message_to_queue();
+    {
+        map_name: 'building-1',
+        possible_encounters: [
+        ],
+        npcs_locations: [
+        ],
+        indoor: true
+    },
+    {
+        map_name: 'partumia-stop',
+        possible_encounters: [
+
+        ],
+        npcs_locations: [
+            {
+                npc: { ...all_npcs.nurse },
+                position: { x: 224, y: 224 - tile_size },
+                path: null,
+                battler: false,
+                event: async function () {
+                    if (store.my_pokemon) {
+                        await map_store.healAllPokemons()
+                    } else {
                         store.menu_state = 'text'
-                        store.info_text = 'This town will have no peace until someone defeats Duke Reyneera...';
+                        store.info_text = 'Oh, you have no Pokemons yet, never mind'
                         await store.delay(store.info_text.length * store.config.text_speed + 500)
-                        store.info_text = 'Take one of my Pokémon, train him until it\'s strong enough to face her'
-                        await store.delay(store.info_text.length * store.config.text_speed + 500)
-                        store.info_text = ''
-
-
-                        map_store.choosing_starter = true;
-                        if (!store.my_items.some(item => item.name === all_items.rare_candy.name)) {
-                            const rareCandyInstance = deepClone(all_items.rare_candy)
-                            rareCandyInstance.owned_amount = 200
-                            store.my_items.push(rareCandyInstance);
-                        }
-
-
-                        if (!store.my_items.some(item => item.name === all_items.mega_ball.name)) {
-                            const pokeBallInstance = deepClone(all_items.mega_ball);
-
-                            pokeBallInstance.owned_amount = 200;
-                            store.my_items.push(pokeBallInstance);
-                        } else {
-                            //     const pokeBallIndex = store.my_items.findIndex(item => item.name === all_items.poke_ball.name);
-                            //     store.my_items[pokeBallIndex].owned_amount += 10;
-                        }
-
-
-
-                        // Use watch from Vue to watch for changes in map_store.choosing_starter and store.my_pokemon
-                        const unwatch = watch(() => ({
-                            choosing_starter: map_store.choosing_starter,
-                            my_pokemon: store.my_pokemon
-                        }), (newValues) => {
-                            if (!newValues.choosing_starter) {
-                                if (newValues.my_pokemon !== undefined) {
-                                    if (this.already_talked_to) {
-                                        return
-                                    }
-
-                                    unwatch(); // Stop watching after conditions are met
-                                    map_store.add_new_message_to_queue(`${store.my_pokemon.name} was a great choice!`);
-                                    map_store.add_new_message_to_queue('Take some Poké Balls and Rare Candies as well, use these items build an army and free us from that burden!');
-                                    this.already_talked_to = true;
-
-                                    resolve(); // Resolve the promise
-                                } else {
-                                    // Continue waiting until my_pokemon is defined
-                                    return;
-                                }
-                            }
-                        });
-
-                        await store.delay(2000);
-                    });
-                } else {
-                    map_store.add_new_message_to_queue('Be careful, she is pretty strong, make sure your army is well trained before challenging her');
-                    await store.delay(2000);
-                }
+                    }
+                },
+                frame: 0,
+                direction: DIRECTION.DOWN
             }
+        ],
+        indoor: true
+    },
+    {
+        map_name: 'partumia-shop',
+        possible_encounters: [
 
-        },
-    ],
-    indoor: true
-},
-{
-    map_name: 'route-1-new',
-    npcs_locations: [
-        {
-            id: 3,
-            npc: { ...all_npcs.guard },
-            position: { x: 576, y: 560 - tile_size },
-            path: null,
-            battler: false,
-            event: null,
-            frame: 0,
-            direction: DIRECTION.DOWN
-        },
-        {
-            id: 4,
-            npc: { ...all_npcs.guard },
-            position: { x: 288, y: 624 - tile_size },
-            path: null,
-            battler: false,
-            event: null,
-            frame: 0,
-            direction: DIRECTION.DOWN
-        },
-        ,
-        {
-            id: 5,
-            npc: { ...all_npcs.guard },
-            position: { x: 80, y: 128 - tile_size },
-            path: null,
-            battler: false,
-            event: null,
-            frame: 0,
-            direction: DIRECTION.DOWN
-        }
-    ],
-    possible_encounters: [
-        { pokemon: Pokemons.meowth, chance: 0.1 },
+        ],
+        npcs_locations: [
+            {
+                npc: { ...all_npcs.merchant },
+                position: { x: 128, y: 112 - tile_size },
+                path: null,
+                battler: false,
+                event: () => {
+                    store.shop_event([all_items.potion, all_items.poke_ball, all_items.mega_ball, all_items.repel, all_items.awakening, all_items.paralyze_heal])
+                },
+                frame: 0,
+                direction: DIRECTION.DOWN
+            }
+        ],
+        indoor: true
+    },
+    {
+        map_name: 'silvarea-city-shop',
+        possible_encounters: [
 
-        { pokemon: Pokemons.poochyena, chance: 0.2 },
-        { pokemon: Pokemons.ralts, chance: 0.05 },
-        { pokemon: Pokemons.wingull, chance: 0.2 },
-        { pokemon: Pokemons.zigzagoon, chance: 0.3 },
-        { pokemon: Pokemons.electrike, chance: 0.1 },
-        { pokemon: Pokemons.starly, chance: 0.05 },
-    ],
-    level_average: 3,
-    indoor: false
-},
-{
-    map_name: 'route-2',
-    possible_encounters: [
-    ],
-    npcs_locations: [
-    ],
-    indoor: false
-},
-{
-    map_name: 'route-3',
-    possible_encounters: [
-    ],
-    npcs_locations: [
-    ],
-    indoor: false
-},
-{
-    map_name: 'cave',
-    possible_encounters: [
-    ],
-    npcs_locations: [
-    ],
-    indoor: false
-},
-{
-    map_name: 'silvarea',
-    possible_encounters: [
-    ],
-    npcs_locations: [
-    ],
-    indoor: false
-},
-{
-    map_name: 'silvarea-city',
-    possible_encounters: [
-    ],
-    npcs_locations: [
-    ],
-    indoor: false
-},
-{
-    map_name: 'nadia-gym',
-    possible_encounters: [
-    ],
-    npcs_locations: [
-    ],
-    indoor: true
-},
-{
-    map_name: 'silvarea-city-stop',
-    possible_encounters: [
+        ],
+        npcs_locations: [
+            {
+                npc: { ...all_npcs.merchant },
+                position: { x: 128, y: 112 - tile_size },
+                path: null,
+                battler: false,
+                event: () => {
+                    store.shop_event([all_items.potion, all_items.poke_ball, all_items.mega_ball, all_items.repel, all_items.awakening, all_items.paralyze_heal])
+                },
+                frame: 0,
+                direction: DIRECTION.DOWN
+            }
+        ],
+        indoor: true
+    },
 
-    ],
-    npcs_locations: [
-        {
-            npc: { ...all_npcs.nurse },
-            position: { x: 128, y: 80 - tile_size },
-            path: null,
-            battler: false,
-            event: async function () {
-                if (store.my_pokemon) {
-                    await map_store.healAllPokemons()
-                } else {
-                    store.menu_state = 'text'
-                    store.info_text = 'Oh, you have no Pokemons yet, never mind'
-                    await store.delay(store.info_text.length * store.config.text_speed + 500)
+    {
+        map_name: 'silvarea-city-shop',
+        possible_encounters: [
+
+        ],
+        npcs_locations: [
+            {
+                npc: { ...all_npcs.merchant },
+                position: { x: 128, y: 112 - tile_size },
+                path: null,
+                battler: false,
+                event: () => {
+                    store.shop_event([all_items.potion, all_items.poke_ball, all_items.mega_ball, all_items.repel, all_items.awakening, all_items.paralyze_heal])
+                },
+                frame: 0,
+                direction: DIRECTION.DOWN
+            }
+        ],
+        indoor: true
+    },
+    {
+        map_name: 'partumia',
+        possible_encounters: [
+        ],
+        npcs_locations: [
+        ],
+        indoor: false
+    },
+    {
+        map_name: 'tintignac',
+        possible_encounters: [
+        ],
+        npcs_locations: [
+        ],
+        indoor: false
+    },
+    {
+        map_name: 'building-2',
+        possible_encounters: [
+        ],
+        npcs_locations: [
+            {
+                id: 2,
+                npc: { ...all_npcs.npc_2 },
+                position: { x: 144, y: 80 - tile_size },
+                path: null,
+                battler: false,
+                already_talked_to: false,
+                event: async function () {
+
+                    if (!this.already_talked_to && !store.my_pokemon) {
+                        return new Promise(async resolve => {
+                            if (this.already_talked_to || map_store.choosing_starter) return
+                            // map_store.add_new_message_to_queue();
+                            store.menu_state = 'text'
+                            store.info_text = 'This region will have no peace until someone defeats the 7 lords...';
+                            await store.delay(store.info_text.length * store.config.text_speed + 500)
+                            store.info_text = 'Take one of my Pokémon, train him until it\'s strong enough to face them'
+                            await store.delay(store.info_text.length * store.config.text_speed + 500)
+                            store.info_text = ''
+
+
+                            map_store.choosing_starter = true;
+                            if (!store.my_items.some(item => item.name === all_items.rare_candy.name)) {
+                                const rareCandyInstance = deepClone(all_items.rare_candy)
+                                rareCandyInstance.owned_amount = 200
+                                store.my_items.push(rareCandyInstance);
+                            }
+
+
+                            if (!store.my_items.some(item => item.name === all_items.mega_ball.name)) {
+                                const pokeBallInstance = deepClone(all_items.mega_ball);
+
+                                pokeBallInstance.owned_amount = 200;
+                                store.my_items.push(pokeBallInstance);
+                            } else {
+                                //     const pokeBallIndex = store.my_items.findIndex(item => item.name === all_items.poke_ball.name);
+                                //     store.my_items[pokeBallIndex].owned_amount += 10;
+                            }
+
+
+
+                            // Use watch from Vue to watch for changes in map_store.choosing_starter and store.my_pokemon
+                            const unwatch = watch(() => ({
+                                choosing_starter: map_store.choosing_starter,
+                                my_pokemon: store.my_pokemon
+                            }), (newValues) => {
+                                if (!newValues.choosing_starter) {
+                                    if (newValues.my_pokemon !== undefined) {
+                                        if (this.already_talked_to) {
+                                            return
+                                        }
+
+                                        unwatch(); // Stop watching after conditions are met
+                                        map_store.add_new_message_to_queue(`${store.my_pokemon.name} was a great choice!`);
+                                        map_store.add_new_message_to_queue('Take some Poké Balls and Rare Candies as well, use these items build an army and free us from that burden!');
+                                        this.already_talked_to = true;
+
+                                        resolve(); // Resolve the promise
+                                    } else {
+                                        // Continue waiting until my_pokemon is defined
+                                        return;
+                                    }
+                                }
+                            });
+
+                            await store.delay(2000);
+                        });
+                    } else {
+                        store.info_text = 'Be careful, the lords are pretty strong and corrupted policemans are everywhere and will try to kill you if they see you running around with pokemons';
+                        await store.delay(store.info_text.length * store.config.text_speed + 500);
+                    }
                 }
+
             },
-            frame: 0,
-            direction: DIRECTION.DOWN
-        }
-    ],
-    indoor: true
-},
+        ],
+        indoor: true
+    },
+    {
+        map_name: 'route-1-new',
+        npcs_locations: [
+            {
+                id: 3,
+                npc: { ...all_npcs.guard },
+                position: { x: 576, y: 560 - tile_size },
+                path: null,
+                battler: true,
+                event: null,
+                frame: 0,
+                direction: DIRECTION.DOWN
+            },
+            {
+                id: 4,
+                npc: { ...all_npcs.guard },
+                position: { x: 288, y: 624 - tile_size },
+                path: null,
+                battler: true,
+                event: null,
+                frame: 0,
+                direction: DIRECTION.DOWN
+            },
+            ,
+            {
+                id: 5,
+                npc: { ...all_npcs.guard },
+                position: { x: 80, y: 128 - tile_size },
+                path: null,
+                battler: true,
+                event: null,
+                frame: 8,
+                direction: DIRECTION.RIGHT
+            }
+        ],
+        possible_encounters: [
+            { pokemon: Pokemons.poochyena, chance: 0.3 },
+            { pokemon: Pokemons.wingull, chance: 0.2 },
+            { pokemon: Pokemons.zigzagoon, chance: 0.3 },
+            { pokemon: Pokemons.electrike, chance: 0.2 },
+
+        ],
+        level_average: 3,
+        indoor: false
+    },
+    {
+        map_name: 'route-2',
+        possible_encounters: [
+            { pokemon: Pokemons.starly, chance: 0.05 },
+            { pokemon: Pokemons.meowth, chance: 0.1 },
+            { pokemon: Pokemons.wingull, chance: 0.3 },
+            { pokemon: Pokemons.ralts, chance: 0.05 },
+            { pokemon: Pokemons.zigzagoon, chance: 0.3 },
+            { pokemon: Pokemons.electrike, chance: 0.2 },
+        ],
+        npcs_locations: [
+            {
+                id: 4,
+                npc: { ...all_npcs.guard },
+                position: { x: 1152, y: 208 - tile_size },
+                path: null,
+                battler: true,
+                event: null,
+                frame: 0,
+                direction: DIRECTION.DOWN
+            },
+            {
+                id: 5,
+                npc: { ...all_npcs.guard },
+                position: { x: 640, y: 432 - tile_size },
+                path: null,
+                battler: true,
+                event: null,
+                frame: 4,
+                direction: DIRECTION.LEFT
+            },
+            ,
+            {
+                id: 6,
+                npc: { ...all_npcs.guard },
+                position: { x: 64, y: 256 - tile_size },
+                path: null,
+                battler: true,
+                event: null,
+                frame: 0,
+                direction: DIRECTION.DOWN
+            }
+        ],
+        indoor: false,
+        battle_background: 'route.jpg'
+    },
+    {
+        map_name: 'route-3',
+        possible_encounters: [
+        ],
+        npcs_locations: [
+        ],
+        indoor: false,
+        battle_background: 'beach.png'
+    },
+    {
+        map_name: 'cave',
+        possible_encounters: [
+        ],
+        npcs_locations: [
+        ],
+        indoor: false
+    },
+    {
+        map_name: 'silvarea',
+        possible_encounters: [
+            { pokemon: Pokemons.kricketune, chance: 0.25 },
+
+            { pokemon: Pokemons.beautifly, chance: 0.25 },
+            { pokemon: Pokemons.foongus, chance: 0.25 },
+            { pokemon: Pokemons.deerling, chance: 0.25 },
+
+        ],
+        npcs_locations: [
+            {
+                id: 7,
+                npc: { ...all_npcs.bug_catcher },
+                position: { x: 1280, y: 448 - tile_size },
+                path: null,
+                battler: true,
+                event: null,
+                frame: 0,
+                direction: DIRECTION.DOWN
+            },
+            {
+                id: 8,
+                npc: { ...all_npcs.guard },
+                position: { x: 1088, y: 576 - tile_size },
+                path: null,
+                battler: true,
+                event: null,
+                frame: 8,
+                direction: DIRECTION.RIGHT
+            },
+            {
+                id: 9,
+                npc: { ...all_npcs.bug_catcher },
+                position: { x: 992, y: 368 - tile_size },
+                path: null,
+                battler: true,
+                event: null,
+                frame: 4,
+                direction: DIRECTION.LEFT
+            },
+            {
+                id: 10,
+                npc: { ...all_npcs.guard },
+                position: { x: 641, y: 720 - tile_size },
+                path: null,
+                battler: true,
+                event: null,
+                frame: 15,
+                direction: DIRECTION.UP
+            },
+            {
+                id: 11,
+                npc: { ...all_npcs.guard },
+                position: { x: 208, y: 592 - tile_size },
+                path: null,
+                battler: true,
+                event: null,
+                frame: 0,
+                direction: DIRECTION.DOWN
+            },
+            {
+                id: 12,
+                npc: { ...all_npcs.bug_catcher },
+                position: { x: 160, y: 176 - tile_size },
+                path: null,
+                battler: true,
+                event: null,
+                frame: 0,
+                direction: DIRECTION.DOWN
+            },
+            {
+                id: 13,
+                npc: { ...all_npcs.guard },
+                position: { x: 352, y: 112 - tile_size },
+                path: null,
+                battler: true,
+                event: null,
+                frame: 0,
+                direction: DIRECTION.DOWN
+            },
+            {
+                id: 14,
+                npc: { ...all_npcs.guard },
+                position: { x: 560, y: 160 - tile_size },
+                path: null,
+                battler: true,
+                event: null,
+                frame: 11,
+                direction: DIRECTION.UP
+            },
+            {
+                id: 15,
+                npc: { ...all_npcs.guard },
+                position: { x: 640, y: 96 - tile_size },
+                path: null,
+                battler: true,
+                event: null,
+                frame: 4,
+                direction: DIRECTION.LEFT
+            },
+        ],
+        indoor: false,
+        battle_background: 'forest.png',
+        level_average: 13,
+    },
+    {
+        map_name: 'silvarea-city',
+        possible_encounters: [
+        ],
+        npcs_locations: [
+        ],
+        indoor: false
+    },
+    {
+        map_name: 'nadia-gym',
+        possible_encounters: [
+        ],
+        npcs_locations: [
+        ],
+        indoor: true
+    },
+    {
+        map_name: 'silvarea-city-stop',
+        possible_encounters: [
+
+        ],
+        npcs_locations: [
+            {
+                npc: { ...all_npcs.nurse },
+                position: { x: 224, y: 224 - tile_size },
+                path: null,
+                battler: false,
+                event: async function () {
+                    if (store.my_pokemon) {
+                        await map_store.healAllPokemons()
+                    } else {
+                        store.menu_state = 'text'
+                        store.info_text = 'Oh, you have no Pokemons yet, never mind'
+                        await store.delay(store.info_text.length * store.config.text_speed + 500)
+                    }
+                },
+                frame: 0,
+                direction: DIRECTION.DOWN
+            }
+        ],
+        indoor: true
+    },
 
 
 ];
@@ -368,7 +511,7 @@ export const map_store = reactive({
     text_queue: [],
     all_messages_read: true,
     event_on_cooldown: false,
-    encounter_frequency: 0.0,
+    encounter_frequency: 0.025,
     current_map: encounter_map[0],
     world_scene_istance: undefined,
     choosing_starter: false,
@@ -391,8 +534,12 @@ export const map_store = reactive({
     show_menu: false,
     show_party_menu: false,
     show_inventory_menu: false,
+    show_shop_menu: false,
+    current_shop_listing: [all_items.poke_ball, all_items.mega_ball, all_items.potion, all_items.paralyze_heal, all_items.awakening, all_items.repel],
     show_title_scene: true,
     preload_scene_istance: undefined,
+    talking_npc: undefined,
+    repel_steps_left: 0,
     createSceneTransition: async function (scene) {
 
         // const skipSceneTransition = options?.skipSceneTransition || false;
@@ -538,6 +685,7 @@ export const map_store = reactive({
             my_pokemon: store.generateSaveCopy(store.my_pokemon),
             my_bench: my_bench_copy,
             my_items: my_inventory_copy,
+            my_money: store.my_money,
             position: this.getPositionSaveObj(),
             defeated_npcs: store.defeated_npcs
         };
@@ -560,6 +708,7 @@ export const map_store = reactive({
                             my_pokemon: my_pokemon_copy,
                             username: store.player_info.name,
                             position: map_store.getPositionSaveObj(new_game),
+                            my_money: 0,
                             my_bench: [],
                             my_items: [],
                             defeated_npcs: [],
@@ -594,7 +743,7 @@ export const map_store = reactive({
                         this.current_map = saved_map
                         store.my_pokemon = this.retrivePokemonData(this.fetched_data.my_pokemon)
                         resolve()
-
+                        store.my_money = this.fetched_data.my_money
                         this.fetched_data.my_bench.forEach((mon) => {
                             store.my_bench.push(this.retrivePokemonData(mon))
                         })

@@ -55,3 +55,7 @@ rework menu UIS
 add title introduction scene 
 do all the maps
 improve foregrounds, market and pokestop map
+pokemon storing system
+redo foregrounds route-2 and  forest
+manage moveset at set levels  for trianer and wild pokemons
+double attack from  wild pokemon after double run attempt failed

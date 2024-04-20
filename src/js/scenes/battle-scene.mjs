@@ -15,8 +15,11 @@ export class BattleScene extends Phaser.Scene {
         })
     }
     async preload() {
-
-        //TODO - organize preload scene better
+        //remove sprite from battle text
+        map_store.talking_npc = undefined
+        //TODO - organize preload scene better`
+        //Support for different backgroudns
+        this.load.image(`${map_store.current_map?.name}_bg`, `/backgrounds/${map_store.current_map?.battle_background}`)
 
         all_items_array.forEach((item) => {
             this.load.image(item.name, item.img_path);
@@ -88,8 +91,11 @@ export class BattleScene extends Phaser.Scene {
 
         }
 
-        const backgroundTexture = this.textures.get(BATTLE_BACKGROUND_ASSET_KEYS.FOREST_NIGHT);
-        const backgroundImage = this.add.image(0, 0, BATTLE_BACKGROUND_ASSET_KEYS.FOREST_NIGHT).setOrigin(0);
+        let bg_asset_key = map_store.current_map.battle_background ? `${map_store.current_map?.name}_bg` : BATTLE_BACKGROUND_ASSET_KEYS.FOREST_NIGHT
+
+        const backgroundTexture = this.textures.get(bg_asset_key);
+        const backgroundImage = this.add.image(0, 0, bg_asset_key).setOrigin(0);
+
 
         const scaleX = this.sys.canvas.width / backgroundTexture.source[0].width;
         const scaleY = this.sys.canvas.height / backgroundTexture.source[0].height;

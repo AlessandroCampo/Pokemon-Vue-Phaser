@@ -8,7 +8,7 @@ let oppo_position = {
 }
 
 class Item {
-    constructor({ name, price, effect, description, img_path, owned_amount, sprite, asset_key, can_be_used_in_battle, consumable, type }) {
+    constructor({ name, price, effect, description, img_path, owned_amount, sprite, asset_key, can_be_used_in_battle, consumable, type, amount }) {
         this.name = name
         this.price = price || 0
         this.effect = effect || null
@@ -20,6 +20,7 @@ class Item {
         this.can_be_used_in_battle = can_be_used_in_battle
         this.consumable = consumable || false
         this.type = type || null
+        this.amount = amount
     }
 
     // drawSprite(scene) {
@@ -119,6 +120,19 @@ export class Antidote extends Item {
     }
 }
 
+const repel = new Item({
+    name: 'Repel',
+    description: 'An item that prevents weak wild Pokémon from appearing for 100 steps after its use.',
+    img_path: base_path + 'repel.png',
+    asset_key: 'repel',
+    can_be_used_in_battle: false,
+    consumable: true,
+    type: 'repel',
+    price: 250,
+    amount: 200
+})
+
+
 const rare_candy = new Item({
 
     name: 'Rare Candy',
@@ -157,7 +171,8 @@ const poke_ball = new Ball({
     img_path: base_path + 'pokeball.png',
     catch_multiplier: 1,
     asset_key: 'pokeball',
-    can_be_used_in_battle: true
+    can_be_used_in_battle: true,
+    price: 200,
 
 })
 
@@ -167,7 +182,8 @@ const mega_ball = new Ball({
     img_path: base_path + 'megaball.png',
     catch_multiplier: 1.5,
     asset_key: 'megaball',
-    can_be_used_in_battle: true
+    can_be_used_in_battle: true,
+    price: 600
 
 })
 
@@ -177,7 +193,8 @@ const potion = new Potion({
     img_path: base_path + 'potion.png',
     amount: 0.25,
     asset_key: 'potion',
-    consumable: true
+    consumable: true,
+    price: 300
 })
 
 const paralyze_heal = new Antidote({
@@ -186,7 +203,8 @@ const paralyze_heal = new Antidote({
     img_path: base_path + 'paralyze_heal.png',
     helead_status: 'paralyzed',
     asset_key: 'paralyze_heal',
-    consumable: true
+    consumable: true,
+    price: 250,
 })
 
 const awakening = new Antidote({
@@ -195,7 +213,8 @@ const awakening = new Antidote({
     img_path: base_path + 'awakening.png',
     helead_status: 'asleep',
     asset_key: 'awakening',
-    consumable: true
+    consumable: true,
+    price: 250
 })
 
 export const all_items = {
@@ -206,7 +225,8 @@ export const all_items = {
     awakening,
     paralyze_heal,
     rare_candy,
-    mega_ball
+    mega_ball,
+    repel
 }
 
-export const all_items_array = [lum_berry, sitrus_berry, poke_ball, potion, mega_ball, awakening, paralyze_heal]
+export const all_items_array = [lum_berry, sitrus_berry, poke_ball, potion, mega_ball, awakening, paralyze_heal, repel]

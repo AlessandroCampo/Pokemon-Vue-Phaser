@@ -1755,6 +1755,304 @@ let starly = new Pokemon({
     leviates: true
 });
 
+let kricketune = new Pokemon({
+    name: "Kricketune",
+    description: "It signals its emotions with its melodies. Scientists are studying these melodic patterns.",
+    types: ['bug'],
+    height: 1,
+    weight: 25.5,
+    moves: [deepClone(all_moves.growl), deepClone(all_moves.tackle), deepClone(all_moves.absorb)],
+    learnable_moves: [],
+    abilities: ['Swarm'],
+    growth_rate: 'Medium Slow',
+    level: 5,
+    catch_rate: 45,
+    pokemon_number: 402,
+    evolution: null,
+    hp: {
+        base: 77,
+        max: 77,
+        current: 77
+    },
+    xp: {
+        base: 134,
+        total: 0
+    },
+    atk: {
+        base: 85,
+        current: 85,
+        effective: 85,
+        stage: 0
+    },
+    def: {
+        base: 51,
+        current: 51,
+        effective: 51,
+        stage: 0
+    },
+    sp_atk: {
+        base: 55,
+        current: 55,
+        effective: 55,
+        stage: 0
+    },
+    sp_def: {
+        base: 51,
+        current: 51,
+        effective: 51,
+        stage: 0
+    },
+    speed: {
+        base: 65,
+        current: 65,
+        effective: 65,
+        stage: 0
+    },
+    images: {
+        front: {
+            path: base_path + 'kricketune-front.png',
+            key: 'kricketune-front',
+            frameWidth: 283,
+            frameHeight: 310,
+            frames: 29
+        },
+        back: {
+            path: base_path + 'kricketune-back.png',
+            key: 'kricketune-back',
+            frameWidth: 376,
+            frameHeight: 410,
+            frames: 29
+        }
+    },
+    sounds: 'assets/sounds/kricketune-cry.ogg',
+    held_item: null,
+    stat_total: 384,
+    leviates: false
+});
+
+let beautifly = new Pokemon({
+    name: "Beautifly",
+    description: "	When flower fields bloom, it flits around, collecting pollen. Despite its appearance, it is savage.",
+    types: ['bug', 'flying'],
+    height: 1,
+    weight: 28.4,
+    moves: [deepClone(all_moves.gust), deepClone(all_moves.bug_bite), deepClone(all_moves.string_shot), deepClone(all_moves.poison_sting)],
+    learnable_moves: [{ at_level: 12, move: { ...all_moves.absorb } }, { at_level: 15, move: { ...all_moves.stun_spore } }],
+    abilities: ['Swarm'],
+    growth_rate: 'Medium Slow',
+    level: 5,
+    catch_rate: 45,
+    pokemon_number: 267,
+    evolution: null,
+    hp: {
+        base: 60,
+        max: 60,
+        current: 60
+    },
+    xp: {
+        base: 178,
+        total: 0
+    },
+    atk: {
+        base: 70,
+        current: 70,
+        effective: 70,
+        stage: 0
+    },
+    def: {
+        base: 50,
+        current: 50,
+        effective: 50,
+        stage: 0
+    },
+    sp_atk: {
+        base: 100,
+        current: 100,
+        effective: 100,
+        stage: 0
+    },
+    sp_def: {
+        base: 50,
+        current: 50,
+        effective: 50,
+        stage: 0
+    },
+    speed: {
+        base: 65,
+        current: 65,
+        effective: 65,
+        stage: 0
+    },
+    images: {
+        front: {
+            path: base_path + 'beautifly-front.png',
+            key: 'beautifly-front',
+            frameWidth: 296,
+            frameHeight: 310,
+            frames: 50
+        },
+        back: {
+            path: base_path + 'beautifly-back.png',
+            key: 'beautifly-back',
+            frameWidth: 384,
+            frameHeight: 410,
+            frames: 50
+        }
+    },
+    sounds: 'assets/sounds/beautifly-cry.ogg',
+    held_item: null,
+    stat_total: 384,
+    leviates: false
+});
+let deerling = new Pokemon({
+    name: "Deerling",
+    description: "Their coloring changes according to the seasons and can be slightly affected by the temperature and humidity as well.",
+    types: ['normal', 'grass'],
+    height: 0.6,
+    weight: 19.5,
+    moves: [deepClone(all_moves.tackle), deepClone(all_moves.growl), deepClone(all_moves.double_kick), deepClone(all_moves.sand_attack)],
+    learnable_moves: [{ at_level: 12, move: { ...all_moves.mega_drain } }, { at_level: 15, move: { ...all_moves.bullet_seed } }],
+    abilities: ['Sap Sipper'],
+    growth_rate: 'Medium Fast',
+    level: 5,
+    catch_rate: 190,
+    pokemon_number: 585,
+    evolution: null,
+    hp: {
+        base: 60,
+        max: 60,
+        current: 60
+    },
+    xp: {
+        base: 67,
+        total: 0
+    },
+    atk: {
+        base: 60,
+        current: 60,
+        effective: 60,
+        stage: 0
+    },
+    def: {
+        base: 50,
+        current: 50,
+        effective: 50,
+        stage: 0
+    },
+    sp_atk: {
+        base: 40,
+        current: 40,
+        effective: 40,
+        stage: 0
+    },
+    sp_def: {
+        base: 50,
+        current: 50,
+        effective: 50,
+        stage: 0
+    },
+    speed: {
+        base: 75,
+        current: 75,
+        effective: 75,
+        stage: 0
+    },
+    images: {
+        front: {
+            path: base_path + 'deerling-front.png',
+            key: 'deerling-front',
+            frameWidth: 227,
+            frameHeight: 310,
+            frames: 38
+        },
+        back: {
+            path: base_path + 'deerling-back.png',
+            key: 'deerling-back',
+            frameWidth: 296,
+            frameHeight: 410,
+            frames: 38
+        }
+    },
+    sounds: 'assets/sounds/deerling-cry.ogg',
+    held_item: null,
+    stat_total: 335,
+    leviates: false
+});
+let foongus = new Pokemon({
+    name: "Foongus",
+    description: "This Pokémon prefers damp places. It spurts out poison spores to repel approaching enemies.",
+    types: ['grass', 'poison'],
+    height: 0.2,
+    weight: 1,
+    moves: [deepClone(all_moves.absorb), deepClone(all_moves.astonish), deepClone(all_moves.growth), deepClone(all_moves.stun_spore)],
+    learnable_moves: [{ at_level: 12, move: { ...all_moves.mega_drain } }, { at_level: 15, move: { ...all_moves.synthesis } }],
+    abilities: ['Effect Spore'],
+    growth_rate: 'Medium Fast',
+    level: 5,
+    catch_rate: 190,
+    pokemon_number: 590,
+    evolution: null,
+    hp: {
+        base: 60,
+        max: 60,
+        current: 60
+    },
+    xp: {
+        base: 59,
+        total: 0
+    },
+    atk: {
+        base: 60,
+        current: 60,
+        effective: 60,
+        stage: 0
+    },
+    def: {
+        base: 50,
+        current: 50,
+        effective: 50,
+        stage: 0
+    },
+    sp_atk: {
+        base: 40,
+        current: 40,
+        effective: 40,
+        stage: 0
+    },
+    sp_def: {
+        base: 50,
+        current: 50,
+        effective: 50,
+        stage: 0
+    },
+    speed: {
+        base: 75,
+        current: 75,
+        effective: 75,
+        stage: 0
+    },
+    images: {
+        front: {
+            path: base_path + 'foongus-front.png',
+            key: 'foongus-front',
+            frameWidth: 300,
+            frameHeight: 310,
+            frames: 25
+        },
+        back: {
+            path: base_path + 'foongus-back.png',
+            key: 'foongus-back',
+            frameWidth: 396,
+            frameHeight: 410,
+            frames: 25
+        }
+    },
+    sounds: 'assets/sounds/foongus-cry.ogg',
+    held_item: null,
+    stat_total: 335,
+    leviates: false
+});
+
 export const Pokemons = {
-    treecko, torchic, mudkip, aggron, nosepass, lunatone, lileep, wingull, ralts, zigzagoon, poochyena, electrike, meowth, timburr, gastly, deino, starly, staravia
+    treecko, torchic, mudkip, aggron, nosepass, lunatone, lileep, wingull, ralts, zigzagoon, poochyena, electrike, meowth, timburr, gastly, deino, starly, staravia, deerling, foongus, beautifly, kricketune
 }

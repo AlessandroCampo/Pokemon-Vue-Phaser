@@ -63,11 +63,7 @@ export class WorldScene extends Phaser.Scene {
     async create() {
 
         this.sound.stopAll()
-        if (map_store.first_loading) {
-            map_store.add_new_message_to_queue(`Welcome to the game, ${store.player_info.name}!`)
-            map_store.add_new_message_to_queue(`In this game , pokemons are way less friendly than what you remember, be careful walking around without a strong team`)
-            map_store.first_loading = false
-        }
+
 
         map_store.world_scene_istance = this
         //dynamically set player position and direction
@@ -90,7 +86,7 @@ export class WorldScene extends Phaser.Scene {
 
         const collision_tiles = map.addTilesetImage('collision', WORLD_ASSETS_KEYS.START_COLLISION)
         const collision_layer = map.createLayer('Collision', collision_tiles, 0, 0)
-        console.log(collision_layer)
+
 
         // create layr for interactive objects, if level has one
         const has_sign_layer = map.getObjectLayer('Sign') !== null;
@@ -120,7 +116,7 @@ export class WorldScene extends Phaser.Scene {
         if (has_transition_layer) {
             this.transition_layer = map.getObjectLayer('Scene-Transitions');
         }
-        console.log(map_store.current_map)
+
 
 
         this.add.image(0, 0, `${map_store.current_map.map_name.toUpperCase()}_BACKGROUND`, 0).setOrigin(0).setScale(map_scale)
@@ -176,7 +172,7 @@ export class WorldScene extends Phaser.Scene {
 
     async update(time) {
         //listen to menu opens
-        if (this.#controls.wasShiftKeyPressed()) {
+        if (this.#controls.wasShiftKeyPressed() && !map_store.show_shop_menu) {
 
             map_store.show_menu = true
         }
@@ -187,9 +183,21 @@ export class WorldScene extends Phaser.Scene {
             return
         }
 
-        if (map_store.show_inventory_menu || map_store.show_party_menu) {
+        if (map_store.show_inventory_menu || map_store.show_party_menu || map_store.show_shop_menu) {
             return
         }
+        //repel logic
+        if (map_store.repel_steps_left == 1) {
+            store.menu_state = 'text'
+            store.info_text = 'The repel effect has expired'
+            await (store.delay(500))
+        }
+        if (map_store.repel_steps_left > 0) {
+            map_store.encounter_frequency = 0.0125
+        } else {
+            map_store.encounter_frequency = 0.025
+        }
+
 
         const { x, y } = this.#player.sprite;
         const target_position = getTargetPosition({ x, y }, this.#player.direction);
@@ -230,7 +238,7 @@ export class WorldScene extends Phaser.Scene {
         if (npc_wants_battle) {
 
             npc_wants_battle.path = [this.#player.getPosition()]
-
+            map_store.talking_npc = npc_wants_battle.obj_ref.npc
             npc_wants_battle.no_delay_movement = true
             npc_wants_battle.battler = false
             npc_wants_battle.obj_ref.battler = false
@@ -327,10 +335,13 @@ export class WorldScene extends Phaser.Scene {
             if (npc.assetKey === 'nurse') {
 
                 return npc.sprite.x === target_position.x && npc.sprite.y === target_position.y - 32
+
             }
             return npc.sprite.x === target_position.x && npc.sprite.y === target_position.y
         })
         if (nearbyNPC) {
+
+            map_store.talking_npc = nearbyNPC.obj_ref.npc
 
             //NPC will turn to the player when triggered
             nearbyNPC.facePlayer(this.#player.direction)
@@ -364,6 +375,7 @@ export class WorldScene extends Phaser.Scene {
                         nearbyNPC.talking = false
 
                         this.talking_npc = undefined
+                        map_store.talking_npc = undefined
                         this.#player.is_talking = false
                         this.#player.can_move = true
                         nearbyNPC.event = null
@@ -372,6 +384,7 @@ export class WorldScene extends Phaser.Scene {
                         nearbyNPC.talking = false
                         this.#player.can_move = true
                         this.talking_npc = undefined
+                        map_store.talking_npc = undefined
                         this.#player.is_talking = false
                     }
 
@@ -526,7 +539,7 @@ export class WorldScene extends Phaser.Scene {
             this.displaying_info = true
             store.menu_state = 'text'
             store.info_text = 'The door is locked...'
-            console.log(store.info_text)
+
             await (store.delay(500))
             this.displaying_info = false
             return
@@ -537,7 +550,7 @@ export class WorldScene extends Phaser.Scene {
 
 
         const transition_obj_layer = map.getObjectLayer('Scene-Transitions');
-        console.log(transition_obj_layer)
+
 
 
         const transition_object = transition_obj_layer.objects.find((object) => {
@@ -546,10 +559,10 @@ export class WorldScene extends Phaser.Scene {
 
             return temp_transition_id == id && temp_transition_name == map_store.player_position_info.map.map_name
         })
-        console.log(name, id)
+
         let x = transition_object?.x
         let y = transition_object?.y - tile_size
-        console.log(transition_object)
+
 
         if (this.#player.direction == DIRECTION.UP) {
             y -= tile_size

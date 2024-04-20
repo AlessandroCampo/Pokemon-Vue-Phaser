@@ -303,7 +303,7 @@
                         {
                          "name":"connects_to",
                          "type":"string",
-                         "value":"pokestop"
+                         "value":"partumia-stop"
                         }, 
                         {
                          "name":"entrance_id",
@@ -336,7 +336,7 @@
                         {
                          "name":"connects_to",
                          "type":"string",
-                         "value":"pokeshop"
+                         "value":"partumia-shop"
                         }, 
                         {
                          "name":"entrance_id",
@@ -351,7 +351,7 @@
                         {
                          "name":"is_locked",
                          "type":"bool",
-                         "value":true
+                         "value":false
                         }],
                  "rotation":0,
                  "type":"entrance",
@@ -698,7 +698,7 @@
                 }],
          "opacity":1,
          "type":"objectgroup",
-         "visible":false,
+         "visible":true,
          "x":0,
          "y":0
         }],

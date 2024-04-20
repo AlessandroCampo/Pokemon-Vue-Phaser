@@ -25,7 +25,7 @@ let npc_2 = {
 }
 
 let merchant = {
-    dialouge: ['Hey, I will heal all  of your pokemons, wait a second'],
+    dialouge: ['Welcome to my shop, if you need anything feel free to ask'],
     name: 'merchant',
     frameWidth: 32,
     frameHeight: 48,
@@ -40,6 +40,15 @@ let guard = {
     scale: 0.5,
 }
 
+let bug_catcher = {
+    dialouge: ["Oh look, another insect"],
+    name: 'bug catcher',
+    frameWidth: 32,
+    frameHeight: 48,
+    scale: 0.5,
+}
+
+
 
 let nurse = {
     dialouge: ['Hey, I will heal all  of your pokemons, wait a second'],
@@ -49,4 +58,4 @@ let nurse = {
     scale: 0.5,
 }
 
-export const all_npcs = { npc_1, npc_2, merchant, guard, nurse }
+export const all_npcs = { npc_1, npc_2, merchant, guard, nurse, bug_catcher }

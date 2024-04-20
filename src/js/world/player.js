@@ -3,6 +3,7 @@ import { Character } from "./character";
 import { DIRECTION } from "../utils/Controls.mjs";
 import { getTargetPosition } from "../utils/GridUtils.mjs";
 import { tile_size } from "../scenes/world-scene";
+import { map_store } from "@/mapStore.mjs";
 
 export class Player extends Character {
     _directionQueue = []
@@ -35,13 +36,22 @@ export class Player extends Character {
         if (this.in_battle || this.is_talking) {
             return
         }
+
+
         // Queue the direction if the character is already moving
         if (this.isMoving) {
             this._directionQueue.push(direction);
+
         } else {
             // Start moving in the specified direction
             super.moveCharacter(direction);
             this.updateAnimation(direction);
+            if (map_store.repel_steps_left > 0) {
+                map_store.repel_steps_left--
+                console.log(map_store.repel_steps_left)
+
+            }
+
         }
 
         if (!this.isMoving) {
@@ -78,6 +88,7 @@ export class Player extends Character {
                 const nextDirection = this._directionQueue.shift();
                 super.moveCharacter(nextDirection);
                 this.updateAnimation(nextDirection);
+
             }
         });
     }
