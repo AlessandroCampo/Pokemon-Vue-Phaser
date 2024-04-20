@@ -86,7 +86,7 @@ export let encounter_map = [{
             npc: { ...all_npcs.guard },
             position: { x: 320, y: 240 - tile_size },
             path: null,
-            battler: true,
+            battler: false,
             event: null,
             frame: 8,
             direction: DIRECTION.RIGHT
@@ -139,7 +139,7 @@ export let encounter_map = [{
     indoor: true
 },
 {
-    map_name: 'city',
+    map_name: 'partumia',
     possible_encounters: [
     ],
     npcs_locations: [
@@ -242,9 +242,9 @@ export let encounter_map = [{
         {
             id: 3,
             npc: { ...all_npcs.guard },
-            position: { x: 32, y: 80 - tile_size },
+            position: { x: 576, y: 560 - tile_size },
             path: null,
-            battler: true,
+            battler: false,
             event: null,
             frame: 0,
             direction: DIRECTION.DOWN
@@ -252,9 +252,20 @@ export let encounter_map = [{
         {
             id: 4,
             npc: { ...all_npcs.guard },
-            position: { x: 432, y: 48 - tile_size },
+            position: { x: 288, y: 624 - tile_size },
             path: null,
-            battler: true,
+            battler: false,
+            event: null,
+            frame: 0,
+            direction: DIRECTION.DOWN
+        },
+        ,
+        {
+            id: 5,
+            npc: { ...all_npcs.guard },
+            position: { x: 80, y: 128 - tile_size },
+            path: null,
+            battler: false,
             event: null,
             frame: 0,
             direction: DIRECTION.DOWN
@@ -273,6 +284,80 @@ export let encounter_map = [{
     level_average: 3,
     indoor: false
 },
+{
+    map_name: 'route-2',
+    possible_encounters: [
+    ],
+    npcs_locations: [
+    ],
+    indoor: false
+},
+{
+    map_name: 'route-3',
+    possible_encounters: [
+    ],
+    npcs_locations: [
+    ],
+    indoor: false
+},
+{
+    map_name: 'cave',
+    possible_encounters: [
+    ],
+    npcs_locations: [
+    ],
+    indoor: false
+},
+{
+    map_name: 'silvarea',
+    possible_encounters: [
+    ],
+    npcs_locations: [
+    ],
+    indoor: false
+},
+{
+    map_name: 'silvarea-city',
+    possible_encounters: [
+    ],
+    npcs_locations: [
+    ],
+    indoor: false
+},
+{
+    map_name: 'nadia-gym',
+    possible_encounters: [
+    ],
+    npcs_locations: [
+    ],
+    indoor: true
+},
+{
+    map_name: 'silvarea-city-stop',
+    possible_encounters: [
+
+    ],
+    npcs_locations: [
+        {
+            npc: { ...all_npcs.nurse },
+            position: { x: 128, y: 80 - tile_size },
+            path: null,
+            battler: false,
+            event: async function () {
+                if (store.my_pokemon) {
+                    await map_store.healAllPokemons()
+                } else {
+                    store.menu_state = 'text'
+                    store.info_text = 'Oh, you have no Pokemons yet, never mind'
+                    await store.delay(store.info_text.length * store.config.text_speed + 500)
+                }
+            },
+            frame: 0,
+            direction: DIRECTION.DOWN
+        }
+    ],
+    indoor: true
+},
 
 
 ];
@@ -283,7 +368,7 @@ export const map_store = reactive({
     text_queue: [],
     all_messages_read: true,
     event_on_cooldown: false,
-    encounter_frequency: 0.1,
+    encounter_frequency: 0.0,
     current_map: encounter_map[0],
     world_scene_istance: undefined,
     choosing_starter: false,

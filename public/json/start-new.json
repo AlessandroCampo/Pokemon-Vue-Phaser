@@ -439,7 +439,7 @@
                         {
                          "name":"connects_to",
                          "type":"string",
-                         "value":"route_2"
+                         "value":"route-3"
                         }, 
                         {
                          "name":"entrance_id",
@@ -467,7 +467,7 @@
                         {
                          "name":"connects_to",
                          "type":"string",
-                         "value":"route_2"
+                         "value":"route-3"
                         }, 
                         {
                          "name":"entrance_id",
@@ -629,7 +629,7 @@
                  "visible":true,
                  "width":16,
                  "x":0,
-                 "y":255.5
+                 "y":256
                 }, 
                 {
                  "gid":23788,
@@ -658,6 +658,34 @@
                  "width":16,
                  "x":0,
                  "y":272
+                }, 
+                {
+                 "gid":23792,
+                 "height":16,
+                 "id":14,
+                 "name":"",
+                 "properties":[
+                        {
+                         "name":"connects_to",
+                         "type":"string",
+                         "value":"route-3"
+                        }, 
+                        {
+                         "name":"entrance_id",
+                         "type":"int",
+                         "value":3
+                        }, 
+                        {
+                         "name":"is_locked",
+                         "type":"bool",
+                         "value":false
+                        }],
+                 "rotation":0,
+                 "type":"entrance",
+                 "visible":true,
+                 "width":16,
+                 "x":544,
+                 "y":240
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -713,7 +741,7 @@
          "y":0
         }],
  "nextlayerid":10,
- "nextobjectid":14,
+ "nextobjectid":15,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.10.2",

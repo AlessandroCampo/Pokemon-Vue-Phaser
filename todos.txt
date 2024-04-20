@@ -46,3 +46,12 @@ fix npc double messages or not talking again
 improve UI and tile graphic 
 locked doors 
 stop npcs from double taking
+
+
+to:DO
+
+animations
+rework menu UIS
+add title introduction scene 
+do all the maps
+improve foregrounds, market and pokestop map
