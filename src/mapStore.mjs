@@ -6,6 +6,7 @@ import { tile_size } from './js/scenes/world-scene';
 import { DIRECTION } from './js/utils/Controls.mjs';
 import { Pokemons } from './js/db/pokemons.mjs';
 import { all_npcs } from './js/db/npcs.mjs';
+import { all_objects } from './js/db/objects.mjs';
 import { Ball, all_items } from './js/db/items.mjs';
 import { trainers } from './js/db/trainers.mjs';
 import { db, auth } from '@/firebase';
@@ -63,8 +64,17 @@ export let encounter_map = [
     {
         map_name: 'partumia-stop',
         possible_encounters: [
-
         ],
+        obj_locations:
+            [{
+                obj: { ...all_objects.pc },
+                position: { x: 144, y: 240 - tile_size },
+                event: () => {
+                    map_store.show_box_menu = true
+                }
+            }]
+
+        ,
         npcs_locations: [
             {
                 npc: { ...all_npcs.nurse },
@@ -82,9 +92,43 @@ export let encounter_map = [
                 },
                 frame: 0,
                 direction: DIRECTION.DOWN
+            },
+            {
+                npc: { ...all_npcs.guard },
+                position: { x: 192, y: 272 - tile_size },
+                path: null,
+                battler: true,
+                event: null,
+                frame: 8,
+                direction: DIRECTION.RIGHT,
+                id: 17
             }
         ],
         indoor: true
+    },
+    {
+        map_name: 'museum',
+        possible_encounters: [
+
+        ],
+        npcs_locations: [
+            {
+                id: 17,
+                npc: { ...all_npcs.aqua_grunt },
+                position: { x: 128, y: 96 - tile_size },
+                path: null,
+                battler: false,
+                event: async function () {
+                    map_store.handleBossBattle(trainers.aqua_grunt)
+                    map_store.world_scene_istance.startBossBattle()
+                },
+                frame: 0,
+                direction: DIRECTION.DOWN,
+                trainer: trainers.aqua_grunt
+            },
+        ],
+        indoor: true,
+        battle_background: 'museum.png'
     },
     {
         map_name: 'partumia-shop',
@@ -156,6 +200,27 @@ export let encounter_map = [
         indoor: false
     },
     {
+        map_name: 'water-gym',
+        possible_encounters: [
+        ],
+        npcs_locations: [
+            {
+                npc: { ...all_npcs.archie },
+                position: { x: 176, y: 176 - tile_size },
+                path: null,
+                battler: false,
+                boss: true,
+                id: 20,
+                event: async function () {
+                    map_store.handleBossBattle(trainers.archie)
+                    map_store.world_scene_istance.startBossBattle()
+                },
+            },
+        ],
+        indoor: true,
+        battle_background: 'water_gym.png'
+    },
+    {
         map_name: 'tintignac',
         possible_encounters: [
         ],
@@ -164,20 +229,21 @@ export let encounter_map = [
         indoor: false
     },
     {
-        map_name: 'building-2',
+        map_name: 'lab',
         possible_encounters: [
         ],
         npcs_locations: [
             {
                 id: 2,
                 npc: { ...all_npcs.npc_2 },
-                position: { x: 144, y: 80 - tile_size },
+                position: { x: 80, y: 128 - tile_size },
                 path: null,
                 battler: false,
                 already_talked_to: false,
-                event: async function () {
 
+                event: async function () {
                     if (!this.already_talked_to && !store.my_pokemon) {
+                        store.event_on_going = true
                         return new Promise(async resolve => {
                             if (this.already_talked_to || map_store.choosing_starter) return
                             // map_store.add_new_message_to_queue();
@@ -220,11 +286,12 @@ export let encounter_map = [
                                             return
                                         }
 
+                                        store.my_money = 1000
                                         unwatch(); // Stop watching after conditions are met
                                         map_store.add_new_message_to_queue(`${store.my_pokemon.name} was a great choice!`);
                                         map_store.add_new_message_to_queue('Take some Poké Balls and Rare Candies as well, use these items build an army and free us from that burden!');
                                         this.already_talked_to = true;
-
+                                        store.event_on_going = false
                                         resolve(); // Resolve the promise
                                     } else {
                                         // Continue waiting until my_pokemon is defined
@@ -293,16 +360,15 @@ export let encounter_map = [
     {
         map_name: 'route-2',
         possible_encounters: [
-            { pokemon: Pokemons.starly, chance: 0.05 },
+            { pokemon: Pokemons.starly, chance: 0.2 },
             { pokemon: Pokemons.meowth, chance: 0.1 },
             { pokemon: Pokemons.wingull, chance: 0.3 },
-            { pokemon: Pokemons.ralts, chance: 0.05 },
-            { pokemon: Pokemons.zigzagoon, chance: 0.3 },
-            { pokemon: Pokemons.electrike, chance: 0.2 },
+            { pokemon: Pokemons.ralts, chance: 0.1 },
+            { pokemon: Pokemons.electrike, chance: 0.3 },
         ],
         npcs_locations: [
             {
-                id: 4,
+                id: 6,
                 npc: { ...all_npcs.guard },
                 position: { x: 1152, y: 208 - tile_size },
                 path: null,
@@ -312,7 +378,7 @@ export let encounter_map = [
                 direction: DIRECTION.DOWN
             },
             {
-                id: 5,
+                id: 7,
                 npc: { ...all_npcs.guard },
                 position: { x: 640, y: 432 - tile_size },
                 path: null,
@@ -323,7 +389,7 @@ export let encounter_map = [
             },
             ,
             {
-                id: 6,
+                id: 8,
                 npc: { ...all_npcs.guard },
                 position: { x: 64, y: 256 - tile_size },
                 path: null,
@@ -334,30 +400,40 @@ export let encounter_map = [
             }
         ],
         indoor: false,
-        battle_background: 'route.jpg'
+        battle_background: 'route.jpg',
+        level_average: 5
     },
     {
         map_name: 'route-3',
         possible_encounters: [
+            { pokemon: Pokemons.tirtouga, chance: 0.2 },
+            { pokemon: Pokemons.wingull, chance: 0.3 },
+            { pokemon: Pokemons.ducklett, chance: 0.2 },
+            { pokemon: Pokemons.krabby, chance: 0.3 },
+
         ],
         npcs_locations: [
         ],
         indoor: false,
-        battle_background: 'beach.png'
+        battle_background: 'beach.png',
+        level_average: 7
     },
     {
         map_name: 'cave',
         possible_encounters: [
+            { pokemon: Pokemons.onix, chance: 0.5 },
+            { pokemon: Pokemons.cranidos, chance: 0.5 },
         ],
         npcs_locations: [
         ],
-        indoor: false
+        level_average: 10,
+        indoor: false,
+        battle_background: 'cave.jpg'
     },
     {
         map_name: 'silvarea',
         possible_encounters: [
             { pokemon: Pokemons.kricketune, chance: 0.25 },
-
             { pokemon: Pokemons.beautifly, chance: 0.25 },
             { pokemon: Pokemons.foongus, chance: 0.25 },
             { pokemon: Pokemons.deerling, chance: 0.25 },
@@ -375,7 +451,7 @@ export let encounter_map = [
                 direction: DIRECTION.DOWN
             },
             {
-                id: 8,
+                id: 16,
                 npc: { ...all_npcs.guard },
                 position: { x: 1088, y: 576 - tile_size },
                 path: null,
@@ -472,8 +548,21 @@ export let encounter_map = [
         possible_encounters: [
         ],
         npcs_locations: [
+            {
+                npc: { ...all_npcs.erika },
+                position: { x: 80, y: 48 - tile_size },
+                path: null,
+                battler: false,
+                boss: true,
+                event: async function () {
+                    map_store.handleBossBattle(trainers.erika)
+                    map_store.world_scene_istance.startBossBattle()
+                },
+            },
+
         ],
-        indoor: true
+        indoor: true,
+        battle_background: 'bug_gym.png'
     },
     {
         map_name: 'silvarea-city-stop',
@@ -506,12 +595,11 @@ export let encounter_map = [
 ];
 
 export const map_store = reactive({
-    walking_speed: 200
-    ,
+    walking_speed: 150,
     text_queue: [],
     all_messages_read: true,
     event_on_cooldown: false,
-    encounter_frequency: 0.025,
+    encounter_frequency: 0,
     current_map: encounter_map[0],
     world_scene_istance: undefined,
     choosing_starter: false,
@@ -535,6 +623,7 @@ export const map_store = reactive({
     show_party_menu: false,
     show_inventory_menu: false,
     show_shop_menu: false,
+    show_box_menu: false,
     current_shop_listing: [all_items.poke_ball, all_items.mega_ball, all_items.potion, all_items.paralyze_heal, all_items.awakening, all_items.repel],
     show_title_scene: true,
     preload_scene_istance: undefined,
@@ -628,11 +717,16 @@ export const map_store = reactive({
         store.menu_state = 'text'
         store.oppo_pokemon = store.getRandomEncounter(this.current_map)
     },
-    handleTrainerBattle(trainer_name, id) {
+    handleTrainerBattle(trainer_ref, id) {
+        console.log(trainer_ref)
+        if (trainer_ref.trainer) {
+            this.handleBossBattle(trainer_ref.trainer)
+            return
+        }
         store.in_battle = true
         store.battle_type = 'trainer'
         store.menu_state = 'text'
-        store.oppo_trainer = store.generate_random_trainer(trainer_name)
+        store.oppo_trainer = store.generate_random_trainer(trainer_ref.name)
         store.oppo_trainer.id = id
         store.oppo_pokemon = store.oppo_trainer.lead
         store.oppo_bench = store.oppo_trainer.bench
@@ -644,6 +738,16 @@ export const map_store = reactive({
         store.oppo_trainer = trainer
         store.oppo_pokemon = store.oppo_trainer.lead
         store.oppo_bench = store.oppo_trainer.bench
+        store.oppo_pokemon.level = trainer.squad_level
+        store.oppo_pokemon.held_item = all_items.sitrus_berry
+        store.oppo_bench.forEach((mon, index) => {
+            mon.level = trainer.squad_level
+            mon.moves = trainer.moveset[index + 1]
+            mon.held_item = all_items.sitrus_berry
+        })
+        console.log(store.oppo_bench)
+        store.oppo_pokemon.moves = trainer.moveset[0]
+
     },
     async healAllPokemons() {
         store.my_pokemon.hp.current = store.my_pokemon.hp.max
@@ -653,6 +757,10 @@ export const map_store = reactive({
             mon.hp.current = mon.hp.max
             mon.status = null
             mon.damage = 0
+            mon.moves.forEach((move) => {
+                move.pp.current = move.pp.max
+                console.log(move.pp.current, move.name)
+            })
         })
         store.menu_state = 'text'
         store.info_text = 'All of your pokemons are back to perfect health'
@@ -671,25 +779,37 @@ export const map_store = reactive({
 
         return player_position_info_copy
     },
+    //FIXME - triggers multiple times
     async updateDB() {
-        const playerRef = doc(db, 'Players', this.fetched_data?.uid);
-        const my_bench_copy = []
-        const my_inventory_copy = []
-        store.my_bench.forEach((mon) => {
-            my_bench_copy.push(store.generateSaveCopy(mon))
+        return new Promise(async (resolve) => {
+            const playerRef = doc(db, 'Players', this.fetched_data?.uid);
+            const my_bench_copy = []
+            const my_inventory_copy = []
+            console.log(store.my_bench)
+            store.my_bench.forEach((mon) => {
+                my_bench_copy.push(store.generateSaveCopy(mon))
+
+            })
+            console.log(my_bench_copy)
+            store.my_items.forEach((item) => {
+                my_inventory_copy.push(store.generateItemSaveCopy(item))
+            })
+            const infosToSave = {
+                my_pokemon: store.generateSaveCopy(store.my_pokemon),
+                my_bench: my_bench_copy,
+                my_items: my_inventory_copy,
+                my_money: store.my_money,
+                level_cap: store.level_cap,
+                position: this.getPositionSaveObj(),
+                defeated_npcs: store.defeated_npcs
+            };
+
+
+
+            await updateDoc(playerRef, infosToSave);
+            resolve()
         })
-        store.my_items.forEach((item) => {
-            my_inventory_copy.push(store.generateItemSaveCopy(item))
-        })
-        const infosToSave = {
-            my_pokemon: store.generateSaveCopy(store.my_pokemon),
-            my_bench: my_bench_copy,
-            my_items: my_inventory_copy,
-            my_money: store.my_money,
-            position: this.getPositionSaveObj(),
-            defeated_npcs: store.defeated_npcs
-        };
-        await updateDoc(playerRef, infosToSave);
+
     },
     async logUser(new_game) {
         await new Promise((resolve, reject) => {
@@ -709,6 +829,7 @@ export const map_store = reactive({
                             username: store.player_info.name,
                             position: map_store.getPositionSaveObj(new_game),
                             my_money: 0,
+                            level_cap: 15,
                             my_bench: [],
                             my_items: [],
                             defeated_npcs: [],
@@ -733,7 +854,7 @@ export const map_store = reactive({
 
                     const uid = user.uid;
                     const player_unsub = onSnapshot(doc(db, "Players", uid), (doc) => {
-
+                        store.my_bench = []
                         this.fetched_data = doc.data();
                         let saved_map = encounter_map.find((map) => {
                             return map.map_name == this.fetched_data.position.map
@@ -744,6 +865,7 @@ export const map_store = reactive({
                         store.my_pokemon = this.retrivePokemonData(this.fetched_data.my_pokemon)
                         resolve()
                         store.my_money = this.fetched_data.my_money
+                        store.level_cap = this.fetched_data.level_cap
                         this.fetched_data.my_bench.forEach((mon) => {
                             store.my_bench.push(this.retrivePokemonData(mon))
                         })

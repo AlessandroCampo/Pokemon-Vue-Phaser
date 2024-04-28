@@ -94,7 +94,7 @@ function skipToNextMessage(e) {
     if (e.key !== 'Enter' && e.code !== 'Space') {
         return
     }
-    if (store.in_battle) {
+    if (store.in_battle || store.event_on_going) {
         return
     }
     if (!map_store.text_queue[1]) {

@@ -59,3 +59,31 @@ pokemon storing system
 redo foregrounds route-2 and  forest
 manage moveset at set levels  for trianer and wild pokemons
 double attack from  wild pokemon after double run attempt failed
+
+bugs:
+
+
+
+
+differet announced name than coming pokemon
+fix position\remove sprite after battle
+stretch to level 20\25
+bullet seed goes after killing and has fixed amoutn
+
+mega drain hps over the top
+ice bream freezing when status already there
+
+double faint takedown bug
+archie swap undefined bug
+
+ai should use +1 priority on fast  kill
+ai shouldn't swap fast killed pokemons
+content till lv25
+non boss fight calculated on the  highest level
+move animations
+content till level 25
+boss in cave
+double battles
+
+
+fix ai swap and damage calc on damage prevent

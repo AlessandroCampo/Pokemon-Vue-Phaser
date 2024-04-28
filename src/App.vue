@@ -8,6 +8,7 @@
   <InventoryMenu v-if="map_store.show_inventory_menu"></InventoryMenu>
   <MoveForgetVue v-if="store.forgettign_pokemon"></MoveForgetVue>
   <ShopMenuVue v-if="map_store.show_shop_menu"></ShopMenuVue>
+  <BoxMenuVue v-if="map_store.show_box_menu"></BoxMenuVue>
 
 
   <TitleSceneVue v-if="map_store.show_title_scene"></TitleSceneVue>
@@ -28,12 +29,15 @@ import InventoryMenu from './components/t3/InventoryMenu.vue';
 import MoveForgetVue from './components/t3/MoveForgetVue.vue';
 import TitleSceneVue from './components/TitleSceneVue.vue';
 import ShopMenuVue from './components/t3/ShopMenuVue.vue';
+import BoxMenuVue from './components/t2/BoxMenu.vue';
 
 import { getAuth, signInAnonymously, onAuthStateChanged } from "firebase/auth";
 import { doc, setDoc, onSnapshot } from 'firebase/firestore'
 import { auth, db } from './firebase';
 import { onMounted } from 'vue'
 import gsap from 'gsap'
+
+
 
 onMounted(() => {
   store.menu_state = 'hidden'

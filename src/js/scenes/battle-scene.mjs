@@ -19,7 +19,7 @@ export class BattleScene extends Phaser.Scene {
         map_store.talking_npc = undefined
         //TODO - organize preload scene better`
         //Support for different backgroudns
-        this.load.image(`${map_store.current_map?.name}_bg`, `/backgrounds/${map_store.current_map?.battle_background}`)
+        this.load.image(`${map_store.current_map?.map_name}_bg`, `/backgrounds/${map_store.current_map?.battle_background}`)
 
         all_items_array.forEach((item) => {
             this.load.image(item.name, item.img_path);
@@ -28,6 +28,13 @@ export class BattleScene extends Phaser.Scene {
         store.my_pokemon.player_controlled = true
         store.my_pokemon.resetStats()
         store.calcStats(store.my_pokemon)
+        if (store.my_pokemon.status == 'asleep') {
+            let sleeping_turns = Math.floor(Math.random() * 3) + 1
+            store.my_pokemon.sleeping_turns = {
+                total: sleeping_turns,
+                passed: 0
+            }
+        }
 
         store.calcStats(store.oppo_pokemon)
         this.load.spritesheet(store.oppo_pokemon.images.front.key, store.oppo_pokemon.images.front.path, {
@@ -53,6 +60,14 @@ export class BattleScene extends Phaser.Scene {
                 frameWidth: member.images.back.frameWidth,
                 frameHeight: member.images.back.frameHeight,
             })
+
+            if (member.status == 'asleep') {
+                let sleeping_turns = Math.floor(Math.random() * 3) + 1
+                member.sleeping_turns = {
+                    total: sleeping_turns,
+                    passed: 0
+                }
+            }
 
 
             member.moves.forEach((move) => {
@@ -80,10 +95,19 @@ export class BattleScene extends Phaser.Scene {
     }
     async create() {
         this.sound.stopAll()
-        this.sound.play(AUDIO_ASSETS_KEY.BATTLE, {
-            loop: true,
-            volume: 0.05
-        })
+        console.log(store.oppo_trainer, store.battle_type)
+        if (store.battle_type == 'trainer' && store.oppo_trainer.boss) {
+            this.sound.play(AUDIO_ASSETS_KEY.BOSS_FIGHT, {
+                loop: true,
+                volume: 0.05
+            })
+        } else {
+            this.sound.play(AUDIO_ASSETS_KEY.BATTLE, {
+                loop: true,
+                volume: 0.05
+            })
+        }
+
         if (store.battle_type == 'wild') {
             store.info_text = `A wild ${store.oppo_pokemon.name} appears! Get ready to fight for your life!`
         } else if (store.battle_type == 'trainer') {
@@ -91,7 +115,7 @@ export class BattleScene extends Phaser.Scene {
 
         }
 
-        let bg_asset_key = map_store.current_map.battle_background ? `${map_store.current_map?.name}_bg` : BATTLE_BACKGROUND_ASSET_KEYS.FOREST_NIGHT
+        let bg_asset_key = map_store.current_map.battle_background ? `${map_store.current_map?.map_name}_bg` : BATTLE_BACKGROUND_ASSET_KEYS.FOREST_NIGHT
 
         const backgroundTexture = this.textures.get(bg_asset_key);
         const backgroundImage = this.add.image(0, 0, bg_asset_key).setOrigin(0);
@@ -202,6 +226,7 @@ export class BattleScene extends Phaser.Scene {
     async changeOpponentPokemonSprite(newPokemon) {
 
         // when a pokemon is switched out, all his stats are restored, and he heals from confusion if he is
+        console.log(newPokemon)
         store.oppo_pokemon.resetStats()
         store.oppo_pokemon.confused = false
         const bench_index = store.oppo_bench.indexOf(newPokemon)

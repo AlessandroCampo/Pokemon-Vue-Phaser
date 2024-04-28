@@ -53,6 +53,7 @@ const menu_voices = [
             store.info_text = 'Your data has been successfully saved'
             await store.delay(store.info_text.length * store.config.text_speed + 500)
             store.menu_state = 'hidden'
+            return
         }
     },
     {
@@ -86,7 +87,8 @@ const handleMovesInput = async function (e) {
 
     if (e.key == 'Enter') {
         if (menu_voices[active_voice.value].callback) {
-            menu_voices[active_voice.value].callback()
+            await menu_voices[active_voice.value].callback()
+            return
         }
 
     }

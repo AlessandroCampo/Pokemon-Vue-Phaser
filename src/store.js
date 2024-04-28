@@ -56,7 +56,8 @@ export const store = reactive({
     my_pokemon: null,
     oppo_pokemon: undefined,
     my_bench: [],
-    test_bench: [Pokemons.gastly, Pokemons.timburr, Pokemons.ralts, Pokemons.meowth],
+    my_box: [],
+    test_bench: [Pokemons.nosepass, Pokemons.wingull, Pokemons.deino, Pokemons.starly],
     test_items: [all_items.potion, all_items.poke_ball],
     my_items: [],
     player_info: {
@@ -89,6 +90,7 @@ export const store = reactive({
     forgettign_pokemon: null,
     learnable_move: null,
     my_money: 3000,
+    event_on_going: false,
 
     useMove: async function (move, caster, target, player_attack) {
         this.info_text = ''
@@ -187,7 +189,11 @@ export const store = reactive({
             return
         }
 
-        if (this.checkDamagePrevent(move, caster, target)) {
+        if (this.checkDamagePrevent(move, caster, target, false) && move.power) {
+            if (target.abilities.includes('Water Absorb')) {
+                let healedAmount = Math.ceil(target.stats.hp.max * 0.25) * -1;
+                await this.applyDamage(target, healedAmount);
+            }
             if (this.additional_info_text) {
                 this.info_text = this.additional_info_text
                 await this.delay(this.info_text.length * this.config.text_speed + 500);
@@ -219,9 +225,16 @@ export const store = reactive({
         for (let i = 0;i < move.repetitions;i++) {
             //Account for crhit chance
 
-            const crhit_chance = Math.random() * 100
+            let crhit_chance = Math.random() * 100
+            // some moves are more likely to crhit
+            if (move.crhit_ratio > 1) {
+                crhit_chance = crhit_chance / 4
+            }
             if (crhit_chance < caster.crhit_chance) {
                 crhit = true
+            }
+            if (target.abilities.includes('Shell Armor')) {
+                crhit = false
             }
             damage = this.calcDamage(move, caster, target, crhit, true);
 
@@ -330,7 +343,11 @@ export const store = reactive({
             // check if text needs to be updated with crhit
 
             if (crhit) {
-                this.info_text = `${move.name} has striked a critical hit!`
+                if (target.abilities.includes('Shell Armor')) {
+                    this.info_text = `${target.abilities[0]} prevented the critical hit!`
+                } else {
+                    this.info_text = `${move.name} has striked a critical hit!`
+                }
                 await this.delay(this.info_text.length * this.config.text_speed + 500)
             }
 
@@ -357,6 +374,11 @@ export const store = reactive({
                         const random_index = Math.floor(Math.random() * 3)
                         caster.status = possible_statuses[random_index]
                     }
+                    store.info_text = `${caster.name} has been ${caster.status} cause of ${target.name}'s ${target.abilities[0]}`
+                    await this.delay(this.info_text.length * this.config.text_speed + 500);
+
+
+
 
                 }
             }
@@ -496,6 +518,12 @@ export const store = reactive({
     },
 
     calcDamage: function (move, caster, target, crhit, not_simulation) {
+        if (!move) {
+            return 0
+        }
+
+        //doubling move.power directly was casuing bugs cause the doubling was  permanent
+        let move_effective_power = move.power || 0
 
         if (move.name == 'Seismic Toss') {
             return caster.level
@@ -504,7 +532,11 @@ export const store = reactive({
         }
 
         if (move.name == 'Low Kick') {
-            move.power = this.calcPowerBasedOnTargetWeight(target)
+            move_effective_power = this.calcPowerBasedOnTargetWeight(target)
+        }
+
+        if (move.name == 'Brine' && target.hp.current < target.hp.max / 2 || move.name == 'Hex' && target.status !== null || move.name == 'Venoshock' && target.status == 'poisoned') {
+            move_effective_power *= 2
         }
 
 
@@ -518,9 +550,10 @@ export const store = reactive({
         //hustle boosts atk by 50% when using physical moves,and guts  does so if the caster has a major status condition
         if ((caster.abilities.includes('Hustle') || ((caster.abilities.includes('Guts') && caster.status !== null))) && move.category == 'physical') {
             offensive_stat *= 1.5
+
         }
         let damage_equation =
-            (((caster.level * 2 / 5) + 2) * move.power * (offensive_stat / defensive_stat) / 50) * pb * effectiveness + 2 * random
+            (((caster.level * 2 / 5) + 2) * move_effective_power * (offensive_stat / defensive_stat) / 50) * pb * effectiveness + 2 * random
         if (crhit) {
             damage_equation *= 1.5
         }
@@ -539,6 +572,8 @@ export const store = reactive({
         if (Math.round(damage_equation) > target.hp.current) {
             damage_equation = target.hp.current + 1
         }
+
+
         return Math.round(damage_equation)
     },
     calcPowerBasedOnTargetWeight(target) {
@@ -712,6 +747,9 @@ export const store = reactive({
             let currentHp = initialHp;
             let stepCount = 0;
             target.damage += damage
+            if (target.damage > target.hp.max) {
+                target.damage = target.hp.max + 1
+            }
 
 
             const updateUIInterval = setInterval(async () => {
@@ -743,12 +781,14 @@ export const store = reactive({
         let ai_healign_move = null
         let high_prio_move = null
         let ai_is_slower = this.oppo_pokemon.speed.effective <= this.my_pokemon.speed.effective
+        let best_player_move = this.playerHighestDmgMove()
+        let player_has_fast_kill = best_player_move.expected_dmg > this.oppo_pokemon.hp.current && ai_is_slower
+
 
         // check if AI holds an healing move or high prio move
 
         this.oppo_pokemon.moves.forEach((move) => {
             if (move.priority > 1) {
-
                 high_prio_move = move
             }
             if (move.category == 'status') {
@@ -760,11 +800,15 @@ export const store = reactive({
             }
         })
 
+        //if ai is gonna get fast killed he may as well go for the high prio move
+
+        if (player_has_fast_kill && high_prio_move) {
+            selected_move = high_prio_move
+        }
         //If Ai is slower but has a kill with an higher prio move, always go for it
 
-        if (ai_is_slower && high_prio_move && this.calcDamage(high_prio_move, this.oppo_pokemon, this.my_pokemon, false, false) >= this.my_pokemon.hp.current) {
+        else if (ai_is_slower && high_prio_move && this.calcDamage(high_prio_move, this.oppo_pokemon, this.my_pokemon, false, false) >= this.my_pokemon.hp.current) {
             selected_move = high_prio_move
-
         }
         // Check if highest damage move could kill or deals at least 50% max HP damage
         else if ((most_damage_move.could_kill || most_damage_move.expected_dmg > this.my_pokemon.hp.max / 2)) {
@@ -838,6 +882,9 @@ export const store = reactive({
 
 
             let expected_damage = this.calcDamage(move, pkmn, this.my_pokemon, false);
+            if (this.checkDamagePrevent(move, pkmn, this.my_pokemon, true)) {
+                expected_damage = 0
+            }
 
 
             if (
@@ -878,22 +925,54 @@ export const store = reactive({
 
         let shuffled_moves = this.shuffleArray(this.my_pokemon.moves.slice());
 
-        shuffled_moves.forEach(move => {
+        for (const move of shuffled_moves) {
             let expected_damage = this.calcDamage(move, this.my_pokemon, this.oppo_pokemon, false);
 
+
+            if (this.checkDamagePrevent(move, this.my_pokemon, this.oppo_pokemon, true)) {
+                expected_damage = 0;
+            }
 
             if (expected_damage > highest_dmg_move.expected_dmg) {
                 highest_dmg_move.move = move;
                 highest_dmg_move.expected_dmg = expected_damage;
                 highest_dmg_move.can_kill = expected_damage >= this.oppo_pokemon.hp.current;
             }
-        });
+        }
 
 
         return highest_dmg_move;
+    },
+
+    playerHighestDmgMoveOnGivenTarget(target) {
+        let highest_dmg_move = {
+            expected_dmg: 0,
+            move: null,
+            can_kill: false
+        };
+
+        let shuffled_moves = this.shuffleArray(this.my_pokemon.moves.slice());
+
+        for (const move of shuffled_moves) {
+            let expected_damage = this.calcDamage(move, this.my_pokemon, target, false);
+
+            if (this.checkDamagePrevent(move, this.my_pokemon, this.oppo_pokemon, true)) {
+                expected_damage = 0;
+            }
+
+            if (expected_damage > highest_dmg_move.expected_dmg) {
+                highest_dmg_move.move = move;
+                highest_dmg_move.expected_dmg = expected_damage;
+                highest_dmg_move.can_kill = expected_damage >= target.hp.current;
+            }
+        }
+
+        return highest_dmg_move;
     }
+
     ,
     bestAiSwap(player_move) {
+
         let best_swap = {
             pokemon: this.oppo_bench[0],
             predicted_dmg_tanked: this.calcDamage(player_move.move, this.my_pokemon, this.oppo_bench[0])
@@ -903,7 +982,7 @@ export const store = reactive({
             let expected_incoming_damage = this.calcDamage(player_move.move, this.my_pokemon, ai_pokemon);
 
             //priority in case of damage prevention cause ability
-            if (this.checkDamagePrevent(player_move.move, this.my_pokemon, ai_pokemon)) {
+            if (this.checkDamagePrevent(player_move.move, this.my_pokemon, ai_pokemon, true)) {
 
                 //checkdmgprevent would queue a message
                 this.additional_info_text = null
@@ -927,12 +1006,14 @@ export const store = reactive({
     aiWantsSwap() {
         if (this.oppo_bench.length == 0) return false
         let predicted_player_move = this.playerHighestDmgMove()
+
         let highest_dmg_ai_move = this.highestAiDmgMove(this.oppo_pokemon)
         let threatening_dmg_expected = false
         let ai_has_high_dmg_move = false
         let wants_to_swap = false
         let possible_swap = this.bestAiSwap(predicted_player_move)
         let ai_is_slower = this.oppo_pokemon.speed.effective <= this.my_pokemon.speed.effective
+        let possible_swap_is_faster = possible_swap.pokemon.speed.effective > this.my_pokemon.speed.effective
 
         //the human player is considered to have a threatening damage move if the dmg  output is higher than 50% of the AI pokemon max hp
         if (predicted_player_move.expected_dmg > this.oppo_pokemon.hp.max * 0.5) {
@@ -944,17 +1025,25 @@ export const store = reactive({
             ai_has_high_dmg_move = true
         }
 
-        // THE ai always wants to swap if the human player can kill his pokemon, he is slower and has a pokemon on the bench whose gonna take less than 40% max hp as dmg
-
-        if (predicted_player_move.can_kill && ai_is_slower && possible_swap.predicted_dmg_tanked <= possible_swap.pokemon.hp.current * 0.4) {
-            wants_to_swap = true
-            console.log('ai wanted to swap cause', predicted_player_move.move.name, 'is about to deal', predicted_player_move.expected_dmg, 'His swap options is', possible_swap.pokemon.name)
-        }
         // The ai wants to swap if its expecting an high damage output from the player and has a benched pokemon uneffected from the predicted move
-        else if (threatening_dmg_expected && possible_swap.predicted_dmg_tanked == 0) {
+        if (threatening_dmg_expected && possible_swap.predicted_dmg_tanked == 0) {
             console.log('Ai wants to swap cause its expecting', threatening_dmg_expected, 'and has a 0 dmg benched pokemon')
             wants_to_swap = true
         }
+
+        // THE ai always wants to swap if the human player can kill his pokemon, he is slower and has a pokemon on the bench whose gonna take less than 40% max hp as dmg, and is gonna outspeed the current target
+
+        else if (predicted_player_move.can_kill && ai_is_slower && possible_swap.predicted_dmg_tanked <= possible_swap.pokemon.hp.current * 0.4 && possible_swap_is_faster) {
+            wants_to_swap = true
+            console.log('ai wanted to swap cause', predicted_player_move.move.name, 'is about to deal', predicted_player_move.expected_dmg, 'His swap options is', possible_swap.pokemon.name, 'which should take around', possible_swap.predicted_dmg_tanked)
+        }
+
+
+        else if (predicted_player_move.can_kill && ai_is_slower && possible_swap.predicted_dmg_tanked <= possible_swap.pokemon.hp.current * 0.15 && !this.wouldGetFastKilledAfterSwap(possible_swap.pokemon, this.my_pokemon, possible_swap.predicted_dmg_tanked)) {
+            wants_to_swap = true
+            console.log('ai wanted to swap cause', predicted_player_move.move.name, 'is about to deal', predicted_player_move.expected_dmg, 'His swap options is', possible_swap.pokemon.name, 'which should take around', possible_swap.predicted_dmg_tanked)
+        }
+
 
         // The ai never wants to swap if he is faster and has a kill on the opponent pokemon
 
@@ -972,23 +1061,54 @@ export const store = reactive({
         }
     },
     bestAfterFaint() {
-        let new_pkmn
+        let new_pkmn;
+        let highest_priority = -Infinity; // Initialize priority to lowest possible value
         let highest_dmg_move = {
             move: null,
             expected_dmg: 0
         }
+
         this.oppo_bench.forEach((pkmn) => {
-            let best_move = this.highestAiDmgMove(pkmn)
-            if (best_move.expected_dmg > highest_dmg_move.expected_dmg) {
-                highest_dmg_move.move = best_move
-                highest_dmg_move.expected_dmg = best_move.expected_dmg
-                new_pkmn = pkmn
+            let best_move = this.highestAiDmgMove(pkmn);
+            let best_player_move = this.playerHighestDmgMoveOnGivenTarget(pkmn);
+            let pkmn_is_slower = pkmn.speed.effective < this.my_pokemon.speed.effective;
+            let player_has_fast_kill = best_player_move.expected_dmg > pkmn.hp.current && pkmn_is_slower;
+
+
+            // Calculate priority based on expected damage and likelihood of being fast killed
+            let priority = 0; // Initialize priority to 0
+            if (!player_has_fast_kill) {
+                priority = best_move.expected_dmg;
+                if (!pkmn_is_slower) { // Give more priority to faster Pokémon
+                    priority += 10; // Increase priority by a certain amount (adjust as needed)
+                }
             }
-        })
+
+            if (priority > highest_priority) {
+                highest_priority = priority;
+                highest_dmg_move.move = best_move;
+                highest_dmg_move.expected_dmg = best_move.expected_dmg;
+                new_pkmn = pkmn;
+            }
+        });
+
         if (!new_pkmn) {
-            new_pkmn = this.oppo_bench[0]
+            new_pkmn = this.oppo_bench[0];
         }
-        return new_pkmn
+
+        return new_pkmn;
+    },
+    wouldGetFastKilledAfterSwap(target, attacker, expected_damage_on_swap) {
+        console.log('fast kill calculator', target, attacker, expected_damage_on_swap)
+        let best_move_on_target = this.playerHighestDmgMoveOnGivenTarget(target)
+        let target_left_hp = target.hp.current - expected_damage_on_swap
+        let target_is_slower = target.speed.current < attacker.speed.current
+        if (target_is_slower && best_move_on_target.expected_dmg > target_left_hp) {
+            return true
+        } else {
+            return false
+        }
+
     },
     delay: function (ms) {
         return new Promise(resolve => setTimeout(resolve, ms));
@@ -1017,6 +1137,11 @@ export const store = reactive({
         let result_message;
         const stat = move_effect.target_stat;
         const stages = move_effect.stages;
+        let random_chance = Math.floor(Math.random() * 100)
+        //return early  with no additional message if stat modifier was conditional to a chance that didnt realize
+        if (move_effect.chance && move_effect.chance < random_chance) {
+            return ''
+        }
         // stat modifying preventers logic
         if (move_effect.target_stat == 'crhit_chance') {
             target.crhit_chance *= 4
@@ -1053,8 +1178,7 @@ export const store = reactive({
         }
 
         return result_message;
-    }
-    ,
+    },
     move_missed: function (move_accuracy, caster_accuracy, target_evasion) {
         const random_chance = Math.floor(Math.random() * 100)
         let chance_of_hit = Math.round(move_accuracy * caster_accuracy * target_evasion)
@@ -1067,15 +1191,16 @@ export const store = reactive({
     },
     apply_status: async function (effect, target, caster) {
         //some types cannot be affected by certain status effects
-        if (effect.applied_status == 'poisoned' && (target.types.includes('poison') || target.types.includes('steel'))) {
-            return false
+        if (
+            (effect.applied_status == 'poisoned' && (target.types.includes('poison') || target.types.includes('steel'))) ||
+            (effect.applied_status == 'paralyzed' && target.types.includes('electric')) ||
+            (effect.applied_status == 'burned' && target.types.includes('fire'))
+        ) {
+            store.info_text = `${target.name} cannot be ${effect.applied_status}`
+            await this.delay(store.info_text.length * this.config.text_speed + 500)
+            return false;
         }
-        if (effect.applied_status == 'paralyzed' && (target.types.includes('electric'))) {
-            return false
-        }
-        if (effect.applied_status == 'burned' && (target.types.includes('fire'))) {
-            return false
-        }
+
         let random_chance = Math.floor(Math.random() * 100)
         let status_applied = false
         if (effect.chance >= random_chance) {
@@ -1159,14 +1284,16 @@ export const store = reactive({
 
             if (this.oppo_pokemon.fainted) {
                 if (this.battle_type == 'trainer' && this.oppo_bench.length > 0) {
-                    this.info_text = `${this.oppo_trainer.name}'s next pokemon will be ${this.oppo_bench[0].name}`;
+                    const next_pokemon = this.bestAfterFaint()
+                    this.info_text = `${this.oppo_trainer.name}'s next pokemon will be ${next_pokemon.name}`;
                     await this.delay(this.info_text.length * this.config.text_speed + 500);
-                    await this.battle_scene_instance.changeOpponentPokemonSprite(this.bestAfterFaint())
+                    await this.battle_scene_instance.changeOpponentPokemonSprite(next_pokemon)
                 } else {
-                    this.info_text = `${this.oppo_pokemon.name} died and you won the battle ${this.battle_type == 'trainer' ? 'against ' + this.oppo_trainer.name + 'and you earned 50$' : ''}`;
+                    this.info_text = `${this.oppo_pokemon.name} died and you won the battle ${this.battle_type == 'trainer' ? 'against ' + this.oppo_trainer.name + `and you earned  ${this.calcReward(this.oppo_trainer)} $` : ''}`;
                     if (this.battle_type == 'trainer') {
                         this.defeated_npcs.push(this.oppo_trainer.id)
-                        this.my_money += 50
+                        this.my_money += this.calcReward(this.oppo_trainer)
+
                     }
 
                     await this.delay(this.info_text.length * this.config.text_speed + 500);
@@ -1390,6 +1517,11 @@ export const store = reactive({
             let gonna_level_up = gainer.xp.total + amount >= this.xp_for_next_level;
             let did_level_up
 
+            //lock for level cap
+            if (gonna_level_up && gainer.level >= this.level_cap) {
+                amount = 0
+            }
+
             // Define a function to increment XP points gradually
             const incrementXP = () => {
                 // Check if all XP has been added
@@ -1450,32 +1582,62 @@ export const store = reactive({
 
         }
     },
-    checkDamagePrevent(move, caster, target) {
-        if (move.type == 'ground' && target.abilities.includes('Levitate') || move.type == 'water' && target.abilities.includes('Storm Drain') || move.type == 'ground' && target.types.includes('Flying') || move.type == 'grass' && target.abilities.includes('Sap Sipper')) {
-            this.additional_info_text = `${target.name}'s is uneffected  by ${move.name}`
-
-            if (target.abilities.includes('Storm Drain')) {
-                let fake_effect = {
-                    type: 'modify_stat', target_stat: 'sp_atk', target: 'ally', stages: +1, target_stat_label: 'special attack'
-                }
-                this.modifyStat(fake_effect, target)
-                this.additional_info_text = `${target.name}'s ${fake_effect.target_stat_label} rose thanks to ${target.abilities[0]}`
-            }
-
-            if (target.abilities.includes('Sap Sipper')) {
-                let fake_effect = {
-                    type: 'modify_stat', target_stat: 'atk', target: 'ally', stages: +1, target_stat_label: 'attack'
-                }
-                this.modifyStat(fake_effect, target)
-                this.additional_info_text = `${target.name}'s ${fake_effect.target_stat_label} rose thanks to ${target.abilities[0]}`
-
-            }
-
-            return true
-        } else {
+    checkDamagePrevent(move, caster, target, simulation) {
+        if (!move) {
             return false
         }
-    },
+        if (!move.power) {
+            return false;
+        }
+
+        let effectiveness = this.checkEffectiveness(move.type, target.types);
+
+        if (effectiveness === 0) {
+            if (!simulation) {
+                this.additional_info_text = `${target.name}'s is unaffected by ${move.name}`;
+            }
+            return true;
+        }
+
+        const abilityEffects = {
+            'Storm Drain': { stat: 'sp_atk', label: 'special attack' },
+            'Sap Sipper': { stat: 'atk', label: 'attack' },
+            'Water Absorb': { heal: true, healFraction: 0.25 }
+        };
+
+        for (let ability in abilityEffects) {
+            if (target.abilities.includes(ability) && (move.type === 'water' || move.type === 'grass' || move.type === 'ground')) {
+                if (!simulation) {
+                    this.additional_info_text = `${target.name}'s is unaffected by ${move.name}`;
+                }
+
+                if (ability === 'Water Absorb') {
+
+                    if (!simulation) {
+
+                        this.additional_info_text = `${target.name} absorbed the ${move.type}-type attack and healed ${healedAmount} HP with Water Absorb!`;
+                    }
+                } else {
+                    let fake_effect = {
+                        type: 'modify_stat',
+                        target_stat: abilityEffects[ability].stat,
+                        target: 'ally',
+                        stages: +1,
+                        target_stat_label: abilityEffects[ability].label
+                    };
+                    if (!simulation) {
+                        this.modifyStat(fake_effect, target);
+                        this.additional_info_text = `${target.name}'s ${fake_effect.target_stat_label} rose thanks to ${ability}`;
+                    }
+                }
+
+                return true;
+            }
+        }
+
+        return false;
+    }
+    ,
     calcModifiedRate(pkmn, ball) {
         const bonus_status = pkmn.status === 'frozen' || pkmn.status === 'asleep' ? 2 :
             pkmn.status === 'paralyzed' || pkmn.status === 'poisoned' ? 1.5 :
@@ -1520,6 +1682,7 @@ export const store = reactive({
             let oppo_copy = this.generateSaveCopy(store.oppo_pokemon)
 
             this.my_bench.push(map_store.retrivePokemonData(oppo_copy))
+
             this.endBattle()
         } else {
             ball.sprite.destroy()
@@ -1570,29 +1733,25 @@ export const store = reactive({
         //trainers pokemons can hold random items
         const possible_trainer_items = [all_items.lum_berry, all_items.sitrus_berry]
         const my_pokemons = [];
-        //NOTE - REMOVE THIS WHEN DECIDING LOGIC TO GET YOUR POKEMOn
-        // this.my_pokemon = deepClone(possible_trainer_pokemons[Math.floor(Math.random() * possible_trainer_pokemons.length)])
         // trainers pokemons will have an average level which is randomly even to 2 level lower compared to the average
-        let my_pokemons_avg_level;
         my_pokemons.push(this.my_pokemon);
         const allPokemons = my_pokemons.concat(this.my_bench);
-        const totalLevels = allPokemons.reduce((sum, pokemon) => sum + pokemon.level, 0);
-        const numPokemons = allPokemons.length;
+        const allLevels = allPokemons.map(pokemon => pokemon.level);
+        const highestLevel = Math.max(...allLevels);
 
-        // Calculate average level
-        my_pokemons_avg_level = Math.floor(totalLevels / numPokemons);
+
         let random_trainer_lead
         let random_trainer_bench = []
         let rand_lead = deepClone(possible_trainer_pokemons[Math.floor(Math.random() * possible_trainer_pokemons.length)])
         random_trainer_lead = rand_lead
-        random_trainer_lead.level = Math.floor(Math.random() * 3) + my_pokemons_avg_level - 2;
+        random_trainer_lead.level = Math.floor(Math.random() * 3) + highestLevel - 2;
         for (let i = 0;i < store.my_bench.length;i++) {
             let rand_pokemon = deepClone(possible_trainer_pokemons[Math.floor(Math.random() * possible_trainer_pokemons.length)])
             if (!rand_pokemon) {
                 rand_pokemon = deepClone(Pokemons.zigzagoon)
             }
 
-            rand_pokemon.level = Math.floor(Math.random() * 3) + my_pokemons_avg_level - 2;
+            rand_pokemon.level = Math.floor(Math.random() * 3) + highestLevel - 2;
             random_trainer_bench.push(rand_pokemon)
         }
 
@@ -1602,31 +1761,63 @@ export const store = reactive({
         const moveKeys = Object.keys(all_moves);
         random_trainer_lead.moves = []
         random_trainer_lead.held_item = possible_trainer_items[Math.random() * possible_trainer_items.length]
-        while (random_trainer_lead.moves.length < 4) {
-            const randomMoveKey = moveKeys[Math.floor(Math.random() * moveKeys.length)];
-            const randomMove = deepClone(all_moves[randomMoveKey]);
+        random_trainer_lead.learnable_moves.forEach(({ at_level, move }) => {
+            if (at_level <= random_trainer_lead.level) {
+                // Check if the move is already known
+                if (!random_trainer_lead.moves.some(pokemonMove => pokemonMove.name === move.name)) {
+                    // If pokemon already has 4 moves, replace the earliest learned move
+                    if (random_trainer_lead.moves.length >= 4) {
+                        // Find the earliest learned move
+                        const earliestMoveIndex = random_trainer_lead.moves.reduce((earliestIndex, move, currentIndex, moves) => {
+                            if (moves[earliestIndex].learned_at > move.learned_at) {
+                                return currentIndex;
+                            }
+                            return earliestIndex;
+                        }, 0);
 
-            if (!random_trainer_lead.moves.includes(randomMove)) {
-                random_trainer_lead.moves.push(randomMove);
-            }
-        }
-
-        random_trainer_bench.forEach((pokemon) => {
-            pokemon.moves = []
-            //trainers pokemons can hold random items
-            pokemon.held_item = possible_trainer_items[Math.random() * possible_trainer_items.length]
-
-            while (pokemon.moves.length < 4) {
-                const randomMoveKey = moveKeys[Math.floor(Math.random() * moveKeys.length)];
-                const randomMove = deepClone(all_moves[randomMoveKey]);
-
-
-                if (!pokemon.moves.includes(randomMove)) {
-                    pokemon.moves.push(randomMove);
-
+                        // Replace the earliest move with the new move
+                        random_trainer_lead.moves.splice(earliestMoveIndex, 1, deepClone(move));
+                    } else {
+                        // If pokemon has less than 4 moves, simply add the move
+                        random_trainer_lead.moves.push(deepClone(move));
+                    }
                 }
             }
         });
+
+        random_trainer_bench.forEach((pokemon) => {
+            // Trainers' pokemons can hold random items
+            pokemon.held_item = possible_trainer_items[Math.floor(Math.random() * possible_trainer_items.length)];
+
+            // Determine the current level of the pokemon
+            const currentLevel = pokemon.level;
+
+            // Iterate over learnable moves and add them if the pokemon's level is appropriate
+            pokemon.learnable_moves.forEach(({ at_level, move }) => {
+                if (at_level <= currentLevel) {
+                    // Check if the move is already known
+                    if (!pokemon.moves.some(pokemonMove => pokemonMove.name === move.name)) {
+                        // If pokemon already has 4 moves, replace the earliest learned move
+                        if (pokemon.moves.length >= 4) {
+                            // Find the earliest learned move
+                            const earliestMoveIndex = pokemon.moves.reduce((earliestIndex, move, currentIndex, moves) => {
+                                if (moves[earliestIndex].learned_at > move.learned_at) {
+                                    return currentIndex;
+                                }
+                                return earliestIndex;
+                            }, 0);
+
+                            // Replace the earliest move with the new move
+                            pokemon.moves.splice(earliestMoveIndex, 1, deepClone(move));
+                        } else {
+                            // If pokemon has less than 4 moves, simply add the move
+                            pokemon.moves.push(deepClone(move));
+                        }
+                    }
+                }
+            });
+        });
+
 
         const trainerNames = [
             "Bella",
@@ -1741,6 +1932,7 @@ export const store = reactive({
         return clone;
     },
     endBattle() {
+
         this.menu_state = 'hidden'
         this.show_hud = false
         this.info_text = ''
@@ -1902,7 +2094,32 @@ export const store = reactive({
         map_store.show_shop_menu = true
         map_store.current_shop_listing = listing
         map_store.talking_npc = all_npcs.merchant
+    },
+    calcReward(trainer) {
+        let reward = 0;
+        let base_reward = 40;
+        let trainer_pokemons = trainer.bench.concat(trainer.lead);
+
+
+        let totalStatTotal = 0;
+        for (let pokemon of trainer_pokemons) {
+            totalStatTotal += pokemon.stat_total;
+        }
+        let averageStatTotal = totalStatTotal / trainer_pokemons.length;
+
+        reward = (averageStatTotal * base_reward) / 30;
+
+        if (trainer.name == 'archie') {
+            this.level_cap = 20
+        }
+
+        if (trainer.boss) {
+            reward *= 2;
+        }
+
+        return Math.round(reward);
     }
+
 
 
 

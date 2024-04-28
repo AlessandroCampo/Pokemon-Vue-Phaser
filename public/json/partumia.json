@@ -93,7 +93,7 @@
          "name":"Foreground 1",
          "opacity":1,
          "type":"tilelayer",
-         "visible":true,
+         "visible":false,
          "width":56,
          "x":0,
          "y":0
@@ -183,7 +183,7 @@
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 23094, 0, 0, 0, 23094, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 23094, 0, 0, 0, 23094, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 23094, 0, 0, 0, 23094, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 23094, 0, 0, 0, 23094, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 23094, 23099, 23099, 23099, 23094, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
          "height":37,
          "id":4,
          "name":"Collision",
@@ -237,7 +237,7 @@
          "name":"Encounter",
          "opacity":1,
          "type":"tilelayer",
-         "visible":false,
+         "visible":true,
          "width":56,
          "x":0,
          "y":0
@@ -459,6 +459,16 @@
                  "name":"",
                  "properties":[
                         {
+                         "name":"connects_to",
+                         "type":"string",
+                         "value":"water-gym"
+                        }, 
+                        {
+                         "name":"entrance_id",
+                         "type":"int",
+                         "value":1
+                        }, 
+                        {
                          "name":"is_building",
                          "type":"bool",
                          "value":true
@@ -466,7 +476,7 @@
                         {
                          "name":"is_locked",
                          "type":"bool",
-                         "value":true
+                         "value":false
                         }],
                  "rotation":0,
                  "type":"entrance",
@@ -482,6 +492,16 @@
                  "name":"",
                  "properties":[
                         {
+                         "name":"connects_to",
+                         "type":"string",
+                         "value":"museum"
+                        }, 
+                        {
+                         "name":"entrance_id",
+                         "type":"int",
+                         "value":1
+                        }, 
+                        {
                          "name":"is_building",
                          "type":"bool",
                          "value":true
@@ -489,7 +509,7 @@
                         {
                          "name":"is_locked",
                          "type":"bool",
-                         "value":true
+                         "value":false
                         }],
                  "rotation":0,
                  "type":"entrance",

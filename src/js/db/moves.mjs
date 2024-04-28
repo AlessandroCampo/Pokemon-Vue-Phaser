@@ -1,7 +1,7 @@
 import { allAnimations } from "./animations.mjs"
 
 class Move {
-    constructor({ name, type, category, power, accuracy, pp, makes_contact, description, animation, effects, priority, targets, sound, repetitions }) {
+    constructor({ name, type, category, power, accuracy, pp, makes_contact, description, animation, effects, priority, targets, sound, repetitions, crhit_ratio }) {
         this.name = name
         this.type = type
         this.category = category || 'Physical'
@@ -16,6 +16,7 @@ class Move {
         this.targets = targets || true
         this.sound = sound || null
         this.repetitions = repetitions || 1
+        this.crhit_ratio = crhit_ratio || 1
     }
 }
 
@@ -123,6 +124,22 @@ const quick_attack = new Move({
     priority: 2
 })
 
+const stomp = new Move({
+    name: 'Stomp',
+    category: 'physical',
+    type: 'normal',
+    power: 65,
+    accuracy: 100,
+    pp: {
+        max: 25,
+        current: 25
+    },
+    makes_contact: true,
+    animation: null,
+    description: 'The user attacks by stomping on the target with a big foot. This may also make the target flinch.',
+    effects: [{ type: 'apply_flinch', applied_status: 'flinch', target: 'enemy', chance: 30 }]
+})
+
 const headbutt = new Move({
     name: 'Headbutt',
     category: 'physical',
@@ -160,7 +177,7 @@ const growl = new Move({
     category: 'status',
     type: 'normal',
     power: null,
-    accuracy: 100,
+    accuracy: 1000,
     pp: {
         max: 40,
         current: 40
@@ -192,7 +209,7 @@ const howl = new Move({
     category: 'status',
     type: 'normal',
     power: null,
-    accuracy: 100,
+    accuracy: 1000,
     pp: {
         max: 40,
         current: 40
@@ -202,6 +219,23 @@ const howl = new Move({
     description: 'The user howls loudly to rouse itself and its allies. This boosts their Attack stats.',
     effects: [{ type: 'modify_stat', target_stat: 'atk', target: 'ally', stages: +1, target_stat_label: 'attack' }]
 })
+
+const harden = new Move({
+    name: 'Harden',
+    category: 'status',
+    type: 'normal',
+    power: null,
+    accuracy: 1000,
+    pp: {
+        max: 30,
+        current: 30
+    },
+    makes_contact: false,
+    animation: null,
+    description: 'The user stiffens all the muscles in its body to boost its Defense stat.',
+    effects: [{ type: 'modify_stat', target_stat: 'def', target: 'ally', stages: +1, target_stat_label: 'defense' }]
+})
+
 
 const focus_energy = new Move({
     name: 'Focus Energy',
@@ -351,6 +385,40 @@ const supersonic = new Move({
     effects: [{ type: 'apply_confusion', applied_status: 'confused', target: 'enemy', chance: 100 }]
 })
 
+const rock_climb = new Move({
+    name: 'Rock Climb',
+    category: 'physical',
+    type: 'normal',
+    power: 90,
+    accuracy: 85,
+    pp: {
+        max: 20,
+        current: 20
+    },
+    makes_contact: false,
+    animation: null,
+    description: 'The target is hit by a weak telekinetic force. This may also confuse the target.',
+    effects: [{ type: 'apply_confusion', applied_status: 'confused', target: 'enemy', chance: 20 }]
+
+})
+
+const slash = new Move({
+    name: 'Slash',
+    category: 'physical',
+    type: 'dark',
+    power: 70,
+    accuracy: 100,
+    pp: {
+        max: 20,
+        current: 20
+    },
+    makes_contact: true,
+    animation: null,
+    description: 'The target is attacked with a slash of claws or blades. Critical hits land more easily.',
+    effects: null,
+    crhit_ratio: 3
+})
+
 // WATERTYPE MOVES 
 const water_gun = new Move({
     name: 'Water Gun',
@@ -366,6 +434,57 @@ const water_gun = new Move({
     animation: null,
     description: 'The target is blasted with a forceful shot of water.',
 
+})
+
+const brine = new Move({
+    name: 'Brine',
+    category: 'special',
+    type: 'water',
+    power: 65,
+    accuracy: 100,
+    pp: {
+        max: 10,
+        current: 10
+    },
+    makes_contact: false,
+    animation: null,
+    description: 'This move’s power is doubled if the target’s HP is at half or less.',
+
+})
+
+
+const water_pulse = new Move({
+    name: 'Water Pulse',
+    category: 'special',
+    type: 'water',
+    power: 60,
+    accuracy: 100,
+    pp: {
+        max: 20,
+        current: 20
+    },
+    makes_contact: false,
+    animation: null,
+    description: 'The user attacks the target with a pulsing blast of water. This may also confuse the target.',
+    effects: [{ type: 'apply_confusion', applied_status: 'confused', target: 'enemy', chance: 20 }]
+
+})
+
+const aqua_jet = new Move({
+    name: 'Aqua Jet',
+    category: 'physical',
+    type: 'water',
+    power: 40,
+    accuracy: 100,
+    pp: {
+        max: 20,
+        current: 20
+    },
+    makes_contact: true,
+    animation: allAnimations.tackle_animation,
+    description: 'The user lunges at the target to inflict damage, moving at blinding speed. This move always goes first.',
+    effects: null,
+    priority: 2
 })
 
 const withdraw = new Move({
@@ -399,8 +518,7 @@ const flame_charge = new Move({
     makes_contact: true,
     animation: null,
     description: 'Cloaking itself in flame, the user attacks the target. Then, building up momentum, the user boosts its Speed stat.',
-    effects: [{ type: 'modify_stat', target_stat: 'speed', target: 'ally', stages: +1, target_stat_label: 'speed' }]
-
+    effects: [{ type: 'modify_stat', target_stat: 'speed', target: 'ally', stages: +1, target_stat_label: 'speed', chance: 100 }]
 })
 
 const ember = new Move({
@@ -492,7 +610,7 @@ const giga_drain = new Move({
 const stun_spore = new Move({
     name: 'Stun Spore',
     category: 'status',
-    type: 'electric',
+    type: 'grass',
     power: null,
     accuracy: 75,
     pp: {
@@ -644,7 +762,7 @@ const seismic_toss = new Move({
     effects: null
 })
 
-const low_kick = new Move({
+const double_kick = new Move({
     name: 'Double Kick',
     category: 'physical',
     type: 'fighting',
@@ -661,8 +779,8 @@ const low_kick = new Move({
     repetitions: 2
 })
 
-const double_kick = new Move({
-    name: 'Double Kick',
+const low_kick = new Move({
+    name: 'Low Kick',
     category: 'physical',
     type: 'fighting',
     power: 1,
@@ -674,6 +792,22 @@ const double_kick = new Move({
     makes_contact: true,
     animation: null,
     description: 'A powerful low kick that makes the target fall over. The heavier the target, the greater the move’s power',
+    effects: null
+})
+
+const brick_break = new Move({
+    name: 'Brick Break',
+    category: 'physical',
+    type: 'fighting',
+    power: 75,
+    accuracy: 100,
+    pp: {
+        max: 15,
+        current: 15
+    },
+    makes_contact: true,
+    animation: null,
+    description: 'The user attacks with a swift chop. This move can also break barriers, such as Light Screen and Reflect.',
     effects: null
 })
 
@@ -810,8 +944,25 @@ const rock_tomb = new Move({
     makes_contact: false,
     animation: null,
     description: 'Boulders are hurled at the target. This also lowers the target’s Speed stat by preventing its movement.',
-    effects: [{ type: 'modify_stat', target_stat: 'speed', target: 'enemy', stages: -1, target_stat_label: 'speed' }]
+    effects: [{ type: 'modify_stat', target_stat: 'speed', target: 'enemy', stages: -1, target_stat_label: 'speed', chance: 100 }]
 })
+
+const rock_polish = new Move({
+    name: 'Rock Polish',
+    category: 'status',
+    type: 'rock',
+    power: null,
+    accuracy: 1000,
+    pp: {
+        max: 20,
+        current: 20
+    },
+    makes_contact: false,
+    animation: null,
+    description: 'The user polishes its body to reduce drag. This sharply boosts the user’s Speed stat.',
+    effects: [{ type: 'modify_stat', target_stat: 'speed', target: 'ally', stages: +2, target_stat_label: 'speed' }],
+})
+
 
 //GROUND TYPE MOVES
 
@@ -830,6 +981,22 @@ const sand_attack = new Move({
     animation: null,
     description: 'Sand is hurled in the target’s face, lowering the target’s accuracy.',
     effects: [{ type: 'modify_stat', target_stat: 'accuracy', target: 'enemy', stages: -1, target_stat_label: 'accuracy' }]
+})
+
+const mud_shot = new Move({
+    name: 'Mud Shot',
+    category: 'physical',
+    type: 'ground',
+    power: 55,
+    accuracy: 95,
+    pp: {
+        max: 15,
+        current: 15
+    },
+    makes_contact: false,
+    animation: null,
+    description: 'The user attacks by hurling a blob of mud at the target. This also lowers the target’s Speed stat.',
+    effects: [{ type: 'modify_stat', target_stat: 'speed', target: 'enemy', stages: -1, target_stat_label: 'speed', chance: 100 }]
 })
 
 
@@ -854,6 +1021,23 @@ const ice_beam = new Move({
 
 })
 
+const ice_fang = new Move({
+    name: 'Ice Fang',
+    category: 'physical',
+    type: 'ice',
+    power: 65,
+    accuracy: 95,
+    pp: {
+        max: 15,
+        current: 15
+    },
+    makes_contact: false,
+    animation: null,
+    description: 'The user bites with cold-infused fangs. This may also make the target flinch or leave it frozen.',
+    effects: [{ type: 'apply_status', applied_status: 'frozen', target: 'enemy', chance: 10 }, { type: 'apply_flinch', applied_status: 'flinch', target: 'enemy', chance: 10 }]
+
+})
+
 // POISON  MOVES
 
 const sludge_bomb = new Move({
@@ -873,6 +1057,57 @@ const sludge_bomb = new Move({
 
 })
 
+const poison_fang = new Move({
+    name: 'Poison Fang',
+    category: 'physical',
+    type: 'poison',
+    power: 50,
+    accuracy: 100,
+    pp: {
+        max: 15,
+        current: 15
+    },
+    makes_contact: true,
+    animation: null,
+    description: 'The user bites the target with toxic fangs. This may also leave the target poisoned.',
+    effects: [{ type: 'apply_status', applied_status: 'poisoned', target: 'enemy', chance: 50 }]
+
+})
+
+const poison_tail = new Move({
+    name: 'Poison Tail',
+    category: 'physical',
+    type: 'dark',
+    power: 50,
+    accuracy: 100,
+    pp: {
+        max: 25,
+        current: 25
+    },
+    makes_contact: true,
+    animation: null,
+    description: 'The target is attacked with a slash of claws or blades. Critical hits land more easily.',
+    effects: [{ type: 'apply_status', applied_status: 'poisoned', target: 'enemy', chance: 10 }],
+    crhit_ratio: 3
+})
+
+const venoshock = new Move({
+    name: 'Venoshock',
+    category: 'special',
+    type: 'poison',
+    power: 65,
+    accuracy: 100,
+    pp: {
+        max: 10,
+        current: 10
+    },
+    makes_contact: false,
+    animation: null,
+    description: 'The user bites the target with toxic fangs. This may also leave the target poisoned.',
+    effects: null
+
+})
+
 const poison_sting = new Move({
     name: 'Poison Sting',
     category: 'physical',
@@ -887,6 +1122,23 @@ const poison_sting = new Move({
     animation: null,
     description: '	The user stabs the target with a poisonous stinger to inflict damage. This may also poison the target.',
     effects: [{ type: 'apply_status', applied_status: 'poisoned', target: 'enemy', chance: 30 }]
+
+})
+
+const toxic = new Move({
+    name: 'Toxic',
+    category: 'status',
+    type: 'poison',
+    power: null,
+    accuracy: 100,
+    pp: {
+        max: 10,
+        current: 10
+    },
+    makes_contact: false,
+    animation: null,
+    description: 'A move that leaves the target poisoned.',
+    effects: [{ type: 'apply_status', applied_status: 'poisoned', target: 'enemy', chance: 100 }]
 
 })
 
@@ -939,6 +1191,23 @@ const peck = new Move({
     description: 'The target is jabbed with a sharply pointed beak or horn.',
     effects: null
 })
+
+const aerial_ace = new Move({
+    name: 'Aerial Ace',
+    category: 'physical',
+    type: 'flying',
+    power: 60,
+    accuracy: 1000,
+    pp: {
+        max: 20,
+        current: 20
+    },
+    makes_contact: true,
+    animation: null,
+    description: 'The user confounds the target with speed, then slashes. This attack never misses.',
+    effects: null
+
+})
 //BUG MOVES
 
 const bug_bite = new Move({
@@ -954,6 +1223,38 @@ const bug_bite = new Move({
     makes_contact: true,
     animation: null,
     description: 'The user attacks by biting the target. If the target is holding a Berry, the user eats it and gains its effect.',
+    effects: null
+})
+
+const mega_horn = new Move({
+    name: 'Megahorn',
+    category: 'physical',
+    type: 'bug',
+    power: 120,
+    accuracy: 85,
+    pp: {
+        max: 10,
+        current: 10
+    },
+    makes_contact: true,
+    animation: null,
+    description: 'Using its tough and impressive horn, the user rams into the target with no letup.',
+    effects: null
+})
+
+const x_scissor = new Move({
+    name: 'X-Scissor',
+    category: 'physical',
+    type: 'bug',
+    power: 80,
+    accuracy: 100,
+    pp: {
+        max: 15,
+        current: 15
+    },
+    makes_contact: true,
+    animation: null,
+    description: 'The user slashes at the target by crossing its scythes or claws as if they were a pair of scissors.',
     effects: null
 })
 
@@ -994,6 +1295,23 @@ const bite = new Move({
     animation: null,
     description: 'The target is bitten with viciously sharp fangs. This may also make the target flinch.',
     effects: [{ type: 'apply_flinch', applied_status: 'flinch', target: 'enemy', chance: 30 }]
+})
+
+const night_slash = new Move({
+    name: 'Night Slash',
+    category: 'physical',
+    type: 'dark',
+    power: 70,
+    accuracy: 100,
+    pp: {
+        max: 15,
+        current: 15
+    },
+    makes_contact: true,
+    animation: null,
+    description: 'The user slashes the target the instant an opportunity arises. This move has a heightened chance of landing a critical hit.',
+    effects: null,
+    crhit_ratio: 3
 })
 
 //FAIRY MOVES 
@@ -1099,6 +1417,39 @@ const astonish = new Move({
     description: 'The user attacks the target by crying out in a startling fashion. This may also make the target flinch.',
     effects: [{ type: 'apply_flinch', applied_status: 'flinch', target: 'enemy', chance: 30 }]
 })
+const hex = new Move({
+    name: 'Hex',
+    category: 'special',
+    type: 'ghost',
+    power: 50,
+    accuracy: 100,
+    pp: {
+        max: 10,
+        current: 10
+    },
+    makes_contact: false,
+    animation: null,
+    description: 'This relentless attack does massive damage to a target affected by status conditions.',
+    effects: null
+})
+
+//steel
+
+const metal_claw = new Move({
+    name: 'Metal Claw',
+    category: 'physical',
+    type: 'fire',
+    power: 50,
+    accuracy: 95,
+    pp: {
+        max: 35,
+        current: 35
+    },
+    makes_contact: true,
+    animation: null,
+    description: 'The target is raked with steel claws. This may also boost the user’s Attack stat',
+    effects: [{ type: 'modify_stat', target_stat: 'atk', target: 'ally', stages: +1, target_stat_label: 'attack', chance: 10 }]
+})
 
 
 export const all_moves = {
@@ -1163,6 +1514,26 @@ export const all_moves = {
     absorb,
     growth,
     synthesis,
-    astonish
-
+    astonish,
+    aqua_jet,
+    harden,
+    metal_claw,
+    mud_shot,
+    water_pulse,
+    aerial_ace,
+    rock_polish,
+    night_slash,
+    mega_horn,
+    brick_break,
+    toxic,
+    rock_climb,
+    x_scissor,
+    slash,
+    brine,
+    stomp,
+    poison_fang,
+    ice_fang,
+    hex,
+    venoshock,
+    poison_tail
 }

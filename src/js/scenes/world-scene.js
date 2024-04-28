@@ -34,6 +34,7 @@ export class WorldScene extends Phaser.Scene {
     area
     is_indoor
     displaying_info
+    map_objects
     constructor() {
         super({
             key: SCENE_KEYS.WORLD_SCENE
@@ -42,6 +43,7 @@ export class WorldScene extends Phaser.Scene {
 
     init() {
         this.npcs = []
+        this.map_objects = []
         this.wildMonsterEcountered = false;
         this.npc_battle_started = false
         this.displaying_info = false
@@ -124,6 +126,12 @@ export class WorldScene extends Phaser.Scene {
         //creating npcs
 
         this.createNPCS(map)
+        if (map_store.current_map.obj_locations) {
+            map_store.current_map.obj_locations.forEach((obj) => {
+                this.map_objects.push(obj)
+            })
+        }
+
         this.npcs.forEach((npc) => {
             this.createNPCAnimation(npc)
         })
@@ -172,6 +180,10 @@ export class WorldScene extends Phaser.Scene {
 
     async update(time) {
         //listen to menu opens
+
+        if (store.event_on_going) {
+            return
+        }
         if (this.#controls.wasShiftKeyPressed() && !map_store.show_shop_menu) {
 
             map_store.show_menu = true
@@ -213,6 +225,7 @@ export class WorldScene extends Phaser.Scene {
         if (selected_direction !== DIRECTION.NONE) {
             this.#player.moveCharacter(selected_direction)
             if (!this.npc_battle_started && !this.#player.is_talking && !this.displaying_info) {
+
                 store.info_text = ''
                 map_store.text_queue = []
                 store.menu_state = 'hidden'
@@ -224,6 +237,7 @@ export class WorldScene extends Phaser.Scene {
         }
         this.#player.update(time)
         this.npcs.forEach((npc) => {
+
             npc.update(time)
         })
 
@@ -235,6 +249,8 @@ export class WorldScene extends Phaser.Scene {
             return npc.spottedPlayer(target_position)
 
         })
+
+
         if (npc_wants_battle) {
 
             npc_wants_battle.path = [this.#player.getPosition()]
@@ -253,7 +269,7 @@ export class WorldScene extends Phaser.Scene {
                 map_store.add_new_message_to_queue(npc_wants_battle.dialogue[0])
             }
 
-            this.startTrainerBattle(npc_wants_battle.obj_ref.npc.name, npc_wants_battle.id)
+            this.startTrainerBattle(npc_wants_battle.obj_ref.npc, npc_wants_battle.id)
 
 
 
@@ -306,8 +322,13 @@ export class WorldScene extends Phaser.Scene {
     async handlePlayerInteraction() {
         const { x, y } = this.#player.sprite;
         const target_position = getTargetPosition({ x, y }, this.#player.direction);
+        const nearbyObj = this.map_objects.find((obj) => {
+            return Math.floor(obj.position.x) === target_position.x && Math.floor(obj.position.y) === target_position.y;
+        })
 
-
+        if (nearbyObj) {
+            console.log(nearbyObj.event())
+        }
 
 
         const nearbySign = this.sign_layer?.objects.find((object) => {
@@ -368,7 +389,8 @@ export class WorldScene extends Phaser.Scene {
 
                 //if the menu state is hidden, it means the player has completed the text queue, here we will set the npc talking to false and trigger possible events that follow the dialogue 
 
-                if (map_store.text_queue.length == 0) {
+                if (map_store.text_queue.length == 0
+                ) {
                     if (nearbyNPC.event) {
                         this.#player.can_move = false
                         await nearbyNPC.event()
@@ -411,8 +433,11 @@ export class WorldScene extends Phaser.Scene {
         // const npcLayers = map.getObjectLayerNames().filter((layer_name) => layer_name.includes('NPC'))
 
         map_store.current_map.npcs_locations.forEach((el) => {
-            let npc_already_defeated = store.defeated_npcs.some(id => id === el.id);
 
+            let npc_already_defeated = store.defeated_npcs.some(id => id === el.id);
+            if (npc_already_defeated) {
+                return
+            }
             const npc_istance = new NPC({
                 scene: this,
                 position: el.position,
@@ -510,14 +535,14 @@ export class WorldScene extends Phaser.Scene {
 
     }
 
-    startTrainerBattle(name, id) {
+    startTrainerBattle(ref, id) {
 
         setTimeout(() => {
             this.cameras.main.fadeOut(2000)
             this.cameras.main.once(Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE, () => {
                 store.info_text = ''
                 map_store.text_queue = []
-                map_store.handleTrainerBattle(name, id)
+                map_store.handleTrainerBattle(ref, id)
                 this.scene.start(SCENE_KEYS.BATTLE_SCENE);
             })
         }, 1500)
@@ -535,6 +560,9 @@ export class WorldScene extends Phaser.Scene {
     }
 
     async handleTransitionCallback(name, id, is_building, is_locked) {
+        if (name == 'water-gym' && !store.defeated_npcs.includes(17)) {
+            is_locked = true
+        }
         if (is_locked) {
             this.displaying_info = true
             store.menu_state = 'text'

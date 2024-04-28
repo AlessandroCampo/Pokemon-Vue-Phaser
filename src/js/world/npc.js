@@ -210,6 +210,7 @@ export class NPC extends Character {
     }
 
     spottedPlayer(player_position) {
+
         if (!this.battler) {
             return false;
         }

@@ -37,6 +37,7 @@ export const AUDIO_ASSETS_KEY = Object.freeze({
     TITLE: 'title',
     WORLD: 'world',
     BATTLE: 'battle',
-    FLEE: 'flee'
+    FLEE: 'flee',
+    BOSS_FIGHT: 'boss_fight'
 })
 

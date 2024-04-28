@@ -56,8 +56,8 @@ At the start of the game, you will be given 200 Mega Balls and Rare Candies to s
 
 There is currently one boss fight in the game: Rayneera. Her team consists of:
 
-- **Lunatone**, moves: [Moonlight, Confusion, Rock Slide, Hypnosis]
 - **Nosepass**, moves: [Self Destruct, Seismic Toss, Thunder Wave, Rock Throw]
+- **Lunatone**, moves: [Moonlight, Confusion, Rock Slide, Hypnosis]
 - **Lileep**, moves: [Giga Drain, Sludge Bomb, Recover, Rock Tomb]
 
 All of Reyneera's pokemons hold a Sitrus Berry and are set at level 15. You're not allowed to own more than 1 pokemon over the size of the next boss' team, and you can't overlevel it. Therefore, for boss number one, the cap is level 15 and 4 pokemons owned.
@@ -67,9 +67,9 @@ All other regular trainers will have a team of random pokemons (among the encoun
 Right now, you can encounter the following pokemons on the map: 
 Route 1: Poochyena, Wingull, Zigszagoon,  Electricke
 Route 2: Starly,Meowth, Wingull,  Ralts, Zigszagoon, Electricke
-Route 3: Tirtouga, Clauncher, Wingull, Ducklett,
+Route 3: Tirtouga, Krabby, Wingull, Ducklett,
 Silvarea: Kricketune, Beautifly, Foongus, Deerling
-Cave: Cranidos, Larvitar, Aaron, Onyx
+Cave: Cranidos, Onyx
 
 ## Credits
 

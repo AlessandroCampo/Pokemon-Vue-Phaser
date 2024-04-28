@@ -20,8 +20,6 @@ let npc_2 = {
     frameWidth: 32,
     frameHeight: 48,
     scale: 0.5,
-
-
 }
 
 let merchant = {
@@ -40,6 +38,14 @@ let guard = {
     scale: 0.5,
 }
 
+let aqua_grunt = {
+    dialouge: ["You know to much now, I'm sorry but I have to kill you"],
+    name: 'aqua grunt',
+    frameWidth: 32,
+    frameHeight: 48,
+    scale: 0.5,
+}
+
 let bug_catcher = {
     dialouge: ["Oh look, another insect"],
     name: 'bug catcher',
@@ -47,6 +53,24 @@ let bug_catcher = {
     frameHeight: 48,
     scale: 0.5,
 }
+
+let erika = {
+    dialouge: ['Oh finally a visitor, I wonder why no one ever comes here...'],
+    name: 'erika',
+    frameWidth: 32,
+    frameHeight: 48,
+    scale: 0.5,
+}
+
+
+let archie = {
+    dialouge: ["I'll teach you not to stick your nose in other people's business"],
+    name: 'archie',
+    frameWidth: 32,
+    frameHeight: 48,
+    scale: 0.5,
+}
+
 
 
 
@@ -58,4 +82,4 @@ let nurse = {
     scale: 0.5,
 }
 
-export const all_npcs = { npc_1, npc_2, merchant, guard, nurse, bug_catcher }
+export const all_npcs = { npc_1, npc_2, merchant, guard, nurse, bug_catcher, erika, archie, aqua_grunt }

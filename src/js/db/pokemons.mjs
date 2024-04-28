@@ -102,6 +102,7 @@ class Pokemon {
         this.guarded = false
         this.stat_total = stat_total || null
         this.crhit_chance = 4.17
+        this.sleeping_turns = null
 
 
     }
@@ -120,16 +121,23 @@ class Pokemon {
 
     setPropScale() {
         //TODO - fix sprite scales
-        let player_controlled_multiplier = this.player_controlled ? 0.8
-
-
+        let player_controlled_multiplier = this.player_controlled ? 0.7
             : 0.4;
 
-        // Set the scale of the sprite
+        if (this.height > 5) {
+            player_controlled_multiplier *= 2
+        }
+        if (this.name == 'Onix' && this.player_controlled) {
+            player_controlled_multiplier = 0.8
+        }
+        if ((this.name == 'Electrike' || this.name == 'Wingull') && this.player_controlled) {
+            player_controlled_multiplier = 0.5
+        }
+        // if (this.name == 'Tirtouga') {
+        //     player_controlled_multiplier = player_controlled_multiplier / 2
+        // }
         this.sprite.setScale(player_controlled_multiplier);
     }
-
-
 
 
 
@@ -222,9 +230,7 @@ class Pokemon {
     async playFaintAnim(scene) {
         return new Promise(resolve => {
             let position = this.player_controlled ? ally_position : oppo_position;
-            if (this.levitates) {
-                position.y = position.y - 20
-            }
+
             scene.tweens.add({
                 delay: 0,
                 duration: 1000,
@@ -270,81 +276,6 @@ class Pokemon {
 
 
 
-// let squirtle = new Pokemon({
-//     name: "Squirtle",
-//     description: "It hides in its shell to protect itself, then strikes back with spouts of water at every opportunity.",
-//     types: ['water'],
-
-//     moves: [{ ...all_moves.tackle }, { ...all_moves.smoke_screen }, { ...all_moves.dobule_team }, { ...all_moves.withdraw }],
-//     abilities: ['Torrent'],
-//     growth_rate: 'Medium Slow',
-//     level: 5,
-//     catch_rate: 45,
-//     pokemon_number: 7,
-//     hp: {
-//         base: 44,
-//         max: 44,
-//         current: 44
-//     },
-//     xp: {
-//         base: 63,
-//         total: 0
-//     },
-//     atk: {
-//         base: 48,
-//         current: 48,
-//         effective: 48,
-//         stage: 0
-//     },
-//     def: {
-//         base: 65,
-//         current: 65,
-//         effective: 65,
-//         stage: 0
-//     },
-//     sp_atk: {
-//         base: 50,
-//         current: 50,
-//         effective: 50,
-//         stage: 0
-//     },
-//     sp_def: {
-//         base: 64,
-//         current: 64,
-//         effective: 64,
-//         stage: 0
-//     },
-//     speed: {
-//         base: 43,
-//         current: 43,
-//         effective: 43,
-//         stage: 0
-//     },
-//     evolution: {
-
-//     },
-//     images: {
-//         front: {
-//             path: base_path + 'squirtle-front.png',
-//             key: 'squirtle-front',
-//             frameWidth: 389,
-//             frameHeight: 410,
-//             frames: 19
-//         },
-//         back: {
-//             path: base_path + 'squirtle-back.png',
-//             key: 'squirtle-back',
-//             frameWidth: 389,
-//             frameHeight: 410,
-//             frames: 19
-//         }
-//     },
-//     sounds: 'assets/sounds/squirtle-cry.ogg'
-
-
-
-
-// });
 
 // let bulbasaur = new Pokemon({
 //     name: "Bulbasaur",
@@ -502,7 +433,7 @@ let gastly = new Pokemon({
     description: "Its body is made of gas. Despite lacking substance, it can envelop an opponent of any size and cause suffocation.",
     types: ['ghost', 'poison'],
     moves: [deepClone(all_moves.confuse_ray), deepClone(all_moves.lick), deepClone(all_moves.hypnosis)],
-    learnable_moves: [{ at_level: 8, move: { ...all_moves.protect } }, { at_level: 12, move: { ...all_moves.confusion } }],
+    learnable_moves: [{ at_level: 8, move: { ...all_moves.protect } }, { at_level: 12, move: { ...all_moves.astonish } }, { at_level: 15, move: { ...all_moves.hex } }],
     abilities: ['Levitate'],
     growth_rate: 'Medium Slow',
     height: 1.3,
@@ -798,11 +729,87 @@ let treecko = new Pokemon({
     sounds: 'assets/sounds/treeko-cry.ogg'
 });
 
+let marshtomp = new Pokemon({
+    name: "Marshtomp",
+    description: "The surface of Marshtomp’s body is enveloped by a thin, sticky film that enables it to live on land. This Pokémon plays in mud on beaches when the ocean tide is low.",
+    types: ['water', 'ground'],
+    height: 0.7,
+    weight: 28,
+    moves: [deepClone(all_moves.growl), deepClone(all_moves.tackle), deepClone(all_moves.water_gun)],
+    learnable_moves: [{ at_level: 6, move: { ...all_moves.rock_smash } }, { at_level: 9, move: { ...all_moves.rock_trhow } }, { at_level: 12, move: { ...all_moves.protect } }, { at_level: 15, move: { ...all_moves.supersonic } }, { at_level: 20, move: { ...all_moves.water_pulse } }, { at_level: 25, move: { ...all_moves.rock_slide } }, { at_level: 30, move: { ...all_moves.take_down } }],
+    abilities: ['Torrent'],
+    growth_rate: 'Medium Slow',
+    level: 5,
+    catch_rate: 45,
+    pokemon_number: 259,
+    hp: {
+        base: 70,
+        max: 70,
+        current: 70
+    },
+    xp: {
+        base: 142,
+        total: 0
+    },
+    atk: {
+        base: 85,
+        current: 85,
+        effective: 85,
+        stage: 0
+    },
+    def: {
+        base: 70,
+        current: 70,
+        effective: 70,
+        stage: 0
+    },
+    sp_atk: {
+        base: 60,
+        current: 60,
+        effective: 60,
+        stage: 0
+    },
+    sp_def: {
+        base: 70,
+        current: 70,
+        effective: 70,
+        stage: 0
+    },
+    speed: {
+        base: 50,
+        current: 50,
+        effective: 50,
+        stage: 0
+    },
+    evolution: {
+
+    },
+    images: {
+        front: {
+            path: base_path + 'marshtomp-front.png',
+            key: 'marshtomp-front',
+            frameWidth: 245,
+            frameHeight: 310,
+            frames: 33
+        },
+        back: {
+            path: base_path + 'marshtomp-back.png',
+            key: 'marshtomp-back',
+            frameWidth: 323,
+            frameHeight: 410,
+            frames: 33
+        }
+    },
+    sounds: 'assets/sounds/marshtomp-cry.ogg',
+    held_item: null,
+});
+
 let mudkip = new Pokemon({
     name: "Mudkip",
     description: "Using the fin on its head, Mudkip senses the flow of water to keep track of what’s going on around it. Mudkip has the strength to heft boulders.",
     types: ['water'],
     height: 0.4,
+    weight: 7.6,
     moves: [deepClone(all_moves.growl), deepClone(all_moves.tackle), deepClone(all_moves.water_gun)],
     learnable_moves: [{ at_level: 6, move: { ...all_moves.rock_smash } }, { at_level: 9, move: { ...all_moves.rock_trhow } }, { at_level: 12, move: { ...all_moves.protect } }, { at_level: 15, move: { ...all_moves.supersonic } }],
     abilities: ['Torrent'],
@@ -849,9 +856,7 @@ let mudkip = new Pokemon({
         effective: 40,
         stage: 0
     },
-    evolution: {
-
-    },
+    evolution: { at_level: 16, into: deepClone(marshtomp) },
     images: {
         front: {
             path: base_path + 'mudkip-front.png',
@@ -1236,7 +1241,7 @@ let wingull = new Pokemon({
         }
     },
     sounds: 'assets/sounds/wingull-cry.ogg',
-    held_item: all_items.sitrus_berry,
+    held_item: null,
     stat_total: 270
 });
 
@@ -1683,7 +1688,7 @@ let staravia = new Pokemon({
 let starly = new Pokemon({
     name: "Starly",
     description: "They flock around mountains and fields, chasing after bug Pokémon. Their singing is noisy and annoying.",
-    types: ['flying'],
+    types: ['flying', 'normal'],
     height: 0.3,
     weight: 2,
     moves: [deepClone(all_moves.growl), deepClone(all_moves.quick_attack), deepClone(all_moves.tackle)],
@@ -1762,6 +1767,83 @@ let kricketune = new Pokemon({
     height: 1,
     weight: 25.5,
     moves: [deepClone(all_moves.growl), deepClone(all_moves.tackle), deepClone(all_moves.absorb)],
+    learnable_moves: [],
+    abilities: ['Swarm'],
+    growth_rate: 'Medium Slow',
+    level: 5,
+    catch_rate: 45,
+    pokemon_number: 402,
+    evolution: null,
+    hp: {
+        base: 77,
+        max: 77,
+        current: 77
+    },
+    xp: {
+        base: 134,
+        total: 0
+    },
+    atk: {
+        base: 85,
+        current: 85,
+        effective: 85,
+        stage: 0
+    },
+    def: {
+        base: 51,
+        current: 51,
+        effective: 51,
+        stage: 0
+    },
+    sp_atk: {
+        base: 55,
+        current: 55,
+        effective: 55,
+        stage: 0
+    },
+    sp_def: {
+        base: 51,
+        current: 51,
+        effective: 51,
+        stage: 0
+    },
+    speed: {
+        base: 65,
+        current: 65,
+        effective: 65,
+        stage: 0
+    },
+    images: {
+        front: {
+            path: base_path + 'kricketune-front.png',
+            key: 'kricketune-front',
+            frameWidth: 283,
+            frameHeight: 310,
+            frames: 29
+        },
+        back: {
+            path: base_path + 'kricketune-back.png',
+            key: 'kricketune-back',
+            frameWidth: 376,
+            frameHeight: 410,
+            frames: 29
+        }
+    },
+    sounds: 'assets/sounds/kricketune-cry.ogg',
+    held_item: null,
+    stat_total: 384,
+    leviates: false
+});
+
+//Bandaid for boss pokemons
+
+let erika_kricketune = new Pokemon({
+    name: "Kricketune",
+    description: "It signals its emotions with its melodies. Scientists are studying these melodic patterns.",
+    types: ['bug'],
+    height: 1,
+    weight: 25.5,
+    moves: [deepClone(all_moves.giga_drain), deepClone(all_moves.night_slash), deepClone(all_moves.x_scissor), deepClone(all_moves.slash)],
     learnable_moves: [],
     abilities: ['Swarm'],
     growth_rate: 'Medium Slow',
@@ -1993,42 +2075,42 @@ let foongus = new Pokemon({
     pokemon_number: 590,
     evolution: null,
     hp: {
-        base: 60,
-        max: 60,
-        current: 60
+        base: 69,
+        max: 69,
+        current: 69
     },
     xp: {
         base: 59,
         total: 0
     },
     atk: {
-        base: 60,
-        current: 60,
-        effective: 60,
+        base: 55,
+        current: 55,
+        effective: 55,
         stage: 0
     },
     def: {
-        base: 50,
-        current: 50,
-        effective: 50,
+        base: 45,
+        current: 45,
+        effective: 45,
         stage: 0
     },
     sp_atk: {
-        base: 40,
-        current: 40,
-        effective: 40,
+        base: 55,
+        current: 55,
+        effective: 55,
         stage: 0
     },
     sp_def: {
-        base: 50,
-        current: 50,
-        effective: 50,
+        base: 55,
+        current: 55,
+        effective: 55,
         stage: 0
     },
     speed: {
-        base: 75,
-        current: 75,
-        effective: 75,
+        base: 15,
+        current: 15,
+        effective: 15,
         stage: 0
     },
     images: {
@@ -2049,10 +2131,845 @@ let foongus = new Pokemon({
     },
     sounds: 'assets/sounds/foongus-cry.ogg',
     held_item: null,
-    stat_total: 335,
+    stat_total: 294,
     leviates: false
 });
 
+let tirtouga = new Pokemon({
+    name: "Tirtouga",
+    description: "Tirtouga is considered to be the ancestor of many turtle Pokémon. It was restored to life from a fossil.",
+    types: ['water', 'rock'],
+    height: 0.7,
+    weight: 16.5,
+    moves: [deepClone(all_moves.water_gun), deepClone(all_moves.withdraw), deepClone(all_moves.protect), deepClone(all_moves.aqua_jet)],
+    learnable_moves: [{ at_level: 12, move: { ...all_moves.rock_slide } }, { at_level: 15, move: { ...all_moves.bite } }],
+    abilities: ['Sturdy'],
+    growth_rate: 'Medium Fast',
+    level: 5,
+    catch_rate: 45,
+    pokemon_number: 564,
+    evolution: null,
+    hp: {
+        base: 54,
+        max: 54,
+        current: 54
+    },
+    xp: {
+        base: 71,
+        total: 0
+    },
+    atk: {
+        base: 78,
+        current: 78,
+        effective: 78,
+        stage: 0
+    },
+    def: {
+        base: 103,
+        current: 103,
+        effective: 103,
+        stage: 0
+    },
+    sp_atk: {
+        base: 53,
+        current: 53,
+        effective: 53,
+        stage: 0
+    },
+    sp_def: {
+        base: 45,
+        current: 45,
+        effective: 45,
+        stage: 0
+    },
+    speed: {
+        base: 22,
+        current: 22,
+        effective: 22,
+        stage: 0
+    },
+    images: {
+        front: {
+            path: base_path + 'tirtouga-front.png',
+            key: 'tirtouga-front',
+            frameWidth: 411,
+            frameHeight: 148,
+            frames: 80
+        },
+        back: {
+            path: base_path + 'tirtouga-back.png',
+            key: 'tirtouga-back',
+            frameWidth: 1331,
+            frameHeight: 410,
+            frames: 40
+        }
+    },
+    sounds: 'assets/sounds/tirtouga-cry.ogg',
+    held_item: null,
+    stat_total: 355,
+    leviates: false
+});
+
+let krabby = new Pokemon({
+    name: "Krabby",
+    description: "It lives in burrows dug on sandy beaches. Its pincers fully grow back if they are lost in battle.",
+    types: ['water'],
+    height: 0.4,
+    weight: 6.5,
+    moves: [deepClone(all_moves.leer), deepClone(all_moves.water_gun), deepClone(all_moves.harden), deepClone(all_moves.metal_claw)],
+    learnable_moves: [{ at_level: 12, move: { ...all_moves.mud_shot } }, { at_level: 15, move: { ...all_moves.protect } }],
+    abilities: ['Shell Armor'],
+    growth_rate: 'Medium Fast',
+    level: 5,
+    catch_rate: 225,
+    pokemon_number: 564,
+    evolution: null,
+    hp: {
+        base: 30,
+        max: 30,
+        current: 30
+    },
+    xp: {
+        base: 65,
+        total: 0
+    },
+    atk: {
+        base: 105,
+        current: 105,
+        effective: 105,
+        stage: 0
+    },
+    def: {
+        base: 90,
+        current: 90,
+        effective: 90,
+        stage: 0
+    },
+    sp_atk: {
+        base: 25,
+        current: 25,
+        effective: 25,
+        stage: 0
+    },
+    sp_def: {
+        base: 25,
+        current: 25,
+        effective: 25,
+        stage: 0
+    },
+    speed: {
+        base: 50,
+        current: 50,
+        effective: 50,
+        stage: 0
+    },
+    images: {
+        front: {
+            path: base_path + 'krabby-front.png',
+            key: 'krabby-front',
+            frameWidth: 387,
+            frameHeight: 310,
+            frames: 25
+        },
+        back: {
+            path: base_path + 'krabby-back.png',
+            key: 'krabby-back',
+            frameWidth: 517,
+            frameHeight: 410,
+            frames: 25
+        }
+    },
+    sounds: 'assets/sounds/krabby-cry.ogg',
+    held_item: null,
+    stat_total: 355,
+    leviates: false
+});
+
+let ducklett = new Pokemon({
+    name: "Ducklett",
+    description: "They are better at swimming than flying, and they happily eat their favorite food, peat moss, as they dive underwater.",
+    types: ['water', 'flying'],
+    height: 0.5,
+    weight: 5.5,
+    moves: [deepClone(all_moves.water_gun)],
+    learnable_moves: [{ at_level: 9, move: { ...all_moves.wing_attack } }, { at_level: 13, move: { ...all_moves.water_pulse } }, { at_level: 15, move: { ...all_moves.aerial_ace } }],
+    abilities: ['Keen Eye'],
+    growth_rate: 'Medium Fast',
+    level: 5,
+    catch_rate: 190,
+    pokemon_number: 580,
+    evolution: null,
+    hp: {
+        base: 62,
+        max: 62,
+        current: 62
+    },
+    xp: {
+        base: 61,
+        total: 0
+    },
+    atk: {
+        base: 44,
+        current: 44,
+        effective: 44,
+        stage: 0
+    },
+    def: {
+        base: 50,
+        current: 50,
+        effective: 50,
+        stage: 0
+    },
+    sp_atk: {
+        base: 44,
+        current: 44,
+        effective: 44,
+        stage: 0
+    },
+    sp_def: {
+        base: 50,
+        current: 50,
+        effective: 50,
+        stage: 0
+    },
+    speed: {
+        base: 55,
+        current: 55,
+        effective: 55,
+        stage: 0
+    },
+    images: {
+        front: {
+            path: base_path + 'ducklett-front.png',
+            key: 'ducklett-front',
+            frameWidth: 218,
+            frameHeight: 310,
+            frames: 30
+        },
+        back: {
+            path: base_path + 'ducklett-back.png',
+            key: 'ducklett-back',
+            frameWidth: 284,
+            frameHeight: 410,
+            frames: 30
+        }
+    },
+    sounds: 'assets/sounds/ducklett-cry.ogg',
+    held_item: null,
+    stat_total: 305,
+    leviates: false
+});
+let cranidos = new Pokemon({
+    name: "Cranidos",
+    description: "An incredibly rare sight. They duel each other by ramming their heads together, and the resulting sound echoes throughout the area like the pealing of a bell.",
+    types: ['rock'],
+    height: 0.9,
+    weight: 31.5,
+    moves: [deepClone(all_moves.headbutt), deepClone(all_moves.leer), deepClone(all_moves.focus_energy)],
+    learnable_moves: [{ at_level: 10, move: { ...all_moves.rock_smash } }, { at_level: 15, move: { ...all_moves.take_down } }],
+    abilities: ['Sturdy'],
+    growth_rate: 'Erratic',
+    level: 5,
+    catch_rate: 45,
+    pokemon_number: 408,
+    evolution: null,
+    hp: {
+        base: 67,
+        max: 67,
+        current: 67
+    },
+    xp: {
+        base: 70,
+        total: 0
+    },
+    atk: {
+        base: 125,
+        current: 125,
+        effective: 125,
+        stage: 0
+    },
+    def: {
+        base: 40,
+        current: 40,
+        effective: 40,
+        stage: 0
+    },
+    sp_atk: {
+        base: 30,
+        current: 30,
+        effective: 30,
+        stage: 0
+    },
+    sp_def: {
+        base: 30,
+        current: 30,
+        effective: 30,
+        stage: 0
+    },
+    speed: {
+        base: 58,
+        current: 58,
+        effective: 58,
+        stage: 0
+    },
+    images: {
+        front: {
+            path: base_path + 'cranidos-front.png',
+            key: 'cranidos-front',
+            frameWidth: 200,
+            frameHeight: 310,
+            frames: 25
+        },
+        back: {
+            path: base_path + 'cranidos-back.png',
+            key: 'cranidos-back',
+            frameWidth: 270,
+            frameHeight: 410,
+            frames: 25
+        }
+    },
+    sounds: 'assets/sounds/cranidos-cry.ogg',
+    held_item: null,
+    stat_total: 350,
+    leviates: false
+});
+let onix = new Pokemon({
+    name: "Onix",
+    description: "When it travels underground, it causes rumbling and tremors. It can move at 50 mph.",
+    types: ['rock', 'ground'],
+    height: 8.8,
+    weight: 210,
+    moves: [deepClone(all_moves.harden), deepClone(all_moves.tackle), deepClone(all_moves.rock_trhow), deepClone(all_moves.rock_polish)],
+    learnable_moves: [{ at_level: 12, move: { ...all_moves.dragon_breath } }, { at_level: 15, move: { ...all_moves.rock_slide } }],
+    abilities: ['Sturdy'],
+    growth_rate: 'Medium Fast',
+    level: 5,
+    catch_rate: 45,
+    pokemon_number: 95,
+    evolution: null,
+    hp: {
+        base: 35,
+        max: 35,
+        current: 35
+    },
+    xp: {
+        base: 77,
+        total: 0
+    },
+    atk: {
+        base: 45,
+        current: 45,
+        effective: 45,
+        stage: 0
+    },
+    def: {
+        base: 160,
+        current: 160,
+        effective: 160,
+        stage: 0
+    },
+    sp_atk: {
+        base: 30,
+        current: 30,
+        effective: 30,
+        stage: 0
+    },
+    sp_def: {
+        base: 45,
+        current: 45,
+        effective: 45,
+        stage: 0
+    },
+    speed: {
+        base: 70,
+        current: 70,
+        effective: 70,
+        stage: 0
+    },
+    images: {
+        front: {
+            path: base_path + 'onix-front.png',
+            key: 'onix-front',
+            frameWidth: 248,
+            frameHeight: 310,
+            frames: 39
+        },
+        back: {
+            path: base_path + 'onix-back.png',
+            key: 'onix-back',
+            frameWidth: 636,
+            frameHeight: 810,
+            frames: 39
+        }
+    },
+    sounds: 'assets/sounds/onix-cry.ogg',
+    held_item: null,
+    stat_total: 385,
+    leviates: false
+});
+
+let scolipede = new Pokemon({
+    name: "Scolipede",
+    description: "Scolipede engage in fierce territorial battles with Centiskorch. At the end of one of these battles, the victor makes a meal of the loser.",
+    types: ['bug', 'poison'],
+    height: 2.5,
+    weight: 200.5,
+    moves: [deepClone(all_moves.toxic), deepClone(all_moves.rock_climb), deepClone(all_moves.mega_horn), deepClone(all_moves.rock_slide)],
+    learnable_moves: [],
+    abilities: ['Swarm'],
+    growth_rate: 'Medium Slow',
+    level: 5,
+    catch_rate: 45,
+    pokemon_number: 545,
+    evolution: null,
+    hp: {
+        base: 60,
+        max: 60,
+        current: 60
+    },
+    xp: {
+        base: 218,
+        total: 0
+    },
+    atk: {
+        base: 100,
+        current: 100,
+        effective: 100,
+        stage: 0
+    },
+    def: {
+        base: 89,
+        current: 89,
+        effective: 89,
+        stage: 0
+    },
+    sp_atk: {
+        base: 55,
+        current: 55,
+        effective: 55,
+        stage: 0
+    },
+    sp_def: {
+        base: 69,
+        current: 69,
+        effective: 69,
+        stage: 0
+    },
+    speed: {
+        base: 112,
+        current: 112,
+        effective: 112,
+        stage: 0
+    },
+    images: {
+        front: {
+            path: base_path + 'scolipede-front.png',
+            key: 'scolipede-front',
+            frameWidth: 213,
+            frameHeight: 310,
+            frames: 38
+        },
+        back: {
+            path: base_path + 'scolipede-back.png',
+            key: 'scolipede-back',
+            frameWidth: 289,
+            frameHeight: 810,
+            frames: 38
+        }
+    },
+    sounds: 'assets/sounds/scolipede-cry.ogg',
+    held_item: null,
+    stat_total: 485,
+    leviates: false
+});
+
+
+let whirlipede = new Pokemon({
+    name: "Whirlipede",
+    description: "Whirlipede protects itself with a sturdy shell and poisonous spikes while it stores up the energy it’ll need for evolution.",
+    types: ['bug', 'poison'],
+    height: 1.2,
+    weight: 58.5,
+    moves: [deepClone(all_moves.toxic), deepClone(all_moves.rock_climb), deepClone(all_moves.mega_horn), deepClone(all_moves.rock_slide)],
+    learnable_moves: [{ at_level: 20, move: { ...all_moves.bug_bite } }, { at_level: 32, move: { ...all_moves.take_down } }],
+    abilities: ['Swarm'],
+    growth_rate: 'Medium Slow',
+    level: 5,
+    catch_rate: 120,
+    pokemon_number: 544,
+    evolution: null,
+    hp: {
+        base: 40,
+        max: 40,
+        current: 40
+    },
+    xp: {
+        base: 218,
+        total: 0
+    },
+    atk: {
+        base: 55,
+        current: 55,
+        effective: 55,
+        stage: 0
+    },
+    def: {
+        base: 99,
+        current: 99,
+        effective: 99,
+        stage: 0
+    },
+    sp_atk: {
+        base: 40,
+        current: 40,
+        effective: 40,
+        stage: 0
+    },
+    sp_def: {
+        base: 79,
+        current: 79,
+        effective: 79,
+        stage: 0
+    },
+    speed: {
+        base: 47,
+        current: 47,
+        effective: 47,
+        stage: 0
+    },
+    images: {
+        front: {
+            path: base_path + 'whirlipede-front.png',
+            key: 'whirlipede-front',
+            frameWidth: 443,
+            frameHeight: 310,
+            frames: 50
+        },
+        back: {
+            path: base_path + 'whirlipede-back.png',
+            key: 'whirlipede-back',
+            frameWidth: 595,
+            frameHeight: 410,
+            frames: 50
+        }
+    },
+    sounds: 'assets/sounds/whirlipede-cry.ogg',
+    held_item: null,
+    stat_total: 360,
+    leviates: false
+});
+
+let frillish = new Pokemon({
+    name: "Frillish",
+    description: "Using the invisible poison spikes on its veillike arms and legs, it paralyzes its enemies and causes them to drown.",
+    types: ['water', 'ghost'],
+    height: 1.2,
+    weight: 33,
+    moves: [deepClone(all_moves.absorb), deepClone(all_moves.poison_sting), deepClone(all_moves.water_gun), deepClone(all_moves.night_slash)],
+    learnable_moves: [{ at_level: 12, move: { ...all_moves.water_pulse } }, { at_level: 20, move: { ...all_moves.hex } }, { at_level: 24, move: { ...all_moves.brine } }],
+    abilities: ['Water Absorb'],
+    growth_rate: 'Medium Slow',
+    level: 5,
+    catch_rate: 190,
+    pokemon_number: 592,
+    evolution: null,
+    hp: {
+        base: 55,
+        max: 55,
+        current: 55
+    },
+    xp: {
+        base: 67,
+        total: 0
+    },
+    atk: {
+        base: 40,
+        current: 40,
+        effective: 40,
+        stage: 0
+    },
+    def: {
+        base: 50,
+        current: 50,
+        effective: 50,
+        stage: 0
+    },
+    sp_atk: {
+        base: 65,
+        current: 65,
+        effective: 65,
+        stage: 0
+    },
+    sp_def: {
+        base: 85,
+        current: 85,
+        effective: 85,
+        stage: 0
+    },
+    speed: {
+        base: 40,
+        current: 40,
+        effective: 40,
+        stage: 0
+    },
+    images: {
+        front: {
+            path: base_path + 'frillish-front.png',
+            key: 'frillish-front',
+            frameWidth: 276,
+            frameHeight: 310,
+            frames: 38
+        },
+        back: {
+            path: base_path + 'frillish-back.png',
+            key: 'frillish-back',
+            frameWidth: 365,
+            frameHeight: 410,
+            frames: 38
+        }
+    },
+    sounds: 'assets/sounds/frillish-cry.ogg',
+    held_item: null,
+    stat_total: 335,
+    leviates: true
+});
+
+let heracross = new Pokemon({
+    name: "Heracross",
+    description: "When it travels underground, it causes rumbling and tremors. It can move at 50 mph.",
+    types: ['bug', 'fighting'],
+    height: 1.5,
+    weight: 54,
+    moves: [deepClone(all_moves.brick_break), deepClone(all_moves.aerial_ace), deepClone(all_moves.bug_bite), deepClone(all_moves.night_slash)],
+    learnable_moves: [],
+    abilities: ['Guts'],
+    growth_rate: 'Slow',
+    level: 5,
+    catch_rate: 45,
+    pokemon_number: 214,
+    evolution: null,
+    hp: {
+        base: 80,
+        max: 80,
+        current: 80
+    },
+    xp: {
+        base: 175,
+        total: 0
+    },
+    atk: {
+        base: 125,
+        current: 125,
+        effective: 125,
+        stage: 0
+    },
+    def: {
+        base: 75,
+        current: 75,
+        effective: 75,
+        stage: 0
+    },
+    sp_atk: {
+        base: 40,
+        current: 40,
+        effective: 40,
+        stage: 0
+    },
+    sp_def: {
+        base: 95,
+        current: 95,
+        effective: 95,
+        stage: 0
+    },
+    speed: {
+        base: 85,
+        current: 85,
+        effective: 85,
+        stage: 0
+    },
+    images: {
+        front: {
+            path: base_path + 'heracross-front.png',
+            key: 'heracross-front',
+            frameWidth: 350,
+            frameHeight: 310,
+            frames: 38
+        },
+        back: {
+            path: base_path + 'heracross-back.png',
+            key: 'heracross-back',
+            frameWidth: 456,
+            frameHeight: 810,
+            frames: 38
+        }
+    },
+    sounds: 'assets/sounds/heracross-cry.ogg',
+    held_item: null,
+    stat_total: 500,
+    leviates: false
+});
+
+
+let squirtle = new Pokemon({
+    name: "Squirtle",
+    description: "It hides in its shell to protect itself, then strikes back with spouts of water at every opportunity.",
+    types: ['water'],
+    height: 0.5,
+    weight: 9,
+    moves: [],
+    learnable_moves: [],
+    abilities: ['Torrent'],
+    growth_rate: 'Medium Slow',
+    level: 5,
+    catch_rate: 45,
+    pokemon_number: 7,
+    hp: {
+        base: 44,
+        max: 44,
+        current: 44
+    },
+    xp: {
+        base: 63,
+        total: 0
+    },
+    atk: {
+        base: 48,
+        current: 48,
+        effective: 48,
+        stage: 0
+    },
+    def: {
+        base: 65,
+        current: 65,
+        effective: 65,
+        stage: 0
+    },
+    sp_atk: {
+        base: 50,
+        current: 50,
+        effective: 50,
+        stage: 0
+    },
+    sp_def: {
+        base: 64,
+        current: 64,
+        effective: 64,
+        stage: 0
+    },
+    speed: {
+        base: 43,
+        current: 43,
+        effective: 43,
+        stage: 0
+    },
+    evolution: {
+
+    },
+    images: {
+        front: {
+            path: base_path + 'squirtle-front.png',
+            key: 'squirtle-front',
+            frameWidth: 293,
+            frameHeight: 310,
+            frames: 19
+        },
+        back: {
+            path: base_path + 'squirtle-back.png',
+            key: 'squirtle-back',
+            frameWidth: 389,
+            frameHeight: 410,
+            frames: 19
+        }
+    },
+    sounds: 'assets/sounds/squirtle-cry.ogg',
+    held_item: null,
+    stat_total: 314,
+    leviates: false
+
+
+
+
+});
+
+let carvanha = new Pokemon({
+    name: "Carvanha",
+    description: "It won’t attack while it’s alone—not even if it spots prey. Instead, it waits for other Carvanha to join it, and then the Pokémon attack as a group.",
+    types: ['water', 'dark'],
+    height: 0.8,
+    weight: 20.8,
+    moves: [deepClone(all_moves.aqua_jet), deepClone(all_moves.leer), deepClone(all_moves.poison_fang)],
+    learnable_moves: [{ at_level: 8, move: { ...all_moves.focus_energy } }, { at_level: 16, move: { ...all_moves.bite } }, { at_level: 20, move: { ...all_moves.ice_fang } }],
+    abilities: ['Torrent'],
+    growth_rate: 'Medium Slow',
+    level: 5,
+    catch_rate: 45,
+    pokemon_number: 318,
+    hp: {
+        base: 45,
+        max: 45,
+        current: 45
+    },
+    xp: {
+        base: 61,
+        total: 0
+    },
+    atk: {
+        base: 90,
+        current: 90,
+        effective: 90,
+        stage: 0
+    },
+    def: {
+        base: 20,
+        current: 20,
+        effective: 20,
+        stage: 0
+    },
+    sp_atk: {
+        base: 65,
+        current: 65,
+        effective: 65,
+        stage: 0
+    },
+    sp_def: {
+        base: 20,
+        current: 20,
+        effective: 20,
+        stage: 0
+    },
+    speed: {
+        base: 65,
+        current: 65,
+        effective: 65,
+        stage: 0
+    },
+    evolution: {
+
+    },
+    images: {
+        front: {
+            path: base_path + 'carvanha-front.png',
+            key: 'carvanha-front',
+            frameWidth: 249,
+            frameHeight: 310,
+            frames: 50
+        },
+        back: {
+            path: base_path + 'carvanha-back.png',
+            key: 'carvanha-back',
+            frameWidth: 328,
+            frameHeight: 410,
+            frames: 50
+        }
+    },
+    sounds: 'assets/sounds/carvanha-cry.ogg',
+    held_item: null,
+    stat_total: 314,
+    leviates: false
+
+});
+
 export const Pokemons = {
-    treecko, torchic, mudkip, aggron, nosepass, lunatone, lileep, wingull, ralts, zigzagoon, poochyena, electrike, meowth, timburr, gastly, deino, starly, staravia, deerling, foongus, beautifly, kricketune
+    treecko, torchic, mudkip, aggron, nosepass, lunatone, lileep, wingull, ralts, zigzagoon, poochyena, electrike, meowth, timburr, gastly, deino, starly, staravia, deerling, foongus, beautifly, kricketune, tirtouga, krabby, ducklett, cranidos, onix,
+    scolipede, heracross, erika_kricketune, squirtle, marshtomp, carvanha, whirlipede, frillish
 }

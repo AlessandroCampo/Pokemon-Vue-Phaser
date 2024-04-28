@@ -66,6 +66,9 @@ const handleMovesInput = async function (e) {
         const ai_best_move = store.calcAiBestMove();
         const ai_selected_move = store.battle_type == 'trainer' ? ai_best_move : store.oppo_pokemon.moves[Math.floor(Math.random() * store.oppo_pokemon.moves.length)];
         const player_selected_move = active_move.value;
+        if (player_selected_move.pp.current <= 0) {
+            return
+        }
 
         // Define functions for player and opponent actions
         const my_pokemon_attack = async () => {

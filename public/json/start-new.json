@@ -551,7 +551,7 @@
                         {
                          "name":"connects_to",
                          "type":"string",
-                         "value":"building-2"
+                         "value":"lab"
                         }, 
                         {
                          "name":"entrance_id",
