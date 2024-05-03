@@ -59,7 +59,7 @@ const menu_voices = [
     {
         label: 'Exit',
         callback: () => {
-            map_store.show_menu = false
+            setTimeout(() => { map_store.show_menu = false }, 250)
         }
     },
 

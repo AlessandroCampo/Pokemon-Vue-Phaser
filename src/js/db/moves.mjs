@@ -341,7 +341,7 @@ const dobule_team = new Move({
     category: 'status',
     type: 'normal',
     power: null,
-    accuracy: 100,
+    accuracy: 1000,
     pp: {
         max: 15,
         current: 15
@@ -350,6 +350,22 @@ const dobule_team = new Move({
     animation: null,
     description: 'By moving rapidly, the user makes illusory copies of itself to boost its evasiveness.',
     effects: [{ type: 'modify_stat', target_stat: 'evasion', target: 'ally', stages: +1, target_stat_label: 'evasiveness' }]
+})
+
+const minimize = new Move({
+    name: 'Minimize',
+    category: 'status',
+    type: 'normal',
+    power: null,
+    accuracy: 1000,
+    pp: {
+        max: 10,
+        current: 10
+    },
+    makes_contact: false,
+    animation: null,
+    description: 'The user compresses its body to make itself look smaller, which sharply boosts its evasiveness.',
+    effects: [{ type: 'modify_stat', target_stat: 'evasion', target: 'ally', stages: +2, target_stat_label: 'evasiveness' }]
 })
 
 const smoke_screen = new Move({
@@ -405,7 +421,7 @@ const rock_climb = new Move({
 const slash = new Move({
     name: 'Slash',
     category: 'physical',
-    type: 'dark',
+    type: 'normal',
     power: 70,
     accuracy: 100,
     pp: {
@@ -417,6 +433,23 @@ const slash = new Move({
     description: 'The target is attacked with a slash of claws or blades. Critical hits land more easily.',
     effects: null,
     crhit_ratio: 3
+})
+
+const fury_swipes = new Move({
+    name: 'Fury Swipes',
+    category: 'physical',
+    type: 'normal',
+    power: 18,
+    accuracy: 80,
+    pp: {
+        max: 15,
+        current: 15
+    },
+    makes_contact: true,
+    animation: null,
+    description: 'The user attacks by raking the target with claws, scythes, or the like. This move hits two to five times in a row.',
+    effects: null,
+    repetitions: bulletSeedHits()
 })
 
 // WATERTYPE MOVES 
@@ -999,6 +1032,23 @@ const mud_shot = new Move({
     effects: [{ type: 'modify_stat', target_stat: 'speed', target: 'enemy', stages: -1, target_stat_label: 'speed', chance: 100 }]
 })
 
+const bulldoze = new Move({
+    name: 'Bulldoze',
+    category: 'physical',
+    type: 'ground',
+    power: 60,
+    accuracy: 100,
+    pp: {
+        max: 20,
+        current: 20
+    },
+    makes_contact: false,
+    animation: null,
+    description: 'The user strikes everything around it by stomping down on the ground. This lowers the Speed stats of those hit.',
+    effects: [{ type: 'modify_stat', target_stat: 'speed', target: 'enemy', stages: -1, target_stat_label: 'speed', chance: 100 }]
+})
+
+
 
 
 
@@ -1021,6 +1071,24 @@ const ice_beam = new Move({
 
 })
 
+const powder_snow = new Move({
+    name: 'Powder Snow',
+    category: 'special',
+    type: 'ice',
+    power: 40,
+    accuracy: 100,
+    pp: {
+        max: 25,
+        current: 25
+    },
+    makes_contact: false,
+    animation: null,
+    description: 'The user attacks with a chilling gust of powdery snow. This may also leave opposing Pokémon frozen.',
+    effects: [{ type: 'apply_status', applied_status: 'frozen', target: 'enemy', chance: 10 }]
+
+})
+
+
 const ice_fang = new Move({
     name: 'Ice Fang',
     category: 'physical',
@@ -1036,6 +1104,40 @@ const ice_fang = new Move({
     description: 'The user bites with cold-infused fangs. This may also make the target flinch or leave it frozen.',
     effects: [{ type: 'apply_status', applied_status: 'frozen', target: 'enemy', chance: 10 }, { type: 'apply_flinch', applied_status: 'flinch', target: 'enemy', chance: 10 }]
 
+})
+
+const icy_wind = new Move({
+    name: 'Icy Wind',
+    category: 'special',
+    type: 'ice',
+    power: 55,
+    accuracy: 95,
+    pp: {
+        max: 15,
+        current: 15
+    },
+    makes_contact: false,
+    animation: null,
+    description: 'The user attacks with a gust of chilled air. This also lowers opposing Pokémon’s Speed stats',
+    effects: [{ type: 'modify_stat', target_stat: 'speed', target: 'enemy', stages: -1, target_stat_label: 'speed', chance: 100 }]
+
+})
+
+const frost_breath = new Move({
+    name: 'Frost Breath',
+    category: 'special',
+    type: 'ice',
+    power: 60,
+    accuracy: 90,
+    pp: {
+        max: 10,
+        current: 10
+    },
+    makes_contact: false,
+    animation: null,
+    description: 'The user attacks by blowing its cold breath on the target. This move always lands a critical hit.',
+    effects: null,
+    crhit_ratio: 1000
 })
 
 // POISON  MOVES
@@ -1077,7 +1179,7 @@ const poison_fang = new Move({
 const poison_tail = new Move({
     name: 'Poison Tail',
     category: 'physical',
-    type: 'dark',
+    type: 'poison',
     power: 50,
     accuracy: 100,
     pp: {
@@ -1295,6 +1397,22 @@ const bite = new Move({
     animation: null,
     description: 'The target is bitten with viciously sharp fangs. This may also make the target flinch.',
     effects: [{ type: 'apply_flinch', applied_status: 'flinch', target: 'enemy', chance: 30 }]
+})
+
+const brutal_swing = new Move({
+    name: 'Brutal Swing',
+    category: 'physical',
+    type: 'dark',
+    power: 60,
+    accuracy: 100,
+    pp: {
+        max: 20,
+        current: 20
+    },
+    makes_contact: true,
+    animation: null,
+    description: 'The user swings its body around violently to inflict damage on everything in its vicinity.',
+    effects: null
 })
 
 const night_slash = new Move({
@@ -1535,5 +1653,12 @@ export const all_moves = {
     ice_fang,
     hex,
     venoshock,
-    poison_tail
+    poison_tail,
+    bulldoze,
+    brutal_swing,
+    minimize,
+    fury_swipes,
+    icy_wind,
+    frost_breath,
+    powder_snow
 }

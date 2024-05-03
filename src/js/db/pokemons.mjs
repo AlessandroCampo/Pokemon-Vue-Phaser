@@ -4,6 +4,7 @@ import { all_items } from "./items.mjs";
 
 import Phaser from "phaser";
 import gsap from 'gsap'
+import { store } from "@/store";
 const base_path = '/pokemons/'
 
 
@@ -253,11 +254,7 @@ class Pokemon {
     }
 
     resetStats() {
-        this.atk.current = this.atk.base;
-        this.def.current = this.def.base;
-        this.sp_atk.current = this.sp_atk.base;
-        this.sp_def.current = this.sp_def.base;
-        this.speed.current = this.speed.base;
+        store.calcStats(this)
         this.accuracy.current = this.accuracy.effective;
         this.evasion.current = this.evasion.effective;
         this.atk.stage = 0
@@ -1550,7 +1547,7 @@ let electrike = new Pokemon({
     growth_rate: 'Slow',
     level: 5,
     catch_rate: 255,
-    pokemon_number: 52,
+    pokemon_number: 309,
     hp: {
         base: 40,
         max: 40,
@@ -2969,7 +2966,400 @@ let carvanha = new Pokemon({
 
 });
 
+let silicobra = new Pokemon({
+    name: "Silicobra",
+    description: "Silicobra’s large nostrils are specialized for spraying sand, so this Pokémon is not very good at telling apart different smells.",
+    types: ['ground'],
+    height: 2.2,
+    weight: 7.6,
+    moves: [deepClone(all_moves.sand_attack), deepClone(all_moves.bite), deepClone(all_moves.minimize)],
+    learnable_moves: [{ at_level: 10, move: { ...all_moves.brutal_swing } }, { at_level: 15, move: { ...all_moves.bulldoze } }, { at_level: 20, move: { ...all_moves.headbutt } }],
+    abilities: ['Shed Skin'],
+    growth_rate: 'Medium Fast',
+    level: 5,
+    catch_rate: 255,
+    pokemon_number: 843,
+    hp: {
+        base: 52,
+        max: 52,
+        current: 52
+    },
+    xp: {
+        base: 63,
+        total: 0
+    },
+    atk: {
+        base: 57,
+        current: 57,
+        effective: 57,
+        stage: 0
+    },
+    def: {
+        base: 75,
+        current: 75,
+        effective: 75,
+        stage: 0
+    },
+    sp_atk: {
+        base: 35,
+        current: 35,
+        effective: 35,
+        stage: 0
+    },
+    sp_def: {
+        base: 50,
+        current: 50,
+        effective: 50,
+        stage: 0
+    },
+    speed: {
+        base: 46,
+        current: 46,
+        effective: 46,
+        stage: 0
+    },
+    evolution: {
+
+    },
+    images: {
+        front: {
+            path: base_path + 'silicobra-front.png',
+            key: 'silicobra-front',
+            frameWidth: 294,
+            frameHeight: 298,
+            frames: 50
+        },
+        back: {
+            path: base_path + 'silicobra-back.png',
+            key: 'silicobra-back',
+            frameWidth: 331,
+            frameHeight: 306,
+            frames: 50
+        }
+    },
+    sounds: 'assets/sounds/silicobra-cry.ogg',
+    held_item: null,
+    stat_total: 315,
+    leviates: false
+
+});
+
+let cufant = new Pokemon({
+    name: "Cufant",
+    description: "Cufant can lift loads weighing five tons. In the mornings, it heads into caves with its herd, in search of the ore on which these Pokémon feed.",
+    types: ['steel'],
+    height: 1.2,
+    weight: 100,
+    moves: [deepClone(all_moves.growl), deepClone(all_moves.tackle), deepClone(all_moves.rock_trhow)],
+    learnable_moves: [{ at_level: 10, move: { ...all_moves.rock_smash } }, { at_level: 15, move: { ...all_moves.bulldoze } }, { at_level: 20, move: { ...all_moves.stomp } }],
+    abilities: ['Sheer Force'],
+    growth_rate: 'Medium Fast',
+    level: 5,
+    catch_rate: 255,
+    pokemon_number: 878,
+    hp: {
+        base: 72,
+        max: 72,
+        current: 72
+    },
+    xp: {
+        base: 66,
+        total: 0
+    },
+    atk: {
+        base: 80,
+        current: 80,
+        effective: 80,
+        stage: 0
+    },
+    def: {
+        base: 49,
+        current: 49,
+        effective: 49,
+        stage: 0
+    },
+    sp_atk: {
+        base: 40,
+        current: 40,
+        effective: 40,
+        stage: 0
+    },
+    sp_def: {
+        base: 49,
+        current: 49,
+        effective: 49,
+        stage: 0
+    },
+    speed: {
+        base: 40,
+        current: 40,
+        effective: 40,
+        stage: 0
+    },
+    evolution: {
+
+    },
+    images: {
+        front: {
+            path: base_path + 'cufant-front.png',
+            key: 'cufant-front',
+            frameWidth: 491,
+            frameHeight: 433,
+            frames: 60
+        },
+        back: {
+            path: base_path + 'cufant-back.png',
+            key: 'cufant-back',
+            frameWidth: 430,
+            frameHeight: 403,
+            frames: 59
+        }
+    },
+    sounds: 'assets/sounds/cufant-cry.ogg',
+    held_item: null,
+    stat_total: 330,
+    leviates: false
+
+});
+
+let cubchoo = new Pokemon({
+    name: "Cubchoo",
+    description: "When Cubchoo starts sneezing, watch out! If it spatters you with its frosty snot, you’ll get frostbite.",
+    types: ['ice'],
+    height: 0.5,
+    weight: 8.5,
+    moves: [deepClone(all_moves.growl), deepClone(all_moves.powder_snow), deepClone(all_moves.fury_swipes)],
+    learnable_moves: [{ at_level: 18, move: { ...all_moves.frost_breath } }, { at_level: 9, move: { ...all_moves.icy_wind } }, { at_level: 15, move: { ...all_moves.brine } }, { at_level: 21, move: { ...all_moves.slash } }],
+    abilities: ['Slush Rush'],
+    growth_rate: 'Medium Fast',
+    level: 5,
+    catch_rate: 120,
+    pokemon_number: 613,
+    hp: {
+        base: 55,
+        max: 55,
+        current: 55
+    },
+    xp: {
+        base: 61,
+        total: 0
+    },
+    atk: {
+        base: 70,
+        current: 70,
+        effective: 70,
+        stage: 0
+    },
+    def: {
+        base: 40,
+        current: 40,
+        effective: 40,
+        stage: 0
+    },
+    sp_atk: {
+        base: 60,
+        current: 60,
+        effective: 60,
+        stage: 0
+    },
+    sp_def: {
+        base: 40,
+        current: 40,
+        effective: 40,
+        stage: 0
+    },
+    speed: {
+        base: 40,
+        current: 40,
+        effective: 40,
+        stage: 0
+    },
+    evolution: {
+
+    },
+    images: {
+        front: {
+            path: base_path + 'cubchoo-front.png',
+            key: 'cubchoo-front',
+            frameWidth: 275,
+            frameHeight: 310,
+            frames: 32
+        },
+        back: {
+            path: base_path + 'cubchoo-back.png',
+            key: 'cubchoo-back',
+            frameWidth: 363,
+            frameHeight: 410,
+            frames: 32
+        }
+    },
+    sounds: 'assets/sounds/cubchoo-cry.ogg',
+    held_item: null,
+    stat_total: 305,
+    leviates: false
+
+});
+
+let archen = new Pokemon({
+    name: "Archen",
+    description: "Archen is said to be the ancestor of bird Pokémon. It lived in treetops, eating berries and bug Pokémon.",
+    types: ['rock', 'flying'],
+    height: 0.5,
+    weight: 9.5,
+    moves: [deepClone(all_moves.leer), deepClone(all_moves.quick_attack
+    ), deepClone(all_moves.rock_trhow), deepClone(all_moves.wing_attack)],
+    learnable_moves: [{ at_level: 9, move: { ...all_moves.dragon_breath } }, { at_level: 15, move: { ...all_moves.bulldoze } }],
+    abilities: ['Defeatist'],
+    growth_rate: 'Medium Fast',
+    level: 5,
+    catch_rate: 45,
+    pokemon_number: 566,
+    hp: {
+        base: 55,
+        max: 55,
+        current: 55
+    },
+    xp: {
+        base: 71,
+        total: 0
+    },
+    atk: {
+        base: 112,
+        current: 112,
+        effective: 112,
+        stage: 0
+    },
+    def: {
+        base: 45,
+        current: 45,
+        effective: 45,
+        stage: 0
+    },
+    sp_atk: {
+        base: 74,
+        current: 74,
+        effective: 74,
+        stage: 0
+    },
+    sp_def: {
+        base: 45,
+        current: 45,
+        effective: 45,
+        stage: 0
+    },
+    speed: {
+        base: 70,
+        current: 70,
+        effective: 70,
+        stage: 0
+    },
+    evolution: {
+
+    },
+    images: {
+        front: {
+            path: base_path + 'archen-front.png',
+            key: 'archen-front',
+            frameWidth: 649,
+            frameHeight: 310,
+            frames: 38
+        },
+        back: {
+            path: base_path + 'archen-back.png',
+            key: 'archen-back',
+            frameWidth: 862,
+            frameHeight: 410,
+            frames: 38
+        }
+    },
+    sounds: 'assets/sounds/archen-cry.ogg',
+    held_item: null,
+    stat_total: 401,
+    leviates: false
+
+});
+
+let nidoran = new Pokemon({
+    name: "Nidoran",
+    description: "It scans its surroundings by raising its ears out of the grass. Its toxic horn is for protection.",
+    types: ['poison'],
+    height: 0.5,
+    weight: 9,
+    moves: [deepClone(all_moves.leer), deepClone(all_moves.poison_sting
+    ), deepClone(all_moves.peck)],
+    learnable_moves: [{ at_level: 10, move: { ...all_moves.focus_energy } }, { at_level: 15, move: { ...all_moves.fury_swipes } }],
+    abilities: ['Poison Point'],
+    growth_rate: 'Medium Slow',
+    level: 5,
+    catch_rate: 235,
+    pokemon_number: 32,
+    hp: {
+        base: 46,
+        max: 46,
+        current: 46
+    },
+    xp: {
+        base: 55,
+        total: 0
+    },
+    atk: {
+        base: 57,
+        current: 57,
+        effective: 57,
+        stage: 0
+    },
+    def: {
+        base: 40,
+        current: 40,
+        effective: 40,
+        stage: 0
+    },
+    sp_atk: {
+        base: 40,
+        current: 40,
+        effective: 40,
+        stage: 0
+    },
+    sp_def: {
+        base: 40,
+        current: 40,
+        effective: 40,
+        stage: 0
+    },
+    speed: {
+        base: 50,
+        current: 50,
+        effective: 50,
+        stage: 0
+    },
+    evolution: {
+
+    },
+    images: {
+        front: {
+            path: base_path + 'nidoran-front.png',
+            key: 'nidoran-front',
+            frameWidth: 313,
+            frameHeight: 310,
+            frames: 32
+        },
+        back: {
+            path: base_path + 'nidoran-back.png',
+            key: 'nidoran-back',
+            frameWidth: 405,
+            frameHeight: 410,
+            frames: 32
+        }
+    },
+    sounds: 'assets/sounds/nidoran-cry.ogg',
+    held_item: null,
+    stat_total: 273,
+    leviates: false
+
+});
+
+
 export const Pokemons = {
     treecko, torchic, mudkip, aggron, nosepass, lunatone, lileep, wingull, ralts, zigzagoon, poochyena, electrike, meowth, timburr, gastly, deino, starly, staravia, deerling, foongus, beautifly, kricketune, tirtouga, krabby, ducklett, cranidos, onix,
-    scolipede, heracross, erika_kricketune, squirtle, marshtomp, carvanha, whirlipede, frillish
+    scolipede, heracross, erika_kricketune, squirtle, marshtomp, carvanha, whirlipede, frillish, silicobra, cufant, cubchoo, archen, nidoran
 }

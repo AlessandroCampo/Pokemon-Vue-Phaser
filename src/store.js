@@ -66,6 +66,7 @@ export const store = reactive({
     oppo_trainer: trainers.roxanne,
     oppo_bench: [],
     defeated_npcs: [],
+    caught_mons: [],
     menu_state: 'text',
     info_text: ``,
     additional_info_text: null,
@@ -175,7 +176,7 @@ export const store = reactive({
         this.info_text = moveText;
         await this.delay(this.info_text.length * this.config.text_speed + 500);
 
-
+        //Sheer Force
 
 
         //hustle makes the physical moves 20% less likely to hit
@@ -191,7 +192,7 @@ export const store = reactive({
 
         if (this.checkDamagePrevent(move, caster, target, false) && move.power) {
             if (target.abilities.includes('Water Absorb')) {
-                let healedAmount = Math.ceil(target.stats.hp.max * 0.25) * -1;
+                let healedAmount = Math.ceil(target.hp.max * 0.25) * -1;
                 await this.applyDamage(target, healedAmount);
             }
             if (this.additional_info_text) {
@@ -364,15 +365,20 @@ export const store = reactive({
             }
 
             // check contact abilities
-            if (move.makes_contact && !caster.status && (target.abilities.includes('Static') || target.abilities.includes('Effect Spore'))) {
+            if (move.makes_contact && !caster.status && (target.abilities.includes('Static') || target.abilities.includes('Effect Spore') || target.abilities.includes('Poison Point'))) {
                 let apply_eff_chance = Math.random() < 0.3
                 if (apply_eff_chance) {
-                    if (target.abilities.includes('Static')) {
+                    if (target.abilities.includes('Static') && !caster.types.includes('electric')) {
                         caster.status = 'paralyzed'
                     } else if (target.abilities.includes('Effect Spore')) {
                         const possible_statuses = ['paralyzed', 'asleep', 'poisoned']
                         const random_index = Math.floor(Math.random() * 3)
-                        caster.status = possible_statuses[random_index]
+                        if (!this.checkStatusEffectPrevent(possible_statuses[random_index], caster)) {
+                            caster.status = possible_statuses[random_index]
+                        }
+
+                    } else if (target.abilities.includes('Poison Point') && !caster.types.includes('poison')) {
+                        caster.status = 'poisoned'
                     }
                     store.info_text = `${caster.name} has been ${caster.status} cause of ${target.name}'s ${target.abilities[0]}`
                     await this.delay(this.info_text.length * this.config.text_speed + 500);
@@ -811,9 +817,10 @@ export const store = reactive({
             selected_move = high_prio_move
         }
         // Check if highest damage move could kill or deals at least 50% max HP damage
-        else if ((most_damage_move.could_kill || most_damage_move.expected_dmg > this.my_pokemon.hp.max / 2)) {
+        else if ((most_damage_move.could_kill || most_damage_move.expected_dmg > this.my_pokemon.hp.max * 0.4)) {
             selected_move = most_damage_move.move;
         }
+
         //AI doenst have an highly damaging move and its below 50% hp, while holding an healing move
         else if (this.oppo_pokemon.hp.current < this.oppo_pokemon.hp.max * 0.5 && ai_healign_move) {
 
@@ -822,12 +829,13 @@ export const store = reactive({
         else {
             // Check for status moves if opponent doesn't have a status condition
             if (!this.my_pokemon.status) {
-                let bestStatusMove = null;
+                let bestStatusMove = undefined;
                 this.oppo_pokemon.moves.forEach(move => {
 
                     if (move.effects && typeof move.effects[Symbol.iterator] === 'function') {
+
                         move.effects.forEach(effect => {
-                            if (effect.type === 'apply_status' && effect.target === 'enemy' && move.pp.current > 0) {
+                            if (effect.type === 'apply_status' && effect.target === 'enemy' && move.pp.current > 0 && !this.checkStatusEffectPrevent(effect.applied_status, this.my_pokemon)) {
                                 // Select move with higher accuracy
                                 if (!bestStatusMove || move.accuracy > bestStatusMove.accuracy) {
                                     bestStatusMove = move;
@@ -837,7 +845,7 @@ export const store = reactive({
                     }
                 });
 
-                if (bestStatusMove && this.checkEffectiveness(bestStatusMove.type, this.my_pokemon.types) >= 1) {
+                if (bestStatusMove) {
                     selected_move = bestStatusMove;
                 }
             }
@@ -857,6 +865,7 @@ export const store = reactive({
                 })
             }
         }
+
         return selected_move;
     },
     highestAiDmgMove(pkmn) {
@@ -865,6 +874,8 @@ export const store = reactive({
             expected_dmg: 0,
             could_kill: false
         };
+
+        console.log(pkmn.name, pkmn.moves)
 
         pkmn.moves.forEach((move) => {
             let self_faint_move = false;
@@ -894,13 +905,13 @@ export const store = reactive({
                 (!best_move.could_kill && pkmn.speed.current > this.my_pokemon.speed.current && move_can_flinch) ||
                 (!best_move.could_kill && pkmn.hp.current < pkmn.hp.max * 0.33 && self_faint_move) // If the opponent's HP is low and the move is self-fainting
             ) {
-
+                console.log(move.name, expected_damage)
                 best_move.move = move;
                 best_move.expected_dmg = expected_damage;
                 best_move.could_kill = expected_damage >= this.my_pokemon.hp.current;
             }
         });
-
+        console.log(best_move)
         return best_move;
     },
     playerKillingMove() {
@@ -1052,7 +1063,7 @@ export const store = reactive({
             wants_to_swap = false
         }
 
-        if (wants_to_swap) {
+        if (wants_to_swap && possible_swap.pokemon) {
             console.log('ai decided to swap')
             return possible_swap.pokemon
         } else {
@@ -1073,6 +1084,7 @@ export const store = reactive({
             let best_player_move = this.playerHighestDmgMoveOnGivenTarget(pkmn);
             let pkmn_is_slower = pkmn.speed.effective < this.my_pokemon.speed.effective;
             let player_has_fast_kill = best_player_move.expected_dmg > pkmn.hp.current && pkmn_is_slower;
+
 
 
             // Calculate priority based on expected damage and likelihood of being fast killed
@@ -1199,6 +1211,12 @@ export const store = reactive({
             store.info_text = `${target.name} cannot be ${effect.applied_status}`
             await this.delay(store.info_text.length * this.config.text_speed + 500)
             return false;
+        }
+
+        if (target.status !== null) {
+            store.info_text = `${target.name} is already ${target.status} and other status conditions cannot be applied`
+            await this.delay(store.info_text.length * this.config.text_speed + 500)
+            return false
         }
 
         let random_chance = Math.floor(Math.random() * 100)
@@ -1583,14 +1601,17 @@ export const store = reactive({
         }
     },
     checkDamagePrevent(move, caster, target, simulation) {
-        if (!move) {
-            return false
-        }
-        if (!move.power) {
+        if (!move || !move.power) {
             return false;
         }
 
-        let effectiveness = this.checkEffectiveness(move.type, target.types);
+        const abilityEffects = {
+            'Storm Drain': { type: 'water', stat: 'sp_atk', label: 'special attack' },
+            'Sap Sipper': { type: 'grass', stat: 'atk', label: 'attack' },
+            'Water Absorb': { type: 'water', heal: true, healFraction: 0.25 }
+        };
+
+        const effectiveness = this.checkEffectiveness(move.type, target.types);
 
         if (effectiveness === 0) {
             if (!simulation) {
@@ -1599,45 +1620,39 @@ export const store = reactive({
             return true;
         }
 
-        const abilityEffects = {
-            'Storm Drain': { stat: 'sp_atk', label: 'special attack' },
-            'Sap Sipper': { stat: 'atk', label: 'attack' },
-            'Water Absorb': { heal: true, healFraction: 0.25 }
-        };
-
         for (let ability in abilityEffects) {
-            if (target.abilities.includes(ability) && (move.type === 'water' || move.type === 'grass' || move.type === 'ground')) {
+            const effect = abilityEffects[ability];
+
+            if (target.abilities.includes(ability) && move.type === effect.type) {
                 if (!simulation) {
-                    this.additional_info_text = `${target.name}'s is unaffected by ${move.name}`;
-                }
-
-                if (ability === 'Water Absorb') {
-
-                    if (!simulation) {
-
+                    if (ability === 'Water Absorb') {
+                        const healedAmount = Math.round(target.hp.max * effect.healFraction);
+                        target.hp.current += healedAmount;
                         this.additional_info_text = `${target.name} absorbed the ${move.type}-type attack and healed ${healedAmount} HP with Water Absorb!`;
-                    }
-                } else {
-                    let fake_effect = {
-                        type: 'modify_stat',
-                        target_stat: abilityEffects[ability].stat,
-                        target: 'ally',
-                        stages: +1,
-                        target_stat_label: abilityEffects[ability].label
-                    };
-                    if (!simulation) {
+                    } else if (ability === 'Sap Sipper' || ability === 'Storm Drain') {
+                        const fake_effect = {
+                            type: 'modify_stat',
+                            target_stat: effect.stat,
+                            target: 'ally',
+                            stages: +1,
+                            target_stat_label: effect.label
+                        };
                         this.modifyStat(fake_effect, target);
                         this.additional_info_text = `${target.name}'s ${fake_effect.target_stat_label} rose thanks to ${ability}`;
                     }
                 }
-
                 return true;
             }
         }
 
+        if (!simulation && this.checkEffectiveness(move.type, target.types) === 0) {
+            this.additional_info_text = `${target.name}'s is unaffected by ${move.name}`;
+        }
+
         return false;
-    }
-    ,
+    },
+
+
     calcModifiedRate(pkmn, ball) {
         const bonus_status = pkmn.status === 'frozen' || pkmn.status === 'asleep' ? 2 :
             pkmn.status === 'paralyzed' || pkmn.status === 'poisoned' ? 1.5 :
@@ -1682,6 +1697,7 @@ export const store = reactive({
             let oppo_copy = this.generateSaveCopy(store.oppo_pokemon)
 
             this.my_bench.push(map_store.retrivePokemonData(oppo_copy))
+            this.caught_mons.push(store.oppo_pokemon.pokemon_number)
 
             this.endBattle()
         } else {
@@ -1729,7 +1745,7 @@ export const store = reactive({
         //cancel later
 
         // trainers can have random pokmeons from a predefined pool
-        const possible_trainer_pokemons = [Pokemons.zigzagoon, Pokemons.ralts, Pokemons.wingull, Pokemons.poochyena, Pokemons.electrike, Pokemons.meowth, Pokemons.starly]
+        const possible_trainer_pokemons = [Pokemons.zigzagoon, Pokemons.ralts, Pokemons.wingull, Pokemons.poochyena, Pokemons.electrike, Pokemons.meowth, Pokemons.starly, Pokemons.nidoran]
         //trainers pokemons can hold random items
         const possible_trainer_items = [all_items.lum_berry, all_items.sitrus_berry]
         const my_pokemons = [];
@@ -1759,7 +1775,6 @@ export const store = reactive({
 
         //enemy mons have random moves
         const moveKeys = Object.keys(all_moves);
-        random_trainer_lead.moves = []
         random_trainer_lead.held_item = possible_trainer_items[Math.random() * possible_trainer_items.length]
         random_trainer_lead.learnable_moves.forEach(({ at_level, move }) => {
             if (at_level <= random_trainer_lead.level) {
@@ -1872,30 +1887,38 @@ export const store = reactive({
         }
 
         // Get the possible encounters for the map
-        const possibleEncounters = mapData.possible_encounters;
+        let possibleEncounters = mapData.possible_encounters;
+        // Filter out the Pokémon from possibleEncounters whose numbers are not included in caughtPokemonNumbers
+
+        //NOTE - THIS CAN BE REMOVED TO DECREASE GAME DIFFICULTY
+        let caughtPokemonNumbers = this.caught_mons;
+        console.log(caughtPokemonNumbers)
+        possibleEncounters = possibleEncounters.filter(pokemon => !caughtPokemonNumbers.includes(pokemon.pokemon_number));
+        console.log(possibleEncounters)
 
         // Calculate total encounter chance
-        const totalChance = possibleEncounters.reduce((acc, encounter) => acc + encounter.chance, 0);
+        // const totalChance = possibleEncounters.reduce((acc, encounter) => acc + encounter.chance, 0);
 
-        // Generate a random number to select the encounter
-        const randomChance = Math.random() * totalChance;
-        let random_encounter = null; // Initialize with null
+        // // Generate a random number to select the encounter
+        // const randomChance = Math.random() * totalChance;
+        // let random_encounter = null; // Initialize with null
 
-        // Loop through encounters and select one based on chance
-        let accumulatedChance = 0;
-        for (const encounter of possibleEncounters) {
-            accumulatedChance += encounter.chance;
-            if (randomChance < accumulatedChance) {
-                random_encounter = encounter.pokemon;
+        // // Loop through encounters and select one based on chance
+        // let accumulatedChance = 0;
+        // for (const encounter of possibleEncounters) {
+        //     accumulatedChance += encounter.chance;
+        //     if (randomChance < accumulatedChance) {
+        //         random_encounter = encounter.pokemon;
 
-                break; // Break out of the loop once random_encounter is set
-            }
-        }
+        //         break; // Break out of the loop once random_encounter is set
+        //     }
+        // }
+        let random_index = Math.floor(Math.random() * possibleEncounters.length)
+        let random_encounter = possibleEncounters[random_index]
 
         // If no encounter is selected, set random_encounter to the last encounter
         if (!random_encounter) {
-            random_encounter = possibleEncounters[possibleEncounters.length - 1].pokemon;
-
+            random_encounter = Pokemons.zigzagoon
         }
 
         // Right now, wild pokemons can't hold items
@@ -2112,12 +2135,27 @@ export const store = reactive({
         if (trainer.name == 'archie') {
             this.level_cap = 20
         }
+        //Unlock silvarea
+        if (trainer.name == 'rayneera') {
+            this.defeated_npcs.push(50, 51, 52)
+        }
 
         if (trainer.boss) {
             reward *= 2;
         }
 
         return Math.round(reward);
+    },
+    checkStatusEffectPrevent(status, target) {
+        if (status == 'poisoned' && (target.types.includes('poison') || target.types.includes('steel'))) {
+            return true
+        } else if (status == 'paralyzed' && target.types.includes('electric')) {
+            return true
+        } else if (status == 'burned' && target.types.includes('fire')) {
+            return true
+        } else {
+            return false
+        }
     }
 
 

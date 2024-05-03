@@ -105,7 +105,7 @@ const sub_menu_voices = [
             if (chosen_item.type == 'repel') {
                 menu_info_text.value = `${chosen_item.name} has been used, and will reduce the chance of encountering wild pokèmons`
                 map_store.repel_steps_left += chosen_item.amount
-                console.log(chosen_item, map_store.repel_steps_left)
+
                 menuReset()
                 return
 

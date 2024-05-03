@@ -48,7 +48,7 @@ export class Player extends Character {
             this.updateAnimation(direction);
             if (map_store.repel_steps_left > 0) {
                 map_store.repel_steps_left--
-                console.log(map_store.repel_steps_left)
+
 
             }
 
@@ -56,7 +56,7 @@ export class Player extends Character {
 
         if (!this.isMoving) {
             const targetPosition = getTargetPosition({ x: this._phaserGameObject.x, y: this._phaserGameObject.y }, this._direction)
-            console.log(targetPosition)
+
 
             const nearby_transition = this.transition_layer.objects.find((object) => {
                 return object.x === targetPosition.x && object.y - tile_size === targetPosition.y
@@ -73,7 +73,7 @@ export class Player extends Character {
             if (!is_building_transition) {
                 is_building_transition = false
             }
-            console.log(is_locked)
+
             this.transition_callback(transition_name, transition_id, is_building_transition, is_locked)
 
 

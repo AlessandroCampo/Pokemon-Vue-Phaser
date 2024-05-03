@@ -82,12 +82,12 @@ const foongus_moveset = [{ ...all_moves.synthesis }, { ...all_moves.mega_drain }
 const frillish_moveset = [{ ...all_moves.hex }, { ...all_moves.water_pulse }, { ...all_moves.shock_wave }, { ...all_moves.recover }]
 
 const whirlipede_moveset = [{ ...all_moves.poison_tail }, { ...all_moves.venoshock }, { ...all_moves.bug_bite }, { ...all_moves.toxic }]
-
+const roxanne_archen_moveset = [{ ...all_moves.dragon_breath }, { ...all_moves.bulldoze }, { ...all_moves.wing_attack }, { ...all_moves.rock_slide }]
 
 const archie = new Trainer({
     name: 'archie',
-    lead: Pokemons.tirtouga,
-    bench: [Pokemons.marshtomp, Pokemons.carvanha, Pokemons.krabby],
+    lead: deepClone(Pokemons.tirtouga),
+    bench: [deepClone(Pokemons.marshtomp), deepClone(Pokemons.carvanha), deepClone(Pokemons.krabby)],
     position: {
         x: 950,
         y: 310
@@ -100,8 +100,8 @@ const archie = new Trainer({
 
 const aqua_grunt = new Trainer({
     name: 'aqua grunt',
-    lead: Pokemons.foongus,
-    bench: [Pokemons.carvanha, Pokemons.whirlipede, Pokemons.frillish],
+    lead: deepClone(Pokemons.foongus),
+    bench: [deepClone(Pokemons.carvanha), deepClone(Pokemons.whirlipede), deepClone(Pokemons.frillish)],
     position: {
         x: 950,
         y: 320
@@ -115,15 +115,15 @@ const aqua_grunt = new Trainer({
 
 const roxanne = new Trainer({
     name: 'Rayneera',
-    lead: Pokemons.nosepass,
-    bench: [Pokemons.lunatone, Pokemons.lileep, Pokemons.tirtouga],
+    lead: deepClone(Pokemons.nosepass),
+    bench: [deepClone(Pokemons.lunatone), deepClone(Pokemons.lileep), deepClone(Pokemons.archen)],
     position: {
         x: 950,
         y: 320
     },
     scale: 0.3,
     squad_level: 15,
-    moveset: [roxanne_nosepass_moveset, roxanne_lunatone_moveset, roxanne_lileep_moveset, tirtogua_moveset],
+    moveset: [roxanne_nosepass_moveset, roxanne_lunatone_moveset, roxanne_lileep_moveset, roxanne_archen_moveset],
 
 
 })

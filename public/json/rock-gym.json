@@ -99,7 +99,7 @@
          "name":"Collision",
          "opacity":0.5,
          "type":"tilelayer",
-         "visible":false,
+         "visible":true,
          "width":15,
          "x":0,
          "y":0
@@ -108,7 +108,40 @@
          "draworder":"topdown",
          "id":5,
          "name":"Scene-Transitions",
-         "objects":[],
+         "objects":[
+                {
+                 "gid":354,
+                 "height":16,
+                 "id":1,
+                 "name":"",
+                 "properties":[
+                        {
+                         "name":"connects_to",
+                         "type":"string",
+                         "value":"route-2"
+                        }, 
+                        {
+                         "name":"entrance_id",
+                         "type":"int",
+                         "value":1
+                        }, 
+                        {
+                         "name":"is_building",
+                         "type":"bool",
+                         "value":true
+                        }, 
+                        {
+                         "name":"is_locked",
+                         "type":"bool",
+                         "value":false
+                        }],
+                 "rotation":0,
+                 "type":"entrance",
+                 "visible":true,
+                 "width":16,
+                 "x":112,
+                 "y":368
+                }],
          "opacity":1,
          "type":"objectgroup",
          "visible":true,
@@ -150,7 +183,7 @@
          "y":0
         }],
  "nextlayerid":7,
- "nextobjectid":1,
+ "nextobjectid":2,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.10.2",

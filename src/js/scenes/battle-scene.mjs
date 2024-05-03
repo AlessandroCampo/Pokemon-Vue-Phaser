@@ -95,7 +95,7 @@ export class BattleScene extends Phaser.Scene {
     }
     async create() {
         this.sound.stopAll()
-        console.log(store.oppo_trainer, store.battle_type)
+
         if (store.battle_type == 'trainer' && store.oppo_trainer.boss) {
             this.sound.play(AUDIO_ASSETS_KEY.BOSS_FIGHT, {
                 loop: true,
@@ -226,7 +226,7 @@ export class BattleScene extends Phaser.Scene {
     async changeOpponentPokemonSprite(newPokemon) {
 
         // when a pokemon is switched out, all his stats are restored, and he heals from confusion if he is
-        console.log(newPokemon)
+
         store.oppo_pokemon.resetStats()
         store.oppo_pokemon.confused = false
         const bench_index = store.oppo_bench.indexOf(newPokemon)

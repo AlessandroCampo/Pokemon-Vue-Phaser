@@ -4,9 +4,9 @@ import { map_store } from "@/mapStore.mjs"
 import { all_items } from "./items.mjs"
 
 
-let npc_1 = {
-    dialouge: [],
-    name: 'NPC_1',
+let rayneera = {
+    dialouge: ['You dare coming to my house with an army of Pokèmons?'],
+    name: 'rayneera',
     frameWidth: 64,
     frameHeight: 64,
     scale: 0.5,
@@ -82,4 +82,4 @@ let nurse = {
     scale: 0.5,
 }
 
-export const all_npcs = { npc_1, npc_2, merchant, guard, nurse, bug_catcher, erika, archie, aqua_grunt }
+export const all_npcs = { rayneera, npc_2, merchant, guard, nurse, bug_catcher, erika, archie, aqua_grunt }

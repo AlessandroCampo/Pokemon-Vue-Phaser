@@ -131,7 +131,7 @@ p img {
 }
 
 .logo {
-    height: 500px;
+    height: 600px;
 }
 
 .menu-container {

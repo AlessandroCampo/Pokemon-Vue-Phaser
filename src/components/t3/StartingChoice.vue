@@ -5,7 +5,7 @@
                 :style="{ marginTop: index === 1 ? '-250px' : '' }">
                 <i class="fa-solid fa-hand-pointer" :class="index == current_choice ? 'active' : ''"></i>
                 <img :src="`/pokemons/${choice.name.toLowerCase()}.gif`" alt=""
-                    :class="index == current_choice ? 'active' : ''">
+                    :class="[index === current_choice ? 'active' : '', choice.name === 'Cufant' ? 'scaled-down' : '']">
                 <div class="info">
                     <span> {{ choice.name }} </span>
                     <div class="types">
@@ -78,6 +78,10 @@ const handleMovesInput = async function (e) {
     justify-content: space-between;
     width: 65%;
     margin: 12% auto;
+}
+
+.img-container img {
+    max-width: 250px;
 }
 
 .choice {

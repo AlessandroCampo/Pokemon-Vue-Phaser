@@ -1,6 +1,10 @@
 <template>
     <div class="box-container">
-
+        <h3 class="info-h3">
+            Press Y to {{ selecting_from_box ? 'team' : 'box' }}, press enter to {{ selecting_from_box
+                ?
+                'withdraw' : 'deposit' }}
+        </h3>
         <div class="box" :class="!selecting_from_box ? 'inactive' : 'active'">
             <h2> {{ store.player_info.name.toUpperCase() }}'S BOX </h2>
             <div class="pokemon-container">
@@ -59,16 +63,31 @@ const handleMovesInput = async function (e) {
         if (selecting_from_box.value) {
             if (party.value.length < 4) {
                 const withdrawn_pokemon = store.my_box.splice(active_box.value, 1)[0];
-                party.value.push(withdrawn_pokemon);
+                store.my_bench.push(withdrawn_pokemon);
             }
         } else {
-            const deposited_pokemon = party.value.splice(active_party.value, 1)[0];
-            store.my_box.push(deposited_pokemon);
+            if (party.value.length > 1) {
+                let deposited_pokemon;
+                if (active_party.value === 0) {
+                    // Deposit the active Pokémon and set the new active Pokémon from the bench
+                    deposited_pokemon = store.my_pokemon;
+                    store.my_pokemon = store.my_bench.splice(0, 1)[0]; // Set new active st
+                } else {
+                    // Deposit a Pokémon from the bench
+                    deposited_pokemon = store.my_bench.splice(active_party.value - 1, 1)[0];
+                }
+                store.my_box.push(deposited_pokemon);
+            } else {
+                store.menu_state = 'text';
+                store.info_text = 'Always leave at least a Pokémon in your party';
+            }
+
+
         }
     }
 
 
-    else if (e.key == 'ArrowUp' || e.key == 'ArrowDown') {
+    else if (e.key == 'y') {
         selecting_from_box.value = !selecting_from_box.value
 
     } else if (e.key == 'ArrowRight') {
@@ -114,7 +133,7 @@ const handleMovesInput = async function (e) {
     width: 100vw;
     height: 100vh;
     position: absolute;
-    z-index: 10;
+    z-index: 3;
     background-color: #121212;
     padding-block: 160px;
     padding-inline: 200px;
@@ -224,5 +243,15 @@ h2 {
 
 .inactive {
     opacity: 0.4
+}
+
+.info-h3 {
+    position: absolute;
+    top: 6%;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 2em;
+    color: white;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
 }
 </style>

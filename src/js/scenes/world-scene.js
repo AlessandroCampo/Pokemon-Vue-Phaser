@@ -301,11 +301,15 @@ export class WorldScene extends Phaser.Scene {
 
         this.wildMonsterEcountered = Math.random() < map_store.encounter_frequency
         if (this.wildMonsterEcountered && store.my_pokemon) {
+            if (map_store.current_map.possible_encounters.length < 0) {
+                return
+            }
             store.info_text = 'Hey, a wild pokemon is attacking'
             this.cameras.main.fadeOut(2000)
             this.cameras.main.once(Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE, () => {
                 this.scene.start(SCENE_KEYS.BATTLE_SCENE);
             })
+
             map_store.handleWildEncounter()
         } else if (this.wildMonsterEcountered && !store.my_pokemon) {
             store.menu_state = 'text'
@@ -542,6 +546,7 @@ export class WorldScene extends Phaser.Scene {
             this.cameras.main.once(Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE, () => {
                 store.info_text = ''
                 map_store.text_queue = []
+                console.log(id)
                 map_store.handleTrainerBattle(ref, id)
                 this.scene.start(SCENE_KEYS.BATTLE_SCENE);
             })
@@ -560,7 +565,11 @@ export class WorldScene extends Phaser.Scene {
     }
 
     async handleTransitionCallback(name, id, is_building, is_locked) {
-        if (name == 'water-gym' && !store.defeated_npcs.includes(17)) {
+        //NOTE - refactor is locked cause of game state logic
+        if (name == 'water-gym' && !store.defeated_npcs.includes(25)) {
+            is_locked = true
+        }
+        if (name == 'route-3' && !store.defeated_npcs.includes(35)) {
             is_locked = true
         }
         if (is_locked) {
