@@ -26,9 +26,11 @@ let active_voice = ref(0)
 const menu_voices = [
     {
         label: 'NEW GAME', callback: async () => {
+
             await map_store.startNewGame()
             map_store.preload_scene_istance.scene.start(SCENE_KEYS.WORLD_SCENE)
             map_store.show_title_scene = false
+            map_store.show_start_scene = true
         }
     },
     {

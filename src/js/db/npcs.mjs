@@ -9,7 +9,7 @@ let rayneera = {
     name: 'rayneera',
     frameWidth: 64,
     frameHeight: 64,
-    scale: 0.5,
+    scale: 0.4,
 
 
 }

@@ -244,10 +244,13 @@ export const store = reactive({
             if (move.power) {
                 // check damage prevention effects, if found return early
 
-                if (target.abilities.includes('Sturdy') && target.hp.current == target.hp.max && damage >= target.hp.max) {
-                    damage = damage - 1
+                if ((target.abilities.includes('Sturdy') || target?.held_item?.name == 'Focus Sash') && target.hp.current == target.hp.max && damage >= target.hp.max) {
+                    damage = target.hp.max - 1
                     await this.applyDamage(target, damage);
-                    this.info_text = `${target.name}'s Sturdy ability prevented him from going down in a single hit`
+                    this.info_text = `${target.name}'s ${target.abilities.includes('Sturdy') ? 'Sturdy ability' : 'Focus Sash item'} prevented him from going down in a single hit`
+                    if (target.held_item.name == 'Focus Sash') {
+                        target.held_item = null
+                    }
                     await this.delay(this.info_text.length * this.config.text_speed + 500);
 
                 } else {
@@ -295,6 +298,7 @@ export const store = reactive({
 
                         // check lum barry
                         //separate logic later on
+                        console.log(move_target)
                         if (move_target.held_item && move_target.held_item.name == 'Lum Berry') {
                             this.info_text = `${move_target.name} is no longer ${effect.applied_status} after consuming his Lum Berry`
                             // if status was paralyzed, restore speed
@@ -375,13 +379,33 @@ export const store = reactive({
                         const random_index = Math.floor(Math.random() * 3)
                         if (!this.checkStatusEffectPrevent(possible_statuses[random_index], caster)) {
                             caster.status = possible_statuses[random_index]
+                            if (caster.status == 'paralyzed') {
+                                caster.speed.effective = caster.speed.current * 0.5
+                            } else if (caster.status == 'asleep') {
+                                let sleeping_turns = Math.floor(Math.random() * 3) + 1
+                                caster.sleeping_turns = {
+                                    total: sleeping_turns,
+                                    passed: 0
+                                }
+                            }
                         }
 
-                    } else if (target.abilities.includes('Poison Point') && !caster.types.includes('poison')) {
+                    } else if (target.abilities.includes('Poison Point') && !caster.types.includes('poison') && !caster.types.includes('steel')) {
                         caster.status = 'poisoned'
                     }
                     store.info_text = `${caster.name} has been ${caster.status} cause of ${target.name}'s ${target.abilities[0]}`
                     await this.delay(this.info_text.length * this.config.text_speed + 500);
+
+                    if (caster.held_item && caster.held_item.name == 'Lum Berry') {
+                        this.info_text = `${caster.name} is no longer ${caster.status} after consuming his Lum Berry`
+                        // if status was paralyzed, restore speed
+                        if (caster.status == 'paralyzed') {
+                            caster.speed.effective += caster.speed.current * 0.5
+                        }
+                        caster.held_item = null
+                        caster.status = null
+                        await this.delay(this.info_text.length * this.config.text_speed + 500);
+                    }
 
 
 
@@ -521,6 +545,8 @@ export const store = reactive({
         pokemon.sp_def.effective = pokemon.sp_def.current
         pokemon.speed.effective = pokemon.speed.current
 
+        console.log(pokemon.name, pokemon.speed)
+
     },
 
     calcDamage: function (move, caster, target, crhit, not_simulation) {
@@ -531,7 +557,7 @@ export const store = reactive({
         //doubling move.power directly was casuing bugs cause the doubling was  permanent
         let move_effective_power = move.power || 0
 
-        if (move.name == 'Seismic Toss') {
+        if (move.name == 'Seismic Toss' || move.name == 'Night Shade') {
             return caster.level
         } else if (!move.power) {
             return 0
@@ -618,12 +644,12 @@ export const store = reactive({
                 flying: {
                     not_effective: ['electric', 'rock', 'steel'],
                     super_effective: ['fighting', 'bug', 'grass'],
-                    no_effect: []
+                    no_effect: ['']
                 },
                 poison: {
                     not_effective: ['poison', 'ground', 'rock', 'ghost'],
                     super_effective: ['grass', 'fairy'],
-                    no_effect: []
+                    no_effect: ['steel']
                 },
                 ground: {
                     not_effective: ['grass', 'bug'],
@@ -636,7 +662,7 @@ export const store = reactive({
                     no_effect: []
                 },
                 bug: {
-                    not_effective: ['grass', 'psychic', 'dark'],
+                    not_effective: ['fire', 'fighting', 'poison', 'flying', 'ghost', 'steel', 'fairy'],
                     super_effective: ['psychic', 'dark', 'grass'],
                     no_effect: []
                 },
@@ -666,9 +692,9 @@ export const store = reactive({
                     no_effect: []
                 },
                 electric: {
-                    not_effective: ['ground'],
+                    not_effective: ['electric', 'grass', 'dragon'],
                     super_effective: ['flying', 'water'],
-                    no_effect: []
+                    no_effect: ['ground']
                 },
                 psychic: {
                     not_effective: ['psychic', 'steel'],
@@ -752,9 +778,11 @@ export const store = reactive({
 
             let currentHp = initialHp;
             let stepCount = 0;
-            target.damage += damage
+            target.damage += Math.floor(damage)
             if (target.damage > target.hp.max) {
                 target.damage = target.hp.max + 1
+            } else if (target.damage < 0) {
+                target.damage = 0
             }
 
 
@@ -1232,16 +1260,16 @@ export const store = reactive({
                             total: sleeping_turns,
                             passed: 0
                         }
-                    } else if (effect.applied_status == 'paralyzed') {
+                    } else if (effect.applied_status == 'paralyzed' && !target.types.includes('electric')) {
                         target.speed.effective = target.speed.current * 0.5
                         if (target.ability == 'Synchronize' && !target.status) {
                             caster.status == 'paralyzed'
                         }
-                    } else if (effect.applied_status == 'burned') {
+                    } else if (effect.applied_status == 'burned' && !target.types.includes('fire')) {
                         if (target.ability == 'Synchronize' && !target.status) {
                             caster.status == 'burned'
                         }
-                    } else if (effect.applied_status == 'poisoned') {
+                    } else if (effect.applied_status == 'poisoned' && !target.types.includes('poison') && !caster.types.includes('steel')) {
                         if (target.ability == 'Synchronize' && !target.status) {
                             caster.status == 'poisoned'
                         }
@@ -1291,40 +1319,7 @@ export const store = reactive({
         this.my_pokemon.flinched = false
         this.oppo_pokemon.flinched = false
 
-        if (this.my_pokemon.fainted && this.my_bench.length == 0) {
 
-            this.info_text = `All of your pokemons died, you're gonna get killed as well`;
-            await this.delay(this.info_text.length * this.config.text_speed + 500);
-            window.location.reload()
-            return
-
-        } else {
-
-            if (this.oppo_pokemon.fainted) {
-                if (this.battle_type == 'trainer' && this.oppo_bench.length > 0) {
-                    const next_pokemon = this.bestAfterFaint()
-                    this.info_text = `${this.oppo_trainer.name}'s next pokemon will be ${next_pokemon.name}`;
-                    await this.delay(this.info_text.length * this.config.text_speed + 500);
-                    await this.battle_scene_instance.changeOpponentPokemonSprite(next_pokemon)
-                } else {
-                    this.info_text = `${this.oppo_pokemon.name} died and you won the battle ${this.battle_type == 'trainer' ? 'against ' + this.oppo_trainer.name + `and you earned  ${this.calcReward(this.oppo_trainer)} $` : ''}`;
-                    if (this.battle_type == 'trainer') {
-                        this.defeated_npcs.push(this.oppo_trainer.id)
-                        this.my_money += this.calcReward(this.oppo_trainer)
-
-                    }
-
-                    await this.delay(this.info_text.length * this.config.text_speed + 500);
-                    // window.location.reload()
-
-                    map_store.world_scene_istance.scene.start(SCENE_KEYS.WORLD_SCENE)
-                    this.endBattle()
-                    return
-                }
-
-
-            }
-        }
 
         if (!this.my_pokemon.fainted) {
             if (this.my_pokemon.status == 'poisoned' || this.my_pokemon.status == 'burned') {
@@ -1348,7 +1343,7 @@ export const store = reactive({
                 }
             }
             //improve this logic
-            if (this.my_pokemon.held_item) {
+            if (this.my_pokemon.held_item && !this.my_pokemon.fainted) {
                 if (this.my_pokemon.hp.current < this.my_pokemon.hp.max * 0.5 && this.my_pokemon.held_item.name == 'Sitrus Berry') {
                     this.info_text = `${this.my_pokemon.name} will eat his Sitrus Berry and restore some of his hp`;
                     this.my_pokemon.held_item = null
@@ -1381,7 +1376,7 @@ export const store = reactive({
                     await this.delay(this.info_text.length * this.config.text_speed + 500);
                 }
             }
-            if (this.oppo_pokemon.held_item) {
+            if (this.oppo_pokemon.held_item && !this.oppo_pokemon.fainted) {
 
                 if (this.oppo_pokemon.hp.current < this.oppo_pokemon.hp.max * 0.5 && this.oppo_pokemon.held_item.name == 'Sitrus Berry') {
                     this.info_text = `${this.oppo_pokemon.name} will eat his Sitrus Berry and restore some of his hp`;
@@ -1389,6 +1384,41 @@ export const store = reactive({
                     await this.delay(this.info_text.length * this.config.text_speed + 500);
                     await this.applyDamage(this.oppo_pokemon, ((this.oppo_pokemon.hp.max * 0.25) * -1))
                 }
+            }
+        }
+
+        if (this.my_pokemon.fainted && this.my_bench.length == 0) {
+
+            this.info_text = `All of your pokemons died, you're gonna get killed as well`;
+            await this.delay(this.info_text.length * this.config.text_speed + 500);
+            window.location.reload()
+            return
+
+        } else {
+
+            if (this.oppo_pokemon.fainted) {
+                if (this.battle_type == 'trainer' && this.oppo_bench.length > 0) {
+                    const next_pokemon = this.bestAfterFaint()
+                    this.info_text = `${this.oppo_trainer.name}'s next pokemon will be ${next_pokemon.name}`;
+                    await this.delay(this.info_text.length * this.config.text_speed + 500);
+                    await this.battle_scene_instance.changeOpponentPokemonSprite(next_pokemon)
+                } else {
+                    this.info_text = `${this.oppo_pokemon.name} died and you won the battle ${this.battle_type == 'trainer' ? 'against ' + this.oppo_trainer.name + `and you earned  ${this.calcReward(this.oppo_trainer)} $` : ''}`;
+                    if (this.battle_type == 'trainer') {
+                        this.defeated_npcs.push(this.oppo_trainer.id)
+                        this.my_money += this.calcReward(this.oppo_trainer)
+
+                    }
+
+                    await this.delay(this.info_text.length * this.config.text_speed + 500);
+                    // window.location.reload()
+
+                    map_store.world_scene_istance.scene.start(SCENE_KEYS.WORLD_SCENE)
+                    this.endBattle()
+                    return
+                }
+
+
             }
         }
 
@@ -1695,8 +1725,12 @@ export const store = reactive({
             await this.delay(this.info_text.length * this.config.text_speed + 1000)
             //this is done due to bug of caught pokemon not having methods
             let oppo_copy = this.generateSaveCopy(store.oppo_pokemon)
+            if (this.my_bench.length < 3) {
+                this.my_bench.push(map_store.retrivePokemonData(oppo_copy))
+            } else {
+                this.my_box.push(map_store.retrivePokemonData(oppo_copy))
+            }
 
-            this.my_bench.push(map_store.retrivePokemonData(oppo_copy))
             this.caught_mons.push(store.oppo_pokemon.pokemon_number)
 
             this.endBattle()
@@ -1745,7 +1779,10 @@ export const store = reactive({
         //cancel later
 
         // trainers can have random pokmeons from a predefined pool
-        const possible_trainer_pokemons = [Pokemons.zigzagoon, Pokemons.ralts, Pokemons.wingull, Pokemons.poochyena, Pokemons.electrike, Pokemons.meowth, Pokemons.starly, Pokemons.nidoran]
+        let possible_trainer_pokemons = [Pokemons.zigzagoon, Pokemons.ralts, Pokemons.wingull, Pokemons.poochyena, Pokemons.electrike, Pokemons.meowth, Pokemons.starly, Pokemons.nidoran]
+        if (this.level_cap > 16) {
+            possible_trainer_pokemons = [Pokemons.kirlia, Pokemons.kricketune, Pokemons.beautifly, Pokemons.linoone, Pokemons.staravia, Pokemons.nidorino, Pokemons.mightyena, Pokemons.carvanha]
+        }
         //trainers pokemons can hold random items
         const possible_trainer_items = [all_items.lum_berry, all_items.sitrus_berry]
         const my_pokemons = [];
@@ -1985,7 +2022,8 @@ export const store = reactive({
             fainted: obj.fainted || false,
             nature: obj.nature || 'Timid',
             damage: obj.damage || 0,
-            current_xp: obj.xp.total || 0
+            current_xp: obj.xp.total || 0,
+            held_item: obj.held_item ? obj.held_item.name : null
         }
         return obj_copy
     },
@@ -2000,7 +2038,7 @@ export const store = reactive({
 
         return new Promise(resolve => {
             pkmn.learnable_moves.forEach(async (move, index) => {
-                if (move.at_level <= pkmn.level) {
+                if (move.at_level <= pkmn.level && !this.checkIfMoveAlreadyLearned(move, pkmn)) {
                     if (pkmn.moves.length < 4) {
                         pkmn.moves.push(move.move)
                         pkmn.learnable_moves.splice(index, 1)
@@ -2020,6 +2058,7 @@ export const store = reactive({
         })
     },
     async checkPossibleEvolution(pkmn) {
+        console.log(pkmn.evolution, pkmn.evolution.at_level)
         if (pkmn.evolution && pkmn.evolution.at_level <= pkmn.level) {
             let old_pokemon = { ...pkmn }
             let new_pkmn = pkmn.evolution.into
@@ -2132,12 +2171,13 @@ export const store = reactive({
 
         reward = (averageStatTotal * base_reward) / 30;
 
-        if (trainer.name == 'archie') {
-            this.level_cap = 20
-        }
+        // if (trainer.name == 'archie') {
+        //     this.level_cap = 20
+        // }
         //Unlock silvarea
         if (trainer.name == 'rayneera') {
             this.defeated_npcs.push(50, 51, 52)
+            this.level_cap = 20
         }
 
         if (trainer.boss) {
@@ -2156,7 +2196,12 @@ export const store = reactive({
         } else {
             return false
         }
+    },
+    checkIfMoveAlreadyLearned(move, pokemon) {
+        // Check if the move exists in the pokemon's moves array
+        return pokemon.moves.find(pokemonMove => pokemonMove.name === move.name) !== undefined;
     }
+
 
 
 

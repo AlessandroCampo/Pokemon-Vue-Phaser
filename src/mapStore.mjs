@@ -218,7 +218,7 @@ export let encounter_map = [
             },
         ],
         indoor: true,
-        battle_background: 'water_gym.png'
+        battle_background: 'town.jpg'
     },
     {
         map_name: 'tintignac',
@@ -261,6 +261,20 @@ export let encounter_map = [
                                 rareCandyInstance.owned_amount = 200
                                 store.my_items.push(rareCandyInstance);
                             }
+
+                            if (!store.my_items.some(item => item.name === all_items.lum_berry.name)) {
+                                const lum_berry_instance = deepClone(all_items.lum_berry)
+                                lum_berry_instance.owned_amount = 200
+                                store.my_items.push(lum_berry_instance);
+                            }
+
+                            if (!store.my_items.some(item => item.name === all_items.sitrus_berry.name)) {
+                                const sitrus_berry_instance = deepClone(all_items.sitrus_berry)
+                                sitrus_berry_instance.owned_amount = 200
+                                store.my_items.push(sitrus_berry_instance);
+                            }
+
+
 
 
                             if (!store.my_items.some(item => item.name === all_items.mega_ball.name)) {
@@ -563,7 +577,7 @@ export let encounter_map = [
         ],
         indoor: false,
         battle_background: 'forest.png',
-        level_average: 13,
+        level_average: 8,
     },
     {
         map_name: 'silvarea-city',
@@ -585,7 +599,7 @@ export let encounter_map = [
                 battler: false,
                 boss: true,
                 event: async function () {
-                    map_store.handleBossBattle(trainers.erika)
+                    map_store.handleBossBattle(trainers.erika, this.id)
                     map_store.world_scene_istance.startBossBattle()
                 },
                 id: 35
@@ -600,6 +614,16 @@ export let encounter_map = [
         possible_encounters: [
 
         ],
+        obj_locations:
+            [{
+                obj: { ...all_objects.pc },
+                position: { x: 144, y: 240 - tile_size },
+                event: () => {
+                    map_store.show_box_menu = true
+                }
+            }]
+
+        ,
         npcs_locations: [
             {
                 npc: { ...all_npcs.nurse },
@@ -657,6 +681,7 @@ export const map_store = reactive({
     show_box_menu: false,
     current_shop_listing: [all_items.poke_ball, all_items.mega_ball, all_items.potion, all_items.paralyze_heal, all_items.awakening, all_items.repel],
     show_title_scene: true,
+    show_start_scene: false,
     preload_scene_istance: undefined,
     talking_npc: undefined,
     repel_steps_left: 0,
@@ -771,11 +796,14 @@ export const map_store = reactive({
         store.oppo_pokemon = store.oppo_trainer.lead
         store.oppo_bench = store.oppo_trainer.bench
         store.oppo_pokemon.level = trainer.squad_level
-        store.oppo_pokemon.held_item = all_items.sitrus_berry
+        store.oppo_pokemon.held_item = trainer.items[0]
         store.oppo_bench.forEach((mon, index) => {
             mon.level = trainer.squad_level
             mon.moves = trainer.moveset[index + 1]
-            mon.held_item = all_items.sitrus_berry
+            if (trainer.items.length > 0) {
+                mon.held_item = trainer.items[index + 1] || null
+            }
+
         })
         console.log(id)
         if (id) {
@@ -961,6 +989,12 @@ export const map_store = reactive({
                     returned_pokemon.status = pkmn.status
                     returned_pokemon.moves = this.retrieveMovesData(pkmn.moves)
                     returned_pokemon.hp.current = returned_pokemon.hp.max - pkmn.damage
+                    const foundItem = Object.values(all_items).find(itemData => itemData.name === pkmn.held_item);
+                    if (pkmn.held_item && foundItem) {
+                        returned_pokemon.held_item = deepClone(foundItem);
+                    } else {
+                        returned_pokemon.held_item = null; // Or any other default value
+                    }
                     store.calcStats(returned_pokemon)
                     return returned_pokemon;
                 }

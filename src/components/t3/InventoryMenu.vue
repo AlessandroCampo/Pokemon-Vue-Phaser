@@ -251,6 +251,7 @@ const useItem = async function (item, target) {
 
             menu_info_text.value = `${target.name} has reached level ${target.level}!`
             let evolved = await store.checkPossibleEvolution(target)
+            console.log(evolved)
             if (evolved) {
                 store.evolvePokemon(target, target.evolution.into)
             }
@@ -277,6 +278,7 @@ const giveItem = function (item, target) {
     }
     item.owned_amount--
     target.held_item = item
+    console.log(target)
     menu_info_text.value = `${item.name} has been assgined to ${target.name}`
     menuReset()
 }

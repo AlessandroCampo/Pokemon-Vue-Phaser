@@ -430,7 +430,7 @@ let gastly = new Pokemon({
     description: "Its body is made of gas. Despite lacking substance, it can envelop an opponent of any size and cause suffocation.",
     types: ['ghost', 'poison'],
     moves: [deepClone(all_moves.confuse_ray), deepClone(all_moves.lick), deepClone(all_moves.hypnosis)],
-    learnable_moves: [{ at_level: 8, move: { ...all_moves.protect } }, { at_level: 12, move: { ...all_moves.astonish } }, { at_level: 15, move: { ...all_moves.hex } }],
+    learnable_moves: [{ at_level: 8, move: { ...all_moves.protect } }, { at_level: 12, move: { ...all_moves.astonish } }, { at_level: 15, move: { ...all_moves.hex } }, { at_level: 20, move: { ...all_moves.night_shade } }],
     abilities: ['Levitate'],
     growth_rate: 'Medium Slow',
     height: 1.3,
@@ -507,7 +507,7 @@ let timburr = new Pokemon({
     description: "It loves helping out with construction projects. It loves it so much that if rain causes work to halt, it swings its log around and throws a tantrum.",
     types: ['fighting'],
     moves: [deepClone(all_moves.leer), deepClone(all_moves.pound), deepClone(all_moves.low_kick)],
-    learnable_moves: [{ at_level: 8, move: { ...all_moves.rock_trhow } }, { at_level: 12, move: { ...all_moves.focus_energy } }, { at_level: 15, move: { ...all_moves.bulk_up } }],
+    learnable_moves: [{ at_level: 8, move: { ...all_moves.rock_trhow } }, { at_level: 12, move: { ...all_moves.focus_energy } }, { at_level: 15, move: { ...all_moves.bulk_up } }, { at_level: 20, move: { ...all_moves.rock_slide } }],
     abilities: ['Guts'],
     growth_rate: 'Medium Slow',
     height: 0.6,
@@ -1176,7 +1176,7 @@ let wingull = new Pokemon({
     height: 0.6,
     weight: 9.5,
     moves: [deepClone(all_moves.growl), deepClone(all_moves.water_gun)],
-    learnable_moves: [{ at_level: 5, move: { ...all_moves.quick_attack } }, { at_level: 10, move: { ...all_moves.supersonic } }, { at_level: 15, move: { ...all_moves.wing_attack } }],
+    learnable_moves: [{ at_level: 5, move: { ...all_moves.quick_attack } }, { at_level: 10, move: { ...all_moves.supersonic } }, { at_level: 15, move: { ...all_moves.wing_attack } }, { at_level: 15, move: { ...all_moves.water_pulse } }],
     abilities: ['Keen Eye'],
     growth_rate: 'Medium Fast',
     level: 5,
@@ -1242,6 +1242,79 @@ let wingull = new Pokemon({
     stat_total: 270
 });
 
+let mightyena = new Pokemon({
+    name: "Mightyena",
+    description: "It chases down prey in a pack. It will never disobey the commands of a skilled Trainer.",
+    types: ['dark'],
+    height: 1,
+    weight: 37,
+    moves: [deepClone(all_moves.tackle), deepClone(all_moves.howl)],
+    learnable_moves: [{ at_level: 7, move: { ...all_moves.sand_attack } }, { at_level: 10, move: { ...all_moves.bite } }, { at_level: 13, move: { ...all_moves.leer } }, { at_level: 19, move: { ...all_moves.swagger } }],
+    abilities: ['Intimidate'],
+    growth_rate: 'Medium Fast',
+    level: 5,
+    catch_rate: 127,
+    pokemon_number: 262,
+    hp: {
+        base: 70,
+        max: 70,
+        current: 70
+    },
+    xp: {
+        base: 147,
+        total: 0
+    },
+    atk: {
+        base: 90,
+        current: 90,
+        effective: 90,
+        stage: 0
+    },
+    def: {
+        base: 70,
+        current: 70,
+        effective: 70,
+        stage: 0
+    },
+    sp_atk: {
+        base: 60,
+        current: 60,
+        effective: 60,
+        stage: 0
+    },
+    sp_def: {
+        base: 60,
+        current: 60,
+        effective: 60,
+        stage: 0
+    },
+    speed: {
+        base: 70,
+        current: 70,
+        effective: 70,
+        stage: 0
+    },
+    images: {
+        front: {
+            path: base_path + 'mightyena-front.png',
+            key: 'mightyena-front',
+            frameWidth: 252,
+            frameHeight: 310,
+            frames: 32
+        },
+        back: {
+            path: base_path + 'mightyena-back.png',
+            key: 'mightyena-back',
+            frameWidth: 320,
+            frameHeight: 410,
+            frames: 32
+        }
+    },
+    sounds: 'assets/sounds/mightyena-cry.ogg',
+    held_item: null,
+    stat_total: 420
+});
+
 let poochyena = new Pokemon({
     name: "Poochyena",
     description: "A Pokémon with a persistent nature, it chases its chosen prey until the prey becomes exhausted.",
@@ -1249,12 +1322,13 @@ let poochyena = new Pokemon({
     height: 0.5,
     weight: 13.6,
     moves: [deepClone(all_moves.tackle), deepClone(all_moves.howl)],
-    learnable_moves: [{ at_level: 7, move: { ...all_moves.sand_attack } }, { at_level: 10, move: { ...all_moves.bite } }, { at_level: 13, move: { ...all_moves.leer } }],
+    learnable_moves: [{ at_level: 7, move: { ...all_moves.sand_attack } }, { at_level: 10, move: { ...all_moves.bite } }, { at_level: 13, move: { ...all_moves.leer } }, { at_level: 19, move: { ...all_moves.swagger } }],
     abilities: ['Run Away'],
     growth_rate: 'Medium Fast',
     level: 5,
     catch_rate: 255,
     pokemon_number: 261,
+    evolution: { at_level: 18, into: deepClone(mightyena) },
     hp: {
         base: 35,
         max: 35,
@@ -1315,6 +1389,79 @@ let poochyena = new Pokemon({
     stat_total: 220
 });
 
+let linoone = new Pokemon({
+    name: "Linoone",
+    description: "It charges prey at speeds over 60 mph. However, because it can only run straight, it often fails.",
+    types: ['normal'],
+    height: 0.5,
+    weight: 32.5,
+    moves: [deepClone(all_moves.growl), deepClone(all_moves.tackle)],
+    learnable_moves: [{ at_level: 3, move: { ...all_moves.sand_attack } }, { at_level: 6, move: { ...all_moves.tail_whip } }, { at_level: 9, move: { ...all_moves.headbutt } }, { at_level: 15, move: { ...all_moves.baby_doll_eyes } }, { at_level: 15, move: { ...all_moves.pin_missle } }],
+    abilities: ['Glattony'],
+    growth_rate: 'Medium Fast',
+    level: 5,
+    catch_rate: 255,
+    pokemon_number: 264,
+    hp: {
+        base: 78,
+        max: 78,
+        current: 78
+    },
+    xp: {
+        base: 56,
+        total: 0
+    },
+    atk: {
+        base: 70,
+        current: 70,
+        effective: 70,
+        stage: 0
+    },
+    def: {
+        base: 61,
+        current: 61,
+        effective: 61,
+        stage: 0
+    },
+    sp_atk: {
+        base: 50,
+        current: 50,
+        effective: 50,
+        stage: 0
+    },
+    sp_def: {
+        base: 61,
+        current: 61,
+        effective: 61,
+        stage: 0
+    },
+    speed: {
+        base: 100,
+        current: 100,
+        effective: 100,
+        stage: 0
+    },
+    images: {
+        front: {
+            path: base_path + 'linoone-front.png',
+            key: 'linoone-front',
+            frameWidth: 627,
+            frameHeight: 310,
+            frames: 32
+        },
+        back: {
+            path: base_path + 'linoone-back.png',
+            key: 'linoone-back',
+            frameWidth: 800,
+            frameHeight: 410,
+            frames: 32
+        }
+    },
+    sounds: 'assets/sounds/linoone-cry.ogg',
+    held_item: null,
+    stat_total: 240
+});
+
 let zigzagoon = new Pokemon({
     name: "Zigzagoon",
     description: "It walks in zigzag fashion. It’s good at finding items in the grass and even in the ground.",
@@ -1322,12 +1469,13 @@ let zigzagoon = new Pokemon({
     height: 0.4,
     weight: 17.5,
     moves: [deepClone(all_moves.growl), deepClone(all_moves.tackle)],
-    learnable_moves: [{ at_level: 3, move: { ...all_moves.sand_attack } }, { at_level: 6, move: { ...all_moves.tail_whip } }, { at_level: 9, move: { ...all_moves.headbutt } }, { at_level: 15, move: { ...all_moves.baby_doll_eyes } }],
+    learnable_moves: [{ at_level: 3, move: { ...all_moves.sand_attack } }, { at_level: 6, move: { ...all_moves.tail_whip } }, { at_level: 9, move: { ...all_moves.headbutt } }, { at_level: 15, move: { ...all_moves.baby_doll_eyes } }, { at_level: 15, move: { ...all_moves.pin_missle } }],
     abilities: ['Glattony'],
     growth_rate: 'Medium Fast',
     level: 5,
     catch_rate: 255,
     pokemon_number: 263,
+    evolution: { at_level: 20, into: deepClone(linoone) },
     hp: {
         base: 38,
         max: 38,
@@ -1388,6 +1536,80 @@ let zigzagoon = new Pokemon({
     stat_total: 240
 });
 
+let kirlia = new Pokemon({
+    name: "Kirlia",
+    description: "The cheerful spirit of its Trainer gives it energy for its psychokinetic power. It spins and dances when happy.",
+    types: ['psychic', 'fairy'],
+    height: 0.4,
+    weight: 6.6,
+    moves: [deepClone(all_moves.growl), deepClone(all_moves.disarming_voice)],
+    learnable_moves: [{ at_level: 6, move: { ...all_moves.confusion } }, { at_level: 9, move: { ...all_moves.hypnosis } }, { at_level: 12, move: { ...all_moves.draining_kiss } }, { at_level: 15, move: { ...all_moves.psybeam } }],
+    abilities: ['Synchronize'],
+    growth_rate: 'Slow',
+    level: 5,
+    catch_rate: 120,
+    pokemon_number: 281,
+
+    hp: {
+        base: 38,
+        max: 38,
+        current: 38
+    },
+    xp: {
+        base: 97,
+        total: 0
+    },
+    atk: {
+        base: 35,
+        current: 35,
+        effective: 35,
+        stage: 0
+    },
+    def: {
+        base: 35,
+        current: 35,
+        effective: 35,
+        stage: 0
+    },
+    sp_atk: {
+        base: 65,
+        current: 65,
+        effective: 65,
+        stage: 0
+    },
+    sp_def: {
+        base: 55,
+        current: 55,
+        effective: 55,
+        stage: 0
+    },
+    speed: {
+        base: 50,
+        current: 50,
+        effective: 50,
+        stage: 0
+    },
+    images: {
+        front: {
+            path: base_path + 'kirlia-front.png',
+            key: 'kirlia-front',
+            frameWidth: 205,
+            frameHeight: 310,
+            frames: 25
+        },
+        back: {
+            path: base_path + 'kirlia-back.png',
+            key: 'kirlia-back',
+            frameWidth: 271,
+            frameHeight: 410,
+            frames: 25
+        }
+    },
+    sounds: 'assets/sounds/kirlia-cry.ogg',
+    held_item: null,
+    stat_total: 278
+});
+
 let ralts = new Pokemon({
     name: "Ralts",
     description: "The horns on its head provide a strong power that enables it to sense people’s emotions.",
@@ -1401,6 +1623,7 @@ let ralts = new Pokemon({
     level: 5,
     catch_rate: 235,
     pokemon_number: 280,
+    evolution: { at_level: 20, into: deepClone(kirlia) },
     hp: {
         base: 28,
         max: 28,
@@ -1542,7 +1765,7 @@ let electrike = new Pokemon({
     height: 0.6,
     weight: 15.2,
     moves: [deepClone(all_moves.tackle), deepClone(all_moves.thunder_wave)],
-    learnable_moves: [{ at_level: 4, move: { ...all_moves.leer } }, { at_level: 8, move: { ...all_moves.howl } }, { at_level: 12, move: { ...all_moves.quick_attack } }, { at_level: 15, move: { ...all_moves.shock_wave } }],
+    learnable_moves: [{ at_level: 4, move: { ...all_moves.leer } }, { at_level: 8, move: { ...all_moves.howl } }, { at_level: 12, move: { ...all_moves.quick_attack } }, { at_level: 15, move: { ...all_moves.shock_wave } }, , { at_level: 20, move: { ...all_moves.bite } }],
     abilities: ['Static'],
     growth_rate: 'Slow',
     level: 5,
@@ -1614,8 +1837,8 @@ let staravia = new Pokemon({
     types: ['flying'],
     height: 0.6,
     weight: 15.5,
-    moves: [],
-    learnable_moves: [],
+    moves: [deepClone(all_moves.growl), deepClone(all_moves.quick_attack), deepClone(all_moves.tackle)],
+    learnable_moves: [{ at_level: 9, move: { ...all_moves.wing_attack } }, { at_level: 13, move: { ...all_moves.dobule_team } }],
     abilities: ['Keen Eye'],
     growth_rate: 'Medium Slow',
     level: 14,
@@ -1916,7 +2139,7 @@ let beautifly = new Pokemon({
     height: 1,
     weight: 28.4,
     moves: [deepClone(all_moves.gust), deepClone(all_moves.bug_bite), deepClone(all_moves.string_shot), deepClone(all_moves.poison_sting)],
-    learnable_moves: [{ at_level: 12, move: { ...all_moves.absorb } }, { at_level: 15, move: { ...all_moves.stun_spore } }],
+    learnable_moves: [{ at_level: 12, move: { ...all_moves.absorb } }, { at_level: 15, move: { ...all_moves.stun_spore } }, { at_level: 19, move: { ...all_moves.air_cutter } }, { at_level: 15, move: { ...all_moves.mega_drain } }],
     abilities: ['Swarm'],
     growth_rate: 'Medium Slow',
     level: 5,
@@ -1990,7 +2213,7 @@ let deerling = new Pokemon({
     height: 0.6,
     weight: 19.5,
     moves: [deepClone(all_moves.tackle), deepClone(all_moves.growl), deepClone(all_moves.double_kick), deepClone(all_moves.sand_attack)],
-    learnable_moves: [{ at_level: 12, move: { ...all_moves.mega_drain } }, { at_level: 15, move: { ...all_moves.bullet_seed } }],
+    learnable_moves: [{ at_level: 12, move: { ...all_moves.mega_drain } }, { at_level: 15, move: { ...all_moves.bullet_seed } }, { at_level: 20, move: { ...all_moves.take_down } }],
     abilities: ['Sap Sipper'],
     growth_rate: 'Medium Fast',
     level: 5,
@@ -2214,7 +2437,7 @@ let krabby = new Pokemon({
     height: 0.4,
     weight: 6.5,
     moves: [deepClone(all_moves.leer), deepClone(all_moves.water_gun), deepClone(all_moves.harden), deepClone(all_moves.metal_claw)],
-    learnable_moves: [{ at_level: 12, move: { ...all_moves.mud_shot } }, { at_level: 15, move: { ...all_moves.protect } }],
+    learnable_moves: [{ at_level: 12, move: { ...all_moves.mud_shot } }, { at_level: 15, move: { ...all_moves.protect } }, { at_level: 20, move: { ...all_moves.bubble_beam } }],
     abilities: ['Shell Armor'],
     growth_rate: 'Medium Fast',
     level: 5,
@@ -2289,7 +2512,7 @@ let ducklett = new Pokemon({
     height: 0.5,
     weight: 5.5,
     moves: [deepClone(all_moves.water_gun)],
-    learnable_moves: [{ at_level: 9, move: { ...all_moves.wing_attack } }, { at_level: 13, move: { ...all_moves.water_pulse } }, { at_level: 15, move: { ...all_moves.aerial_ace } }],
+    learnable_moves: [{ at_level: 9, move: { ...all_moves.wing_attack } }, { at_level: 13, move: { ...all_moves.water_pulse } }, { at_level: 15, move: { ...all_moves.aerial_ace } }, { at_level: 19, move: { ...all_moves.bubble_beam } }],
     abilities: ['Keen Eye'],
     growth_rate: 'Medium Fast',
     level: 5,
@@ -3279,6 +3502,85 @@ let archen = new Pokemon({
 
 });
 
+let nidorino = new Pokemon({
+    name: "Nidorino",
+    description: "It has a violent disposition and stabs foes with its horn, which oozes venom upon impact.",
+    types: ['poison'],
+    height: 0.9,
+    weight: 19.5,
+    moves: [deepClone(all_moves.leer), deepClone(all_moves.poison_sting
+    ), deepClone(all_moves.peck)],
+    learnable_moves: [{ at_level: 10, move: { ...all_moves.focus_energy } }, { at_level: 15, move: { ...all_moves.fury_swipes } }],
+    abilities: ['Poison Point'],
+    growth_rate: 'Medium Slow',
+    level: 5,
+    catch_rate: 120,
+    pokemon_number: 33,
+    hp: {
+        base: 61,
+        max: 61,
+        current: 61
+    },
+    xp: {
+        base: 128,
+        total: 0
+    },
+    atk: {
+        base: 72,
+        current: 72,
+        effective: 72,
+        stage: 0
+    },
+    def: {
+        base: 57,
+        current: 57,
+        effective: 57,
+        stage: 0
+    },
+    sp_atk: {
+        base: 55,
+        current: 55,
+        effective: 55,
+        stage: 0
+    },
+    sp_def: {
+        base: 55,
+        current: 55,
+        effective: 55,
+        stage: 0
+    },
+    speed: {
+        base: 65,
+        current: 65,
+        effective: 65,
+        stage: 0
+    },
+    evolution: {
+
+    },
+    images: {
+        front: {
+            path: base_path + 'nidorino-front.png',
+            key: 'nidorino-front',
+            frameWidth: 353,
+            frameHeight: 310,
+            frames: 32
+        },
+        back: {
+            path: base_path + 'nidorino-back.png',
+            key: 'nidorino-back',
+            frameWidth: 469,
+            frameHeight: 410,
+            frames: 32
+        }
+    },
+    sounds: 'assets/sounds/nidorino-cry.ogg',
+    held_item: null,
+    stat_total: 365,
+    leviates: false
+
+});
+
 let nidoran = new Pokemon({
     name: "Nidoran",
     description: "It scans its surroundings by raising its ears out of the grass. Its toxic horn is for protection.",
@@ -3293,6 +3595,7 @@ let nidoran = new Pokemon({
     level: 5,
     catch_rate: 235,
     pokemon_number: 32,
+    evolution: { at_level: 16, into: deepClone(staravia) },
     hp: {
         base: 46,
         max: 46,
@@ -3361,5 +3664,5 @@ let nidoran = new Pokemon({
 
 export const Pokemons = {
     treecko, torchic, mudkip, aggron, nosepass, lunatone, lileep, wingull, ralts, zigzagoon, poochyena, electrike, meowth, timburr, gastly, deino, starly, staravia, deerling, foongus, beautifly, kricketune, tirtouga, krabby, ducklett, cranidos, onix,
-    scolipede, heracross, erika_kricketune, squirtle, marshtomp, carvanha, whirlipede, frillish, silicobra, cufant, cubchoo, archen, nidoran
+    scolipede, heracross, erika_kricketune, squirtle, marshtomp, carvanha, whirlipede, frillish, silicobra, cufant, cubchoo, archen, nidoran, mightyena, kirlia, linoone, nidorino
 }

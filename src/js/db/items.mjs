@@ -149,17 +149,26 @@ const lum_berry = new Item({
     description: 'If a Pokémon holds one of these Berries, it will be able to cure itself of any status condition it may have.',
     img_path: base_path + 'lum_berry.png',
     asset_key: 'lum_berry',
-    can_be_used_in_battle: true,
-    consumable: true,
-    type: 'antidote'
+    can_be_used_in_battle: false,
+    consumable: false,
 })
+
+const focus_sash = new Item({
+    name: 'Focus Sash',
+    description: 'An item to be held by a Pokémon. If the holder has full HP and it is hit with a move that should knock it out, it will endure with 1 HP—but only once.',
+    img_path: base_path + 'lum_berry.png',
+    asset_key: 'focus_sash',
+    can_be_used_in_battle: false,
+    consumable: false,
+})
+
 
 const sitrus_berry = new Potion({
     name: 'Sitrus Berry',
     description: 'If a Pokémon holds one of these Berries, it will be able to restore a small amount of HP to itself.',
     img_path: base_path + 'sitrus_berry.png',
     asset_key: 'sitrus_berry',
-    can_be_used_in_battle: true,
+    can_be_used_in_battle: false,
     amount: 0.25,
     consumable: true,
     type: 'potion'
@@ -226,7 +235,8 @@ export const all_items = {
     paralyze_heal,
     rare_candy,
     mega_ball,
-    repel
+    repel,
+    focus_sash
 }
 
-export const all_items_array = [lum_berry, sitrus_berry, poke_ball, potion, mega_ball, awakening, paralyze_heal, repel]
+export const all_items_array = [lum_berry, sitrus_berry, poke_ball, potion, mega_ball, awakening, paralyze_heal, repel, focus_sash]

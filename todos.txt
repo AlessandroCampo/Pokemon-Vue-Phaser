@@ -87,3 +87,44 @@ double battles
 
 
 fix ai swap and damage calc on damage prevent
+
+
+bugs:
+
+Rayneera too big 
+double learning moves
+lv20 after archie
+counts in the items menu if 0 amount
+sometimes swap into undefined
+in use items interface show status condition
+
+ai could use items
+block  load if not game
+
+bugs: 
+
+crush after loading game
+not rounded healing
+
+
+Electricke open
+Leer
+Double Wing attack
+Quick attack on carvahna
+Zigszagoon Headbutt
+Zigszagoon double bay-doll eyes
+let it die 
+Electricke
+Timburr 1v1
+
+
+
+berry healing should happen b4 swap
+both kill I should not know his pokemon
+nosepass exploded bad timing
+moves double learn
+recap forgetting move
+eriaks bugs 
+bug pp same move
+swap during poison bug double damage
+double poison when mon dies

@@ -401,6 +401,25 @@ const supersonic = new Move({
     effects: [{ type: 'apply_confusion', applied_status: 'confused', target: 'enemy', chance: 100 }]
 })
 
+const swagger = new Move({
+
+    name: 'Swagger',
+    category: 'status',
+    type: 'normal',
+    power: null,
+    accuracy: 85,
+    pp: {
+        max: 15,
+        current: 15
+    },
+    makes_contact: false,
+    animation: null,
+    description: 'The user enrages and confuses the target. However, this also sharply boosts the target’s Attack stat.',
+    effects: [{ type: 'apply_confusion', applied_status: 'confused', target: 'enemy', chance: 100 }, { type: 'modify_stat', target_stat: 'atk', target: 'enemy', stages: +2, target_stat_label: 'attack' }]
+})
+
+
+
 const rock_climb = new Move({
     name: 'Rock Climb',
     category: 'physical',
@@ -518,6 +537,22 @@ const aqua_jet = new Move({
     description: 'The user lunges at the target to inflict damage, moving at blinding speed. This move always goes first.',
     effects: null,
     priority: 2
+})
+
+const bubble_beam = new Move({
+    name: 'Bubble Beam',
+    category: 'physical',
+    type: 'water',
+    power: 65,
+    accuracy: 100,
+    pp: {
+        max: 20,
+        current: 20
+    },
+    makes_contact: false,
+    animation: null,
+    description: 'A spray of bubbles is forcefully ejected at the target. This may also lower the target’s Speed stat',
+    effects: [{ type: 'modify_stat', target_stat: 'speed', target: 'enemy', stages: -1, target_stat_label: 'speed', chance: 10 }]
 })
 
 const withdraw = new Move({
@@ -723,6 +758,23 @@ const confusion = new Move({
     makes_contact: false,
     animation: null,
     description: 'The target is hit by a weak telekinetic force. This may also confuse the target.',
+    effects: [{ type: 'apply_confusion', applied_status: 'confused', target: 'enemy', chance: 10 }]
+
+})
+
+const psychic = new Move({
+    name: 'Psychic',
+    category: 'special',
+    type: 'psychic',
+    power: 90,
+    accuracy: 100,
+    pp: {
+        max: 10,
+        current: 10
+    },
+    makes_contact: false,
+    animation: null,
+    description: 'The target is hit with a strong telekinetic force to inflict damage. This may also lower the target’s Sp. Def stat.',
     effects: [{ type: 'apply_confusion', applied_status: 'confused', target: 'enemy', chance: 10 }]
 
 })
@@ -1067,7 +1119,7 @@ const ice_beam = new Move({
     makes_contact: false,
     animation: null,
     description: 'The target is struck with an icy-cold beam of energy. This may also leave the target frozen.',
-    effects: [{ type: 'apply_status', applied_status: 'frozen', target: 'enemy', chance: 10 }]
+    effects: [{ type: 'apply_status', applied_status: 'frozen', target: 'enemy', chance: 100 }]
 
 })
 
@@ -1310,6 +1362,23 @@ const aerial_ace = new Move({
     effects: null
 
 })
+
+const air_cutter = new Move({
+    name: 'Air Cutter',
+    category: 'special',
+    type: 'flying',
+    power: 60,
+    accuracy: 95,
+    pp: {
+        max: 25,
+        current: 25
+    },
+    makes_contact: false,
+    animation: null,
+    description: 'The user launches razor-like wind to slash opposing Pokémon. This move has a heightened chance of landing a critical hit.',
+    effects: null,
+    crhit_ratio: 3
+})
 //BUG MOVES
 
 const bug_bite = new Move({
@@ -1358,6 +1427,23 @@ const x_scissor = new Move({
     animation: null,
     description: 'The user slashes at the target by crossing its scythes or claws as if they were a pair of scissors.',
     effects: null
+})
+
+const pin_missle = new Move({
+    name: 'Pin Missile',
+    category: 'physical',
+    type: 'bug',
+    power: 25,
+    accuracy: 95,
+    pp: {
+        max: 20,
+        current: 20
+    },
+    makes_contact: false,
+    animation: null,
+    description: 'The user attacks by shooting sharp spikes at the target. This move hits two to five times in a row.',
+    effects: null,
+    repetitions: bulletSeedHits()
 })
 
 
@@ -1551,6 +1637,22 @@ const hex = new Move({
     effects: null
 })
 
+const night_shade = new Move({
+    name: 'Night Shade',
+    category: 'special',
+    type: 'ghost',
+    power: 1,
+    accuracy: 100,
+    pp: {
+        max: 15,
+        current: 15
+    },
+    makes_contact: false,
+    animation: null,
+    description: 'The user makes the target see a frightening mirage. It inflicts damage equal to the user’s level.',
+    effects: null
+})
+
 //steel
 
 const metal_claw = new Move({
@@ -1660,5 +1762,11 @@ export const all_moves = {
     fury_swipes,
     icy_wind,
     frost_breath,
-    powder_snow
+    powder_snow,
+    night_shade,
+    swagger,
+    pin_missle,
+    air_cutter,
+    bubble_beam,
+    psychic
 }

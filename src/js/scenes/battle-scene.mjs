@@ -17,7 +17,7 @@ export class BattleScene extends Phaser.Scene {
     async preload() {
         //remove sprite from battle text
         map_store.talking_npc = undefined
-        //TODO - organize preload scene better`
+        //TODO - organize preload scene better
         //Support for different backgroudns
         this.load.image(`${map_store.current_map?.map_name}_bg`, `/backgrounds/${map_store.current_map?.battle_background}`)
 
@@ -52,9 +52,12 @@ export class BattleScene extends Phaser.Scene {
             this.load.audio(move.name, `/sounds/moves/${move.name}.mp3`)
         })
         store.my_bench.forEach((member) => {
+            console.log(member)
+
 
             member.resetStats()
             store.calcStats(member)
+
             member.player_controlled = true
             this.load.spritesheet(member.images.back.key, member.images.back.path, {
                 frameWidth: member.images.back.frameWidth,
@@ -108,12 +111,7 @@ export class BattleScene extends Phaser.Scene {
             })
         }
 
-        if (store.battle_type == 'wild') {
-            store.info_text = `A wild ${store.oppo_pokemon.name} appears! Get ready to fight for your life!`
-        } else if (store.battle_type == 'trainer') {
-            store.info_text = `The match against ${store.oppo_trainer.name} is about to start. The first pokèmon is ${store.oppo_pokemon.name}`
 
-        }
 
         let bg_asset_key = map_store.current_map.battle_background ? `${map_store.current_map?.map_name}_bg` : BATTLE_BACKGROUND_ASSET_KEYS.FOREST_NIGHT
 
@@ -187,9 +185,30 @@ export class BattleScene extends Phaser.Scene {
 
 
         store.oppo_pokemon.playSwitchAnim();
-
-
         store.my_pokemon.playSwitchAnim();
+
+        if (store.battle_type == 'wild') {
+            store.info_text = `A wild ${store.oppo_pokemon.name} appears! Get ready to fight for your life!`
+            await store.delay(store.info_text.length * store.config.text_speed + 500);
+        } else if (store.battle_type == 'trainer') {
+            store.info_text = `The match against ${store.oppo_trainer.name} is about to start. The first pokèmon is ${store.oppo_pokemon.name}`
+            await store.delay(store.info_text.length * store.config.text_speed + 500);
+
+        }
+
+        if (store.my_pokemon.abilities.includes('Intimidate')) {
+            let move_target = store.oppo_pokemon
+            let effect = { type: 'modify_stat', target_stat: 'atk', target: 'enemy', stages: -1, target_stat_label: 'attack' }
+            store.info_text = await store.modifyStat(effect, move_target) + `thanks to ${store.my_pokemon.name}'s Intimidate`;
+            await store.delay(store.info_text.length * store.config.text_speed + 500);
+        }
+
+        if (store.oppo_pokemon.abilities.includes('Intimidate')) {
+            let move_target = store.my_pokemon
+            let effect = { type: 'modify_stat', target_stat: 'atk', target: 'enemy', stages: -1, target_stat_label: 'attack' }
+            store.info_text = await store.modifyStat(effect, move_target) + `thanks to ${store.oppo_pokemon.name}'s Intimidate`;
+            await store.delay(store.info_text.length * store.config.text_speed + 500);
+        }
 
 
     }
@@ -221,6 +240,12 @@ export class BattleScene extends Phaser.Scene {
         store.my_pokemon.setPropScale()
         store.my_pokemon.sprite.setAlpha(1)
         await store.my_pokemon.playSwitchAnim(initial_scale_val)
+        if (store.my_pokemon.abilities.includes('Intimidate')) {
+            let move_target = store.oppo_pokemon
+            let effect = { type: 'modify_stat', target_stat: 'atk', target: 'enemy', stages: -1, target_stat_label: 'attack' }
+            store.info_text = await store.modifyStat(effect, move_target) + `thanks to ${store.my_pokemon.name}'s Intimidate`;
+            await store.delay(store.info_text.length * store.config.text_speed + 500);
+        }
     }
 
     async changeOpponentPokemonSprite(newPokemon) {
@@ -250,6 +275,12 @@ export class BattleScene extends Phaser.Scene {
         store.oppo_pokemon.setPropScale()
         store.oppo_pokemon.sprite.setAlpha(1)
         await store.oppo_pokemon.playSwitchAnim(initial_scale_val)
+        if (store.oppo_pokemon.abilities.includes('Intimidate')) {
+            let move_target = store.my_pokemon
+            let effect = { type: 'modify_stat', target_stat: 'atk', target: 'enemy', stages: -1, target_stat_label: 'attack' }
+            store.info_text = await store.modifyStat(effect, move_target) + `thanks to ${store.oppo_pokemon.name}'s Intimidate`;
+            await store.delay(store.info_text.length * store.config.text_speed + 500);
+        }
     }
 
     cleanupAnimations() {

@@ -70,6 +70,8 @@ const handleMovesInput = async function (e) {
             return
         }
 
+        console.log(store.my_pokemon.speed.effective, store.oppo_pokemon.speed.effective)
+
         // Define functions for player and opponent actions
         const my_pokemon_attack = async () => {
             await store.useMove(player_selected_move, store.my_pokemon, store.oppo_pokemon, true);
@@ -80,7 +82,7 @@ const handleMovesInput = async function (e) {
         };
 
         const oppo_pokemon_swap = async () => {
-            await store.battle_scene_instance.changeOpponentPokemonSprite(store.aiWantsSwap());
+            await store.battle_scene_instance.changeOpponentPokemonSprite(ai_decided_swap);
         };
 
         // Determine AI decision

@@ -1,6 +1,6 @@
 <template>
     <div class="items-container">
-        <div class="item" :class="index == active_voice ? 'active' : ''" v-for="(item, index) in store.my_items"
+        <div class="item" :class="index == active_voice ? 'active' : ''" v-for="(item, index) in consumable_items"
             :key="index" v-show="item?.owned_amount > 0">
 
             <div class="name-icon">
@@ -51,6 +51,12 @@ const active_target = ref(0)
 const targets = ref([])
 let selecting_target = ref(false)
 
+let consumable_items = computed(() => {
+    return store.my_items.filter((item) => {
+        return item.can_be_used_in_battle == true
+    })
+})
+
 //TODO, ITEM USAGE
 
 onMounted(() => {
@@ -75,21 +81,25 @@ const useItem = async function (item, target) {
 
     store.menu_state = 'text'
     store.battle_events = [];
-    const ai_selected_move = store.oppo_pokemon.moves[Math.floor(Math.random() * store.oppo_pokemon.moves.length)]
+    const ai_decided_swap = store.aiWantsSwap();
+    const ai_best_move = store.calcAiBestMove();
+    const ai_selected_move = store.battle_type == 'trainer' ? ai_best_move : store.oppo_pokemon.moves[Math.floor(Math.random() * store.oppo_pokemon.moves.length)];
     let item_has_been_used = false
     const oppo_pokemon_attack = async () => {
         await store.useMove(ai_selected_move, store.oppo_pokemon, store.my_pokemon, false);
-
+    };
+    const oppo_pokemon_swap = async () => {
+        await store.battle_scene_instance.changeOpponentPokemonSprite(ai_decided_swap);
     };
 
     if (item.type == 'ball') {
         store.battle_sequence_playing = true
-        if (store.my_bench.length >= 3) {
-            store.info_text = `You cannot have more than 4 pokemons in your team at the moment`
-            await store.delay(store.info_text.length * store.config.text_speed + 500)
-            store.menu_state = 'items'
-            return
-        }
+        // if (store.my_bench.length >= 3) {
+        //     store.info_text = `You cannot have more than 4 pokemons in your team at the moment`
+        //     await store.delay(store.info_text.length * store.config.text_speed + 500)
+        //     store.menu_state = 'items'
+        //     return
+        // }
         if (store.battle_type !== 'wild') {
             store.info_text = `Only wild pokemons can be caught...`
             await store.delay(store.info_text.length * store.config.text_speed + 500)
@@ -147,13 +157,19 @@ const useItem = async function (item, target) {
         }
     }
     if (item_has_been_used) {
-        store.battle_events.push(oppo_pokemon_attack)
+        let ai_decision;
+        if (!ai_decided_swap) {
+            ai_decision = oppo_pokemon_attack;
+        } else {
+            ai_decision = oppo_pokemon_swap;
+        }
+        store.battle_events.push(ai_decision);
         await store.processEvents();
     }
 }
 
 const handleMovesInput = async function (e) {
-    let selected_item = store.my_items[active_voice.value];
+    let selected_item = consumable_items.value[active_voice.value];
 
     if (store.menu_state !== 'items') {
         return

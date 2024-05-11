@@ -135,7 +135,7 @@
          "name":"Foreground1",
          "opacity":1,
          "type":"tilelayer",
-         "visible":true,
+         "visible":false,
          "width":80,
          "x":0,
          "y":0
@@ -181,7 +181,7 @@
          "name":"Foreground2",
          "opacity":1,
          "type":"tilelayer",
-         "visible":true,
+         "visible":false,
          "width":80,
          "x":0,
          "y":0
@@ -224,6 +224,7 @@
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
          "height":35,
          "id":4,
+         "locked":true,
          "name":"Collision",
          "opacity":0.5,
          "type":"tilelayer",
@@ -558,8 +559,32 @@
                  "type":"",
                  "visible":true,
                  "width":16,
-                 "x":64,
-                 "y":256
+                 "x":48,
+                 "y":272
+                }, 
+                {
+                 "gid":23823,
+                 "height":16,
+                 "id":13,
+                 "name":"",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":16,
+                 "x":48.25,
+                 "y":272.5
+                }, 
+                {
+                 "gid":23823,
+                 "height":16,
+                 "id":14,
+                 "name":"",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":16,
+                 "x":48.5,
+                 "y":288.25
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -568,7 +593,7 @@
          "y":0
         }],
  "nextlayerid":9,
- "nextobjectid":13,
+ "nextobjectid":15,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.10.2",

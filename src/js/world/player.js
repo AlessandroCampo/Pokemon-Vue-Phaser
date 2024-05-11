@@ -57,7 +57,8 @@ export class Player extends Character {
         if (!this.isMoving) {
             const targetPosition = getTargetPosition({ x: this._phaserGameObject.x, y: this._phaserGameObject.y }, this._direction)
 
-
+            console.log(targetPosition)
+            console.log(this._phaserGameObject.y)
             const nearby_transition = this.transition_layer.objects.find((object) => {
                 return object.x === targetPosition.x && object.y - tile_size === targetPosition.y
             })

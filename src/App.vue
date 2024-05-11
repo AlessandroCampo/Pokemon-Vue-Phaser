@@ -12,6 +12,8 @@
 
 
   <TitleSceneVue v-if="map_store.show_title_scene"></TitleSceneVue>
+  <StartGameVue v-if="map_store.show_start_scene"></StartGameVue>
+
 
 
 </template>
@@ -30,6 +32,7 @@ import MoveForgetVue from './components/t3/MoveForgetVue.vue';
 import TitleSceneVue from './components/TitleSceneVue.vue';
 import ShopMenuVue from './components/t3/ShopMenuVue.vue';
 import BoxMenuVue from './components/t2/BoxMenu.vue';
+import StartGameVue from './components/t3/StartGameVue.vue';
 
 import { getAuth, signInAnonymously, onAuthStateChanged } from "firebase/auth";
 import { doc, setDoc, onSnapshot } from 'firebase/firestore'

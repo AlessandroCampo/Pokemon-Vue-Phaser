@@ -1,6 +1,7 @@
 import { Pokemons } from "./pokemons.mjs";
 
 import { all_moves } from "./moves.mjs";
+import { all_items } from "./items.mjs";
 
 
 function deepClone(obj) {
@@ -56,33 +57,43 @@ export class Trainer {
 
 
 
+
+
+
+const mudkip_moveset = [deepClone(all_moves.mud_shot), deepClone(all_moves.ice_beam), deepClone(all_moves.tackle), deepClone(all_moves.brine)];
+const carvahna_moveset = [deepClone(all_moves.aqua_jet), deepClone(all_moves.poison_fang), deepClone(all_moves.ice_fang), deepClone(all_moves.bite)];
+const tirtogua_moveset = [deepClone(all_moves.rock_slide), deepClone(all_moves.brine), deepClone(all_moves.aqua_jet), deepClone(all_moves.mud_shot)];
+const archie_krabby_moveset = [deepClone(all_moves.metal_claw), deepClone(all_moves.mud_shot), deepClone(all_moves.aqua_jet), deepClone(all_moves.stomp)];
+const roxanne_lunatone_moveset = [deepClone(all_moves.moonlight), deepClone(all_moves.confusion), deepClone(all_moves.rock_slide), deepClone(all_moves.hypnosis)];
+const roxanne_nosepass_moveset = [deepClone(all_moves.self_destruct), deepClone(all_moves.seismic_toss), deepClone(all_moves.thunder_wave), deepClone(all_moves.rock_trhow)];
+const roxanne_lileep_moveset = [deepClone(all_moves.giga_drain), deepClone(all_moves.sludge_bomb), deepClone(all_moves.recover), deepClone(all_moves.rock_tomb)];
+const foongus_moveset = [deepClone(all_moves.synthesis), deepClone(all_moves.mega_drain), deepClone(all_moves.toxic), deepClone(all_moves.stun_spore)];
+const frillish_moveset = [deepClone(all_moves.hex), deepClone(all_moves.water_pulse), deepClone(all_moves.shock_wave), deepClone(all_moves.recover)];
+const whirlipede_moveset = [deepClone(all_moves.poison_tail), deepClone(all_moves.venoshock), deepClone(all_moves.bug_bite), deepClone(all_moves.toxic)];
+const roxanne_archen_moveset = [deepClone(all_moves.dragon_breath), deepClone(all_moves.bulldoze), deepClone(all_moves.wing_attack), deepClone(all_moves.rock_slide)];
+const heracross_moveset = [deepClone(all_moves.brick_break), deepClone(all_moves.aerial_ace), deepClone(all_moves.bug_bite), deepClone(all_moves.night_slash)];
+const scolipede_moveset = [deepClone(all_moves.toxic), deepClone(all_moves.rock_climb), deepClone(all_moves.bug_bite), deepClone(all_moves.rock_slide)];
+const beautifly_moveset = [deepClone(all_moves.air_cutter), deepClone(all_moves.giga_drain), deepClone(all_moves.bug_bite), deepClone(all_moves.psychic)];
+const kricketune_moveset = [deepClone(all_moves.giga_drain), deepClone(all_moves.night_slash), deepClone(all_moves.x_scissor), deepClone(all_moves.slash)];
+
+
+
 const erika = new Trainer({
     name: 'erika',
-    lead: Pokemons.scolipede,
-    bench: [Pokemons.heracross, Pokemons.erika_kricketune],
+    lead: deepClone(Pokemons.scolipede),
+    bench: [deepClone(Pokemons.heracross), deepClone(Pokemons.kricketune), deepClone(Pokemons.beautifly)],
     position: {
         x: 950,
         y: 320
     },
     scale: 0.3,
-    squad_level: 25,
-    moveset: []
+    squad_level: 20,
+    items: [all_items.focus_sash, all_items.focus_sash, all_items.focus_sash, all_items.focus_sash],
+    moveset: [scolipede_moveset, heracross_moveset, kricketune_moveset, beautifly_moveset]
 
 })
 
 
-const mudkip_moveset = [{ ...all_moves.mud_shot }, { ...all_moves.ice_beam }, { ...all_moves.tackle }, { ...all_moves.brine }]
-const carvahna_moveset = [{ ...all_moves.aqua_jet }, { ...all_moves.poison_fang }, { ...all_moves.ice_fang }, { ...all_moves.bite }]
-const tirtogua_moveset = [{ ...all_moves.rock_slide }, { ...all_moves.brine }, { ...all_moves.aqua_jet }, { ...all_moves.mud_shot }]
-const archie_krabby_moveset = [{ ...all_moves.metal_claw }, { ...all_moves.mud_shot }, { ...all_moves.aqua_jet }, { ...all_moves.stomp }]
-const roxanne_lunatone_moveset = [{ ...all_moves.moonlight }, { ...all_moves.confusion }, { ...all_moves.rock_slide }, { ...all_moves.hypnosis }]
-const roxanne_nosepass_moveset = [{ ...all_moves.self_destruct }, { ...all_moves.seismic_toss }, { ...all_moves.thunder_wave }, { ...all_moves.rock_trhow }]
-const roxanne_lileep_moveset = [{ ...all_moves.giga_drain }, { ...all_moves.sludge_bomb }, { ...all_moves.recover }, { ...all_moves.rock_tomb }]
-const foongus_moveset = [{ ...all_moves.synthesis }, { ...all_moves.mega_drain }, { ...all_moves.toxic }, { ...all_moves.stun_spore }]
-const frillish_moveset = [{ ...all_moves.hex }, { ...all_moves.water_pulse }, { ...all_moves.shock_wave }, { ...all_moves.recover }]
-
-const whirlipede_moveset = [{ ...all_moves.poison_tail }, { ...all_moves.venoshock }, { ...all_moves.bug_bite }, { ...all_moves.toxic }]
-const roxanne_archen_moveset = [{ ...all_moves.dragon_breath }, { ...all_moves.bulldoze }, { ...all_moves.wing_attack }, { ...all_moves.rock_slide }]
 
 const archie = new Trainer({
     name: 'archie',
@@ -95,6 +106,7 @@ const archie = new Trainer({
     scale: 0.15,
     squad_level: 15,
     moveset: [tirtogua_moveset, mudkip_moveset, carvahna_moveset, archie_krabby_moveset],
+    items: [all_items.sitrus_berry, all_items.lum_berry, all_items.sitrus_berry, all_items.sitrus_berry]
 
 })
 
@@ -109,12 +121,13 @@ const aqua_grunt = new Trainer({
     scale: 0.10,
     squad_level: 15,
     moveset: [foongus_moveset, carvahna_moveset, whirlipede_moveset, frillish_moveset],
+    items: []
 
 })
 
 
 const roxanne = new Trainer({
-    name: 'Rayneera',
+    name: 'rayneera',
     lead: deepClone(Pokemons.nosepass),
     bench: [deepClone(Pokemons.lunatone), deepClone(Pokemons.lileep), deepClone(Pokemons.archen)],
     position: {
@@ -124,6 +137,7 @@ const roxanne = new Trainer({
     scale: 0.3,
     squad_level: 15,
     moveset: [roxanne_nosepass_moveset, roxanne_lunatone_moveset, roxanne_lileep_moveset, roxanne_archen_moveset],
+    items: [all_items.sitrus_berry, all_items.lum_berry, all_items.sitrus_berry, all_items.sitrus_berry]
 
 
 })

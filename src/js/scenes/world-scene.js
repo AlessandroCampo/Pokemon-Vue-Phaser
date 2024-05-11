@@ -35,6 +35,7 @@ export class WorldScene extends Phaser.Scene {
     is_indoor
     displaying_info
     map_objects
+    can_encounter_mons
     constructor() {
         super({
             key: SCENE_KEYS.WORLD_SCENE
@@ -45,6 +46,7 @@ export class WorldScene extends Phaser.Scene {
         this.npcs = []
         this.map_objects = []
         this.wildMonsterEcountered = false;
+        this.can_encounter_mons = true
         this.npc_battle_started = false
         this.displaying_info = false
         map_store.player_position_info.map = map_store.current_map
@@ -181,10 +183,10 @@ export class WorldScene extends Phaser.Scene {
     async update(time) {
         //listen to menu opens
 
-        if (store.event_on_going) {
+        if (store.event_on_going || map_store.show_start_scene || map_store.show_box_menu) {
             return
         }
-        if (this.#controls.wasShiftKeyPressed() && !map_store.show_shop_menu) {
+        if (this.#controls?.wasShiftKeyPressed() && !map_store.show_shop_menu && !map_store.show_start_scene) {
 
             map_store.show_menu = true
         }
@@ -211,9 +213,9 @@ export class WorldScene extends Phaser.Scene {
         }
 
 
-        const { x, y } = this.#player.sprite;
+        const { x, y } = this.#player?.sprite;
         const target_position = getTargetPosition({ x, y }, this.#player.direction);
-        if (this.wildMonsterEcountered) {
+        if (this.wildMonsterEcountered && this.can_encounter_mons) {
             this.#player.update(time)
             return
         }
@@ -299,11 +301,11 @@ export class WorldScene extends Phaser.Scene {
             return
         }
 
+        let caughtPokemonNumbers = store.caught_mons;
+        let possibleEncounters = map_store.current_map.possible_encounters.filter(pokemon => !caughtPokemonNumbers.includes(pokemon.pokemon_number));
         this.wildMonsterEcountered = Math.random() < map_store.encounter_frequency
-        if (this.wildMonsterEcountered && store.my_pokemon) {
-            if (map_store.current_map.possible_encounters.length < 0) {
-                return
-            }
+        this.can_encounter_mons = possibleEncounters.length > 0
+        if (this.wildMonsterEcountered && store.my_pokemon && possibleEncounters.length > 0) {
             store.info_text = 'Hey, a wild pokemon is attacking'
             this.cameras.main.fadeOut(2000)
             this.cameras.main.once(Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE, () => {
@@ -596,6 +598,8 @@ export class WorldScene extends Phaser.Scene {
 
             return temp_transition_id == id && temp_transition_name == map_store.player_position_info.map.map_name
         })
+
+
 
         let x = transition_object?.x
         let y = transition_object?.y - tile_size
