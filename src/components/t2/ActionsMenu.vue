@@ -71,7 +71,7 @@ const menu_voices = ref([
                 store.info_text = "You  don't have any items in your inventory"
                 await store.delay(store.info_text.length * store.config.text_speed + 500)
                 store.menu_state = 'options'
-            } else if (!store.config.rules.items_in_battle_allowed) {
+            } else if (!store.config.rules.items_in_battle_allowed && store.battle_type == 'trainer') {
                 store.menu_state = 'text'
                 store.info_text = "You're not allowed to use items in battle in Hardcore mode"
                 await store.delay(store.info_text.length * store.config.text_speed + 500)
