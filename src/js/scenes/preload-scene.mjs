@@ -26,6 +26,22 @@ import { all_items_array } from '../db/items.mjs';
 //     console.log(store.oppo_pokemon)
 // })
 
+const frameInfoMap = {
+    'water': { frameWidth: 480, frameHeight: 480, startFrame: 0, endFrame: 24, repeat: 1, frameRate: 30 },
+    'fire': { frameWidth: 480, frameHeight: 480, startFrame: 0, endFrame: 5, repeat: 3 },
+    'grass': { frameWidth: 480, frameHeight: 421, startFrame: 0, endFrame: 19, repeat: 1 },
+    'flying': { frameWidth: 480, frameHeight: 480, startFrame: 0, endFrame: 19, repeat: 1 },
+    'poison': { frameWidth: 270, frameHeight: 470, startFrame: 0, endFrame: 19, repeat: 1 },
+    'rock': { frameWidth: 375, frameHeight: 375, startFrame: 0, endFrame: 11, repeat: 1 },
+    'ghost': { frameWidth: 480, frameHeight: 270, startFrame: 0, endFrame: 15, repeat: 1 },
+    'electric': { frameWidth: 480, frameHeight: 480, startFrame: 0, endFrame: 15, repeat: 2 },
+    'ice': { frameWidth: 678, frameHeight: 558, startFrame: 0, endFrame: 3, repeat: 4 },
+    'dragon': { frameWidth: 480, frameHeight: 471, startFrame: 0, endFrame: 10, repeat: 1 },
+    'confused': { frameWidth: 462, frameHeight: 480, startFrame: 0, endFrame: 2, repeat: 4 },
+    'paralyzed': { frameWidth: 332, frameHeight: 379, startFrame: 0, endFrame: 24, repeat: 1 },
+    'asleep': { frameWidth: 400, frameHeight: 400, startFrame: 0, endFrame: 20, repeat: 1 },
+};
+
 
 
 export class PreloadScene extends Phaser.Scene {
@@ -44,19 +60,12 @@ export class PreloadScene extends Phaser.Scene {
             this.load.image(item.name, item.img_path);
         })
 
-        this.load.image(BATTLE_BACKGROUND_ASSET_KEYS.FOREST_NIGHT, '/backgrounds/background-1-night.jpg')
-        // if (store.battle_type == 'trainer') {
-        //     store.oppo_trainer = store.generate_random_trainer()
-        //     store.oppo_pokemon = store.oppo_trainer.lead
-        //     store.oppo_bench = store.oppo_trainer.bench
+        //animation assets
 
-        // }
-        // if (store.my_pokemon) {
-        //     this.load.spritesheet(store.my_pokemon.images.back.key, store.my_pokemon.images.back.path, {
-        //         frameWidth: store.my_pokemon.images.back.frameWidth,
-        //         frameHeight: store.my_pokemon.images.back.frameHeight,
-        //     })
-        // }
+
+
+
+        this.load.image(BATTLE_BACKGROUND_ASSET_KEYS.FOREST_NIGHT, '/backgrounds/background-1-night.jpg')
 
         // load all from team
         for (let i = 0;i < store.my_bench.length;i++) {
@@ -93,6 +102,7 @@ export class PreloadScene extends Phaser.Scene {
         this.load.audio(AUDIO_ASSETS_KEY.BOSS_FIGHT, 'sounds/Leau.mp3')
         this.load.audio(AUDIO_ASSETS_KEY.FLEE, 'sounds/flee.wav');
         this.load.audio('evolution-sound', 'sounds/evolution.mp3');
+        this.load.audio('win', 'sounds/win.mp3');
 
 
 
@@ -107,11 +117,22 @@ export class PreloadScene extends Phaser.Scene {
 
 
         this.load.spritesheet(CHARACTER_ASSET_KEYS.PLAYER, `/characters/player1.png`, {
-            // frameWidth: 32,
-            // frameHeight: 46,
             frameWidth: 32,
             frameHeight: 48,
         })
+
+        for (const moveType in frameInfoMap) {
+            if (frameInfoMap.hasOwnProperty(moveType)) {
+                this.load.spritesheet(moveType + '_animation', `/animations/${moveType}.png`, {
+                    frameWidth: frameInfoMap[moveType].frameWidth,
+                    frameHeight: frameInfoMap[moveType].frameHeight,
+                });
+            }
+        }
+
+        this.load.on('complete', () => {
+            map_store.loading = false;
+        });
 
     }
     create() {
@@ -138,6 +159,24 @@ export class PreloadScene extends Phaser.Scene {
                 yoyo: animation.yoyo
             })
         });
+        for (const moveType in frameInfoMap) {
+            if (frameInfoMap.hasOwnProperty(moveType)) {
+                const frames = this.anims.generateFrameNumbers(moveType + '_animation', {
+                    start: frameInfoMap[moveType].startFrame,
+                    end: frameInfoMap[moveType].endFrame
+                });
+
+                this.anims.create({
+                    key: moveType + '_animation',
+                    frames: frames,
+                    frameRate: frameInfoMap[moveType].frameRate || 20,
+                    repeat: frameInfoMap[moveType].repeat
+                });
+            }
+        }
+
+
+
 
     }
 

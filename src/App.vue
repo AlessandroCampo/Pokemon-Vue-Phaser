@@ -9,6 +9,7 @@
   <MoveForgetVue v-if="store.forgettign_pokemon"></MoveForgetVue>
   <ShopMenuVue v-if="map_store.show_shop_menu"></ShopMenuVue>
   <BoxMenuVue v-if="map_store.show_box_menu"></BoxMenuVue>
+  <EndGameScreen v-if="map_store.show_end_game_screen"></EndGameScreen>
 
 
   <TitleSceneVue v-if="map_store.show_title_scene"></TitleSceneVue>
@@ -33,6 +34,7 @@ import TitleSceneVue from './components/TitleSceneVue.vue';
 import ShopMenuVue from './components/t3/ShopMenuVue.vue';
 import BoxMenuVue from './components/t2/BoxMenu.vue';
 import StartGameVue from './components/t3/StartGameVue.vue';
+import EndGameScreen from './components/t3/EndGameScreen.vue';
 
 import { getAuth, signInAnonymously, onAuthStateChanged } from "firebase/auth";
 import { doc, setDoc, onSnapshot } from 'firebase/firestore'

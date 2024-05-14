@@ -110,7 +110,7 @@ function skipToNextMessage(e) {
 
 function showOptionsMenu(e) {
     if ((e.key !== 'Enter' && e.code !== 'Space') || store.battle_sequence_playing || store.menu_state !== 'text') return;
-    console.log('showing options menu')
+
     store.menu_state = 'options'
 }
 
@@ -131,6 +131,7 @@ function showOptionsMenu(e) {
     align-items: center;
     justify-content: center;
     font-size: 2.5em;
+    text-align: center;
 
 }
 

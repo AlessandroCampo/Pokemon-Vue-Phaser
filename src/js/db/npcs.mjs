@@ -63,9 +63,26 @@ let erika = {
 }
 
 
+let mom = {
+    dialouge: ['Hey, you look hungry, do you want something to eat?'],
+    name: 'mom',
+    frameWidth: 32,
+    frameHeight: 48,
+    scale: 0.5,
+}
+
+
 let archie = {
     dialouge: ["I'll teach you not to stick your nose in other people's business"],
     name: 'archie',
+    frameWidth: 32,
+    frameHeight: 48,
+    scale: 0.5,
+}
+
+let maxie = {
+    dialouge: ["Can't belive three of my peers got defeated by such a nullity, your journey is gonna end here though"],
+    name: 'maxie',
     frameWidth: 32,
     frameHeight: 48,
     scale: 0.5,
@@ -82,4 +99,4 @@ let nurse = {
     scale: 0.5,
 }
 
-export const all_npcs = { rayneera, npc_2, merchant, guard, nurse, bug_catcher, erika, archie, aqua_grunt }
+export const all_npcs = { rayneera, npc_2, merchant, guard, nurse, bug_catcher, erika, archie, aqua_grunt, mom, maxie }

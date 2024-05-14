@@ -156,11 +156,23 @@ const lum_berry = new Item({
 const focus_sash = new Item({
     name: 'Focus Sash',
     description: 'An item to be held by a Pokémon. If the holder has full HP and it is hit with a move that should knock it out, it will endure with 1 HP—but only once.',
-    img_path: base_path + 'lum_berry.png',
+    img_path: base_path + 'focus_sash.png',
     asset_key: 'focus_sash',
     can_be_used_in_battle: false,
     consumable: false,
+    price: 1000
 })
+
+const leftovers = new Item({
+    name: 'Leftovers',
+    description: 'An item to be held by a Pokémon. The holder’s HP is slowly but steadily restored throughout a battle.',
+    img_path: base_path + 'leftovers.png',
+    asset_key: 'leftovers',
+    can_be_used_in_battle: false,
+    consumable: false,
+    price: 20
+})
+
 
 
 const sitrus_berry = new Potion({
@@ -168,7 +180,7 @@ const sitrus_berry = new Potion({
     description: 'If a Pokémon holds one of these Berries, it will be able to restore a small amount of HP to itself.',
     img_path: base_path + 'sitrus_berry.png',
     asset_key: 'sitrus_berry',
-    can_be_used_in_battle: false,
+    can_be_used_in_battle: true,
     amount: 0.25,
     consumable: true,
     type: 'potion'
@@ -189,7 +201,7 @@ const mega_ball = new Ball({
     name: 'Mega Ball',
     description: 'A good, high-performance Poké Ball that provides a higher success rate for catching Pokémon than a standard Poké Ball.',
     img_path: base_path + 'megaball.png',
-    catch_multiplier: 1000.5,
+    catch_multiplier: 1.5,
     asset_key: 'megaball',
     can_be_used_in_battle: true,
     price: 600
@@ -203,7 +215,7 @@ const potion = new Potion({
     amount: 0.25,
     asset_key: 'potion',
     consumable: true,
-    price: 300
+    price: 300,
 })
 
 const paralyze_heal = new Antidote({
@@ -236,7 +248,8 @@ export const all_items = {
     rare_candy,
     mega_ball,
     repel,
-    focus_sash
+    focus_sash,
+    leftovers
 }
 
-export const all_items_array = [lum_berry, sitrus_berry, poke_ball, potion, mega_ball, awakening, paralyze_heal, repel, focus_sash]
+export const all_items_array = [lum_berry, sitrus_berry, poke_ball, potion, mega_ball, awakening, paralyze_heal, repel, focus_sash, leftovers]

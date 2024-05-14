@@ -70,7 +70,7 @@ const handleMovesInput = async function (e) {
             return
         }
 
-        console.log(store.my_pokemon.speed.effective, store.oppo_pokemon.speed.effective)
+
 
         // Define functions for player and opponent actions
         const my_pokemon_attack = async () => {

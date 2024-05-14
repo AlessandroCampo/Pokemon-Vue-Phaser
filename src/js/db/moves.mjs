@@ -1,5 +1,15 @@
 import { allAnimations } from "./animations.mjs"
 
+const correctAnimation = function (move) {
+    if (move.power && move.makes_contact) {
+        return allAnimations.tackle_animation
+    } else if (move.power && !move.makes_contact) {
+        return allAnimations.no_contact_animation
+    } else {
+        return null
+    }
+}
+
 class Move {
     constructor({ name, type, category, power, accuracy, pp, makes_contact, description, animation, effects, priority, targets, sound, repetitions, crhit_ratio }) {
         this.name = name
@@ -10,7 +20,7 @@ class Move {
         this.pp = pp
         this.makes_contact = makes_contact
         this.description = description || ''
-        this.animation = animation || null
+        this.animation = animation || correctAnimation(this)
         this.effects = effects || null
         this.priority = priority || 1
         this.targets = targets || true
@@ -20,26 +30,7 @@ class Move {
     }
 }
 
-const bulletSeedHits = function () {
-    // Define the probabilities and corresponding number of hits
-    const probabilities = [3 / 8, 3 / 8, 1 / 8, 1 / 8];
-    const hits = [2, 3, 4, 5];
 
-    // Generate a random number between 0 and 1
-    const rand = Math.random();
-
-    // Calculate the cumulative probability
-    let cumulativeProbability = 0;
-    for (let i = 0;i < probabilities.length;i++) {
-        cumulativeProbability += probabilities[i];
-        if (rand < cumulativeProbability) {
-            return hits[i]; // Return the corresponding number of hits
-        }
-    }
-
-    // This line should never be reached, but just in case
-    return hits[hits.length - 1];
-}
 
 // NORMAL TYPE MOVES
 
@@ -468,7 +459,7 @@ const fury_swipes = new Move({
     animation: null,
     description: 'The user attacks by raking the target with claws, scythes, or the like. This move hits two to five times in a row.',
     effects: null,
-    repetitions: bulletSeedHits()
+    repetitions: 'x'
 })
 
 // WATERTYPE MOVES 
@@ -606,6 +597,59 @@ const ember = new Move({
 
 })
 
+const incinerate = new Move({
+    name: 'Incinerate',
+    category: 'special',
+    type: 'fire',
+    power: 60,
+    accuracy: 100,
+    pp: {
+        max: 15,
+        current: 15
+    },
+    makes_contact: false,
+    animation: null,
+    description: 'The user attacks opposing Pokémon with fire. If a Pokémon is holding a certain item, such as a Berry, the item becomes burned up and unusable.',
+    effects: [{ type: 'remove_berry' }]
+
+})
+
+const fire_fang = new Move({
+    name: 'Fire Fang',
+    category: 'physical',
+    type: 'fire',
+    power: 65,
+    accuracy: 95,
+    pp: {
+        max: 15,
+        current: 15
+    },
+    makes_contact: true,
+    animation: null,
+    description: 'The user bites with cold-infused fangs. This may also make the target flinch or leave it frozen.',
+    effects: [{ type: 'apply_status', applied_status: 'burned', target: 'enemy', chance: 10 }, { type: 'apply_flinch', applied_status: 'flinch', target: 'enemy', chance: 10 }]
+
+})
+
+const will_o_wisp = new Move({
+    name: 'Will-O-Wisp',
+    category: 'status',
+    type: 'fire',
+    power: null,
+    accuracy: 85,
+    pp: {
+        max: 15,
+        current: 15
+    },
+    makes_contact: false,
+    animation: null,
+    description: 'The user shoots a sinister flame at the target to inflict a burn.',
+    effects: [{ type: 'apply_status', applied_status: 'burned', target: 'enemy', chance: 100 }]
+
+})
+
+
+
 // GRASS TYPE
 
 const leafage = new Move({
@@ -723,7 +767,7 @@ const bullet_seed = new Move({
     animation: null,
     description: 'The user forcefully shoots seeds at the target two to five times in a row.',
     effects: null,
-    repetitions: bulletSeedHits()
+    repetitions: 'x'
 })
 
 //PSYCHIC TYPE
@@ -794,6 +838,22 @@ const psybeam = new Move({
     description: 'The target is hit by a weak telekinetic force. This may also confuse the target.',
     effects: [{ type: 'apply_confusion', applied_status: 'confused', target: 'enemy', chance: 10 }]
 
+})
+
+const zen_headbutt = new Move({
+    name: 'Zen Headbutt',
+    category: 'physical',
+    type: 'psychic',
+    power: 80,
+    accuracy: 90,
+    pp: {
+        max: 15,
+        current: 15
+    },
+    makes_contact: true,
+    animation: null,
+    description: 'The user focuses its willpower to its head and attacks the target. This may also make the target flinch.',
+    effects: [{ type: 'apply_flinch', applied_status: 'flinch', target: 'enemy', chance: 20 }]
 })
 
 const draining_kiss = new Move({
@@ -946,6 +1006,22 @@ const bulk_up = new Move({
     effects: [{ type: 'modify_stat', target_stat: 'def', target: 'ally', stages: +1, target_stat_label: 'defense' }, { type: 'modify_stat', target_stat: 'atk', target: 'ally', stages: +1, target_stat_label: 'attack' }]
 })
 
+const superpower = new Move({
+    name: 'Superpower',
+    category: 'Physical',
+    type: 'fighting',
+    power: 120,
+    accuracy: 100,
+    pp: {
+        max: 5,
+        current: 5
+    },
+    makes_contact: true,
+    animation: null,
+    description: 'The user attacks the target with great power. This also lowers the user’s Attack and Defense stats.',
+    effects: [{ type: 'recoil', amount: 0.33 }]
+})
+
 // ELECTRIC MOVES
 
 const thunder_wave = new Move({
@@ -997,7 +1073,7 @@ const rock_trhow = new Move({
     makes_contact: false,
     animation: null,
     description: 'The user picks up and throws a small rock at the target to attack.',
-    effects: null
+    effects: [{ type: 'modify_stat', target_stat: 'speed', target: 'enemy', stages: -1, target_stat_label: 'speed', chance: 100 }]
 })
 
 const rock_slide = new Move({
@@ -1046,6 +1122,22 @@ const rock_polish = new Move({
     animation: null,
     description: 'The user polishes its body to reduce drag. This sharply boosts the user’s Speed stat.',
     effects: [{ type: 'modify_stat', target_stat: 'speed', target: 'ally', stages: +2, target_stat_label: 'speed' }],
+})
+
+const head_smash = new Move({
+    name: 'Head Smash',
+    category: 'Physical',
+    type: 'rock',
+    power: 150,
+    accuracy: 80,
+    pp: {
+        max: 5,
+        current: 5
+    },
+    makes_contact: true,
+    animation: null,
+    description: 'The user attacks the target with a hazardous full-power headbutt. This also damages the user terribly.',
+    effects: [{ type: 'recoil', amount: 0.5 }]
 })
 
 
@@ -1151,7 +1243,7 @@ const ice_fang = new Move({
         max: 15,
         current: 15
     },
-    makes_contact: false,
+    makes_contact: true,
     animation: null,
     description: 'The user bites with cold-infused fangs. This may also make the target flinch or leave it frozen.',
     effects: [{ type: 'apply_status', applied_status: 'frozen', target: 'enemy', chance: 10 }, { type: 'apply_flinch', applied_status: 'flinch', target: 'enemy', chance: 10 }]
@@ -1379,6 +1471,22 @@ const air_cutter = new Move({
     effects: null,
     crhit_ratio: 3
 })
+
+const air_slash = new Move({
+    name: 'Air Slash',
+    category: 'physical',
+    type: 'flying',
+    power: 75,
+    accuracy: 95,
+    pp: {
+        max: 15,
+        current: 15
+    },
+    makes_contact: false,
+    animation: null,
+    description: 'The user attacks with a blade of air that slices even the sky. This may also make the target flinch.',
+    effects: [{ type: 'apply_flinch', applied_status: 'flinch', target: 'enemy', chance: 30 }]
+})
 //BUG MOVES
 
 const bug_bite = new Move({
@@ -1443,7 +1551,7 @@ const pin_missle = new Move({
     animation: null,
     description: 'The user attacks by shooting sharp spikes at the target. This move hits two to five times in a row.',
     effects: null,
-    repetitions: bulletSeedHits()
+    repetitions: 'x'
 })
 
 
@@ -1483,6 +1591,21 @@ const bite = new Move({
     animation: null,
     description: 'The target is bitten with viciously sharp fangs. This may also make the target flinch.',
     effects: [{ type: 'apply_flinch', applied_status: 'flinch', target: 'enemy', chance: 30 }]
+})
+
+const crunch = new Move({
+    name: 'Crunch',
+    category: 'physical',
+    type: 'dark',
+    power: 80,
+    accuracy: 100,
+    pp: {
+        max: 15,
+        current: 15
+    },
+    makes_contact: true,
+    description: '	The user crunches up the target with sharp fangs. This may also lower the target’s Defense stat.',
+    effects: [{ type: 'modify_stat', target_stat: 'def', target: 'enemy', stages: -1, target_stat_label: 'defense', chance: 20 }]
 })
 
 const brutal_swing = new Move({
@@ -1653,12 +1776,29 @@ const night_shade = new Move({
     effects: null
 })
 
+
+const shadow_ball = new Move({
+    name: 'Shadow Ball',
+    category: 'special',
+    type: 'ghost',
+    power: 80,
+    accuracy: 100,
+    pp: {
+        max: 15,
+        current: 15
+    },
+    makes_contact: false,
+    animation: null,
+    description: 'The user attacks by hurling a shadowy blob at the target. This may also lower the target’s Sp. Def stat.',
+    effects: [{ type: 'modify_stat', target_stat: 'sp_def', target: 'enemy', stages: -1, target_stat_label: 'special defense', chance: 20 }]
+})
+
 //steel
 
 const metal_claw = new Move({
     name: 'Metal Claw',
     category: 'physical',
-    type: 'fire',
+    type: 'steel',
     power: 50,
     accuracy: 95,
     pp: {
@@ -1670,6 +1810,24 @@ const metal_claw = new Move({
     description: 'The target is raked with steel claws. This may also boost the user’s Attack stat',
     effects: [{ type: 'modify_stat', target_stat: 'atk', target: 'ally', stages: +1, target_stat_label: 'attack', chance: 10 }]
 })
+
+
+const iron_head = new Move({
+    name: 'Iron Head',
+    category: 'physical',
+    type: 'steel',
+    power: 80,
+    accuracy: 100,
+    pp: {
+        max: 15,
+        current: 15
+    },
+    makes_contact: true,
+    animation: null,
+    description: 'The user slams the target with its steel-hard head. This may also make the target flinch.',
+    effects: [{ type: 'apply_flinch', applied_status: 'flinch', target: 'enemy', chance: 30 }]
+})
+
 
 
 export const all_moves = {
@@ -1768,5 +1926,15 @@ export const all_moves = {
     pin_missle,
     air_cutter,
     bubble_beam,
-    psychic
+    psychic,
+    head_smash,
+    superpower,
+    iron_head,
+    air_slash,
+    crunch,
+    fire_fang,
+    incinerate,
+    will_o_wisp,
+    shadow_ball,
+    zen_headbutt
 }

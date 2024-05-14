@@ -20,11 +20,7 @@ import { map_store } from "@/mapStore.mjs";
 
 
 
-// onMounted(() => {
-//     console.log(store.text_queue[0])
-//     store.text_queue.shift()
 
-// })
 
 </script>
 

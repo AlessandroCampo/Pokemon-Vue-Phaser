@@ -7,6 +7,7 @@
             }" v-for="(pokemon, index) in party" :key="index">
 
                 <img :src="`/pokemons/${pokemon?.name.toLowerCase()}.gif`" alt="">
+                <img :src="`${pokemon?.held_item?.img_path}`" v-show="pokemon?.held_item" class="held-item">
                 <div class="bottom">
                     <div class="type-name">
                         <div>
@@ -378,6 +379,15 @@ img {
     transform: translateX(-50%);
     color: gray;
     font-size: 1.5em;
+}
+
+.held-item {
+    height: auto;
+    width: 30px;
+    position: absolute;
+    bottom: 5%;
+    left: 35%;
+
 }
 
 /* Apply pulsating effect to child img and i elements when parent button is active */

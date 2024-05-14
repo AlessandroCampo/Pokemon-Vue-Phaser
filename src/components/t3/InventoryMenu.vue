@@ -251,7 +251,6 @@ const useItem = async function (item, target) {
 
             menu_info_text.value = `${target.name} has reached level ${target.level}!`
             let evolved = await store.checkPossibleEvolution(target)
-            console.log(evolved)
             if (evolved) {
                 store.evolvePokemon(target, target.evolution.into)
             }
@@ -272,13 +271,17 @@ const useItem = async function (item, target) {
 }
 
 const giveItem = function (item, target) {
+    if (item.owned_amount <= 0) {
+        menu_info_text.value = `You don't have any ${item.name} left in your inventory`
+        return
+    }
     const old_held_item = target.held_item
     if (old_held_item) {
         old_held_item.owned_amount++
     }
     item.owned_amount--
     target.held_item = item
-    console.log(target)
+
     menu_info_text.value = `${item.name} has been assgined to ${target.name}`
     menuReset()
 }
@@ -585,9 +588,12 @@ transform: translateY(-50%); */
     padding-inline: 2em;
     font-size: 1.5em;
     position: absolute;
-    bottom: 5%;
+    bottom: 2%;
     left: 50%;
     transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .image-item {

@@ -64,6 +64,40 @@
 
         </div>
 
+        <div class="new-move-card  different-font old-move">
+            <div style="display: flex; gap: 15px;">
+                <div>
+                    <strong>Name:</strong><span>{{ current_selected_move?.name }}</span>
+                </div>
+                <div>
+                    <strong>Type:</strong> <img :src="`/badges/move-types/${current_selected_move?.type}.png`"
+                        class="move-type">
+                </div>
+                <div>
+                    <strong>Category:</strong><span>{{ current_selected_move?.category }}</span>
+                </div>
+
+
+            </div>
+            <div>
+                <strong>Description:</strong><span>{{ current_selected_move?.description }}</span>
+            </div>
+            <div style="display: flex; gap: 15px;">
+                <div>
+                    <strong>Accuracy:</strong><span>{{ current_selected_move.accuracy ? current_selected_move.accuracy :
+                        '-' }}</span>
+                </div>
+                <div>
+                    <strong>Power:</strong><span>{{ current_selected_move.power ? current_selected_move.power :
+                        '-' }}</span>
+                </div>
+                <div>
+                    <strong>Max PP:</strong><span>{{ current_selected_move?.pp?.max }}</span>
+                </div>
+            </div>
+
+        </div>
+
     </div>
 
 
@@ -71,8 +105,11 @@
 
 <script setup>
 import { store } from '@/store';
-import { ref, onMounted, onBeforeUnmount } from 'vue'
+import { ref, onMounted, onBeforeUnmount, computed } from 'vue'
 const active_voice = ref(0)
+const current_selected_move = computed(() => {
+    return store.forgettign_pokemon.moves[active_voice.value]
+})
 
 onMounted(() => {
 
@@ -263,6 +300,10 @@ img.icon {
 .active-sprite img {
     width: 250px;
     height: auto;
+}
+
+.old-move {
+    background-color: lightcoral;
 }
 
 

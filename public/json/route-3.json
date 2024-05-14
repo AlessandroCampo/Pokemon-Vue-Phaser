@@ -453,6 +453,34 @@
                  "width":16,
                  "x":80,
                  "y":704
+                }, 
+                {
+                 "gid":25332,
+                 "height":16,
+                 "id":10,
+                 "name":"",
+                 "properties":[
+                        {
+                         "name":"connects_to",
+                         "type":"string",
+                         "value":"?"
+                        }, 
+                        {
+                         "name":"entrance_id",
+                         "type":"int",
+                         "value":1
+                        }, 
+                        {
+                         "name":"is_building",
+                         "type":"bool",
+                         "value":true
+                        }],
+                 "rotation":0,
+                 "type":"entrance",
+                 "visible":true,
+                 "width":16,
+                 "x":1120,
+                 "y":272
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -528,7 +556,7 @@
          "y":0
         }],
  "nextlayerid":8,
- "nextobjectid":10,
+ "nextobjectid":11,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.10.2",

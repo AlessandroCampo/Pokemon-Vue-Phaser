@@ -5,6 +5,7 @@ import { Pokemons } from '../db/pokemons.mjs'
 import { store } from '@/store'
 import { map_store } from '@/mapStore.mjs'
 import { all_items, all_items_array } from '../db/items.mjs'
+import { allAnimations } from '../db/animations.mjs'
 // import SceneTransition from ''
 
 
@@ -52,7 +53,7 @@ export class BattleScene extends Phaser.Scene {
             this.load.audio(move.name, `/sounds/moves/${move.name}.mp3`)
         })
         store.my_bench.forEach((member) => {
-            console.log(member)
+
 
 
             member.resetStats()
@@ -199,15 +200,21 @@ export class BattleScene extends Phaser.Scene {
         if (store.my_pokemon.abilities.includes('Intimidate')) {
             let move_target = store.oppo_pokemon
             let effect = { type: 'modify_stat', target_stat: 'atk', target: 'enemy', stages: -1, target_stat_label: 'attack' }
-            store.info_text = await store.modifyStat(effect, move_target) + `thanks to ${store.my_pokemon.name}'s Intimidate`;
-            await store.delay(store.info_text.length * store.config.text_speed + 500);
+            if (!store.oppo_pokemon.fainted) {
+                store.info_text = await store.modifyStat(effect, move_target) + `thanks to ${store.my_pokemon.name}'s Intimidate`;
+                await store.delay(store.info_text.length * store.config.text_speed + 500);
+            }
+
         }
 
         if (store.oppo_pokemon.abilities.includes('Intimidate')) {
             let move_target = store.my_pokemon
             let effect = { type: 'modify_stat', target_stat: 'atk', target: 'enemy', stages: -1, target_stat_label: 'attack' }
-            store.info_text = await store.modifyStat(effect, move_target) + `thanks to ${store.oppo_pokemon.name}'s Intimidate`;
-            await store.delay(store.info_text.length * store.config.text_speed + 500);
+            if (!store.my_pokemon.fainted) {
+                store.info_text = await store.modifyStat(effect, move_target) + `thanks to ${store.oppo_pokemon.name}'s Intimidate`;
+                await store.delay(store.info_text.length * store.config.text_speed + 500);
+            }
+
         }
 
 
@@ -229,6 +236,10 @@ export class BattleScene extends Phaser.Scene {
         // pokemon lost after ko rule
         if (!store.my_pokemon.fainted) {
             store.my_bench.push(store.my_pokemon)
+        } else {
+            if (!store.config.rules.pokemon_dead_after_ko) {
+                store.my_box.push(store.my_pokemon)
+            }
         }
         // heal provisional status effects
         if (store.my_pokemon.confused) {

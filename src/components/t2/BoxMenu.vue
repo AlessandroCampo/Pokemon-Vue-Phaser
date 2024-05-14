@@ -198,7 +198,7 @@ h2 {
 }
 
 .box-pokemon {
-    width: calc(100% / 4);
+    width: calc(100% / 5);
     display: flex;
     align-items: center;
     justify-content: center;

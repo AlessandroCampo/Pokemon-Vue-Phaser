@@ -74,14 +74,18 @@ const roxanne_archen_moveset = [deepClone(all_moves.dragon_breath), deepClone(al
 const heracross_moveset = [deepClone(all_moves.brick_break), deepClone(all_moves.aerial_ace), deepClone(all_moves.bug_bite), deepClone(all_moves.night_slash)];
 const scolipede_moveset = [deepClone(all_moves.toxic), deepClone(all_moves.rock_climb), deepClone(all_moves.bug_bite), deepClone(all_moves.rock_slide)];
 const beautifly_moveset = [deepClone(all_moves.air_cutter), deepClone(all_moves.giga_drain), deepClone(all_moves.bug_bite), deepClone(all_moves.psychic)];
-const kricketune_moveset = [deepClone(all_moves.giga_drain), deepClone(all_moves.night_slash), deepClone(all_moves.x_scissor), deepClone(all_moves.slash)];
+const kricketune_moveset = [deepClone(all_moves.air_cutter), deepClone(all_moves.night_slash), deepClone(all_moves.x_scissor), deepClone(all_moves.slash)];
+const aggron_moveset = [deepClone(all_moves.head_smash), deepClone(all_moves.superpower), deepClone(all_moves.iron_head), deepClone(all_moves.bulldoze)];
+const crobat_moveset = [deepClone(all_moves.giga_drain), deepClone(all_moves.poison_fang), deepClone(all_moves.bite), deepClone(all_moves.air_slash)];
+const houndoom_moveset = [deepClone(all_moves.poison_fang), deepClone(all_moves.ice_fang), deepClone(all_moves.bite), deepClone(all_moves.incinerate)];
+const dusclops_moveset = [deepClone(all_moves.will_o_wisp), deepClone(all_moves.shadow_ball), deepClone(all_moves.recover), deepClone(all_moves.seismic_toss)];
 
 
 
 const erika = new Trainer({
     name: 'erika',
     lead: deepClone(Pokemons.scolipede),
-    bench: [deepClone(Pokemons.heracross), deepClone(Pokemons.kricketune), deepClone(Pokemons.beautifly)],
+    bench: [deepClone(Pokemons.heracross), deepClone(Pokemons.scyther), deepClone(Pokemons.beautifly)],
     position: {
         x: 950,
         y: 320
@@ -142,6 +146,22 @@ const roxanne = new Trainer({
 
 })
 
+const maxie = new Trainer({
+    name: 'maxie',
+    lead: deepClone(Pokemons.aggron),
+    bench: [deepClone(Pokemons.crobat), deepClone(Pokemons.houndoom), deepClone(Pokemons.dusclops)],
+    position: {
+        x: 950,
+        y: 320
+    },
+    scale: 0.15,
+    squad_level: 20,
+    moveset: [aggron_moveset, crobat_moveset, houndoom_moveset, dusclops_moveset],
+    items: [all_items.leftovers, all_items.lum_berry, all_items.lum_berry, all_items.leftovers]
+
+
+})
+
 
 
 
@@ -150,5 +170,5 @@ const roxanne = new Trainer({
 // archie.bench[1].moves = squirtle_moveset
 
 export const trainers = {
-    roxanne, erika, archie, aqua_grunt
+    roxanne, erika, archie, aqua_grunt, maxie
 }

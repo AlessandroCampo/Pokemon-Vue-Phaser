@@ -54,7 +54,7 @@ const pokemon_natures = [
 
 
 class Pokemon {
-    constructor({ name, description, height, weight, types, level, moves, learnable_moves, abilities, gender, xp, base_exp, growth_rate, catch_rate, pokemon_number, status, confused, flinched, hp, atk, def, sp_atk, sp_def, speed, accuracy, evasion, evolution, images, sounds, damage, location, fainted, sprite, nature, held_item, leviates, stat_total }) {
+    constructor({ name, description, height, weight, types, level, moves, learnable_moves, abilities, gender, xp, base_exp, growth_rate, catch_rate, pokemon_number, status, confused, flinched, hp, atk, def, sp_atk, sp_def, speed, accuracy, evasion, evolution, images, sounds, damage, location, fainted, sprite, nature, held_item, levitates, stat_total }) {
         this.name = name;
         this.description = description || 'no description available';
         this.types = types || [];
@@ -99,7 +99,7 @@ class Pokemon {
         this.sprite = null
         this.nature = nature || pokemon_natures[Math.floor(Math.random() * pokemon_natures.length)]
         this.held_item = held_item || null
-        this.levitates = leviates || false
+        this.levitates = levitates || false
         this.guarded = false
         this.stat_total = stat_total || null
         this.crhit_chance = 4.17
@@ -130,6 +130,12 @@ class Pokemon {
         }
         if (this.name == 'Onix' && this.player_controlled) {
             player_controlled_multiplier = 0.8
+        }
+        if (this.name == 'Aggron') {
+            player_controlled_multiplier *= 1.2
+        }
+        if (this.name == 'Houndoom') {
+            player_controlled_multiplier *= 1.1
         }
         if ((this.name == 'Electrike' || this.name == 'Wingull') && this.player_controlled) {
             player_controlled_multiplier = 0.5
@@ -578,6 +584,82 @@ let timburr = new Pokemon({
     stat_total: 305
 });
 
+let combusken = new Pokemon({
+    name: "Combusken",
+    description: "A fire burns inside it, so it feels very warm to hug. It launches fireballs of 1,800 degrees Fahrenheit.",
+    types: ['fire'],
+    moves: [deepClone(all_moves.growl), deepClone(all_moves.scratch), deepClone(all_moves.ember)],
+    learnable_moves: [{ at_level: 6, move: { ...all_moves.quick_attack } }, { at_level: 9, move: { ...all_moves.flame_charge } }, { at_level: 12, move: { ...all_moves.detect } }, { at_level: 15, move: { ...all_moves.sand_attack } }, { at_level: 20, move: { ...all_moves.aerial_ace } }, , { at_level: 25, move: { ...all_moves.slash } },],
+    abilities: ['Blaze'],
+    growth_rate: 'Medium Slow',
+    height: 0.9,
+    level: 5,
+    catch_rate: 45,
+    pokemon_number: 256,
+    height: 0.9,
+    weight: 19.5,
+    hp: {
+        base: 60,
+        max: 60,
+        current: 60
+    },
+    xp: {
+        base: 142,
+        total: 0
+    },
+    atk: {
+        base: 85,
+        current: 85,
+        effective: 85,
+        stage: 0
+    },
+    def: {
+        base: 60,
+        current: 60,
+        effective: 60,
+        stage: 0
+    },
+    sp_atk: {
+        base: 85,
+        current: 85,
+        effective: 85,
+        stage: 0
+    },
+    sp_def: {
+        base: 60,
+        current: 60,
+        effective: 60,
+        stage: 0
+    },
+    speed: {
+        base: 55,
+        current: 55,
+        effective: 55,
+        stage: 0
+    },
+    evolution: null,
+    images: {
+        front: {
+            path: base_path + 'combusken-front.png',
+            key: 'combusken-front',
+            frameWidth: 245,
+            frameHeight: 310,
+            frames: 18
+        },
+        back: {
+            path: base_path + 'combusken-back.png',
+            key: 'combusken-back',
+            frameWidth: 323,
+            frameHeight: 410,
+            frames: 18
+        }
+    },
+    held_item: null,
+    sounds: 'assets/sounds/combusken-cry.ogg',
+    stat_total: 405
+});
+
+
 
 let torchic = new Pokemon({
     name: "Torchic",
@@ -588,9 +670,11 @@ let torchic = new Pokemon({
     abilities: ['Blaze'],
     growth_rate: 'Medium Slow',
     height: 0.4,
-    level: 15,
+    level: 5,
     catch_rate: 45,
     pokemon_number: 255,
+    height: 0.4,
+    weight: 2.5,
     hp: {
         base: 45,
         max: 45,
@@ -630,9 +714,7 @@ let torchic = new Pokemon({
         effective: 45,
         stage: 0
     },
-    evolution: {
-
-    },
+    evolution: { at_level: 16, into: deepClone(combusken) },
     images: {
         front: {
             path: base_path + 'torchic-front.png',
@@ -650,7 +732,82 @@ let torchic = new Pokemon({
         }
     },
     held_item: null,
-    sounds: 'assets/sounds/torchic-cry.ogg'
+    sounds: 'assets/sounds/torchic-cry.ogg',
+    stat_total: 310
+});
+
+let grovyle = new Pokemon({
+    name: "Grovyle",
+    description: "This Pokémon adeptly flies from branch to branch in trees. In a forest, no Pokémon can ever hope to catch a fleeing Grovyle however fast they may be.",
+    types: ['grass'],
+    moves: [deepClone(all_moves.leer), deepClone(all_moves.pound), deepClone(all_moves.leafage)],
+    learnable_moves: [{ at_level: 6, move: { ...all_moves.quick_attack } }, { at_level: 9, move: { ...all_moves.mega_drain } }, { at_level: 12, move: { ...all_moves.detect } }, { at_level: 15, move: { ...all_moves.giga_drain } }, { at_level: 20, move: { ...all_moves.x_scissor } }],
+    abilities: ['Overgrow'],
+    growth_rate: 'Medium Slow',
+    level: 5,
+    catch_rate: 45,
+    pokemon_number: 253,
+    height: 0.5,
+    weight: 5,
+    hp: {
+        base: 50,
+        max: 50,
+        current: 50
+    },
+    xp: {
+        base: 142,
+        total: 0
+    },
+    atk: {
+        base: 65,
+        current: 65,
+        effective: 65,
+        stage: 0
+    },
+    def: {
+        base: 45,
+        current: 45,
+        effective: 45,
+        stage: 0
+    },
+    sp_atk: {
+        base: 85,
+        current: 85,
+        effective: 85,
+        stage: 0
+    },
+    sp_def: {
+        base: 65,
+        current: 65,
+        effective: 65,
+        stage: 0
+    },
+    speed: {
+        base: 95,
+        current: 95,
+        effective: 95,
+        stage: 0
+    },
+    evolution: null,
+    images: {
+        front: {
+            path: base_path + 'grovyle-front.png',
+            key: 'grovyle-front',
+            frameWidth: 323,
+            frameHeight: 310,
+            frames: 32
+        },
+        back: {
+            path: base_path + 'grovyle-back.png',
+            key: 'grovyle-back',
+            frameWidth: 428,
+            frameHeight: 410,
+            frames: 32
+        }
+    },
+    held_item: null,
+    sounds: 'assets/sounds/grovyle-cry.ogg',
+    stat_total: 405
 });
 
 let treecko = new Pokemon({
@@ -658,12 +815,14 @@ let treecko = new Pokemon({
     description: "The soles of its feet are covered by countless tiny hooks, enabling it to walk on walls and ceilings.",
     types: ['grass'],
     moves: [deepClone(all_moves.leer), deepClone(all_moves.pound), deepClone(all_moves.leafage)],
-    learnable_moves: [{ at_level: 6, move: { ...all_moves.quick_attack } }, { at_level: 9, move: { ...all_moves.mega_drain } }, { at_level: 12, move: { ...all_moves.detect } }, { at_level: 15, move: { ...all_moves.giga_drain } }],
+    learnable_moves: [{ at_level: 6, move: { ...all_moves.quick_attack } }, { at_level: 9, move: { ...all_moves.mega_drain } }, { at_level: 12, move: { ...all_moves.detect } }, { at_level: 20, move: { ...all_moves.giga_drain } }],
     abilities: ['Overgrow'],
     growth_rate: 'Medium Slow',
     level: 5,
     catch_rate: 45,
     pokemon_number: 252,
+    height: 0.5,
+    weight: 5,
     hp: {
         base: 40,
         max: 40,
@@ -703,9 +862,7 @@ let treecko = new Pokemon({
         effective: 70,
         stage: 0
     },
-    evolution: {
-
-    },
+    evolution: { at_level: 16, into: deepClone(grovyle) },
     images: {
         front: {
             path: base_path + 'treecko-front.png',
@@ -723,7 +880,8 @@ let treecko = new Pokemon({
         }
     },
     held_item: null,
-    sounds: 'assets/sounds/treeko-cry.ogg'
+    sounds: 'assets/sounds/treeko-cry.ogg',
+    stat_total: 310
 });
 
 let marshtomp = new Pokemon({
@@ -778,9 +936,7 @@ let marshtomp = new Pokemon({
         effective: 50,
         stage: 0
     },
-    evolution: {
-
-    },
+    evolution: null,
     images: {
         front: {
             path: base_path + 'marshtomp-front.png',
@@ -876,57 +1032,58 @@ let mudkip = new Pokemon({
 
 let aggron = new Pokemon({
     name: "Aggron",
-    description: "Using the fin on its head, Mudkip senses the flow of water to keep track of what’s going on around it. Mudkip has the strength to heft boulders.",
-    types: ['steel'],
+    description: "While seeking iron for food, it digs tunnels by breaking through bedrock with its steel horns.",
+    types: ['steel', 'rock'],
     height: 2,
-    moves: [{ ...all_moves.mega_drain }, { ...all_moves.tackle }, { ...all_moves.water_gun }, { ...all_moves.ember }],
-    abilities: ['Torrent'],
-    growth_rate: 'Medium Slow',
+    moves: [{ ...all_moves.harden }, { ...all_moves.metal_claw }, { ...all_moves.rock_tomb }, { ...all_moves.tackle }],
+    learnable_moves: [{ at_level: 12, move: { ...all_moves.headbutt } }, { at_level: 15, move: { ...all_moves.protect } }, { at_level: 18, move: { ...all_moves.rock_slide } }, { at_level: 20, move: { ...all_moves.water_pulse } }],
+    abilities: ['Rock Head'],
+    growth_rate: 'Slow',
     level: 5,
     catch_rate: 45,
-    pokemon_number: 258,
+    pokemon_number: 306,
+    height: 2.1,
+    weight: 360,
     hp: {
-        base: 50,
-        max: 50,
-        current: 50
+        base: 70,
+        max: 70,
+        current: 70
     },
     xp: {
-        base: 62,
+        base: 239,
         total: 0
     },
     atk: {
-        base: 70,
-        current: 70,
-        effective: 70,
+        base: 110,
+        current: 110,
+        effective: 110,
         stage: 0
     },
     def: {
-        base: 50,
-        current: 50,
-        effective: 50,
+        base: 180,
+        current: 180,
+        effective: 180,
         stage: 0
     },
     sp_atk: {
-        base: 50,
-        current: 50,
-        effective: 50,
+        base: 60,
+        current: 60,
+        effective: 60,
         stage: 0
     },
     sp_def: {
+        base: 60,
+        current: 60,
+        effective: 60,
+        stage: 0
+    },
+    speed: {
         base: 50,
         current: 50,
         effective: 50,
         stage: 0
     },
-    speed: {
-        base: 40,
-        current: 40,
-        effective: 40,
-        stage: 0
-    },
-    evolution: {
-
-    },
+    evolution: null,
     images: {
         front: {
             path: base_path + 'aggron-front.png',
@@ -943,7 +1100,8 @@ let aggron = new Pokemon({
             frames: 38
         }
     },
-    sounds: 'assets/sounds/aggron-cry.ogg'
+    sounds: 'assets/sounds/aggron-cry.ogg',
+    stat_total: 530
 });
 
 let nosepass = new Pokemon({
@@ -1092,7 +1250,7 @@ let lunatone = new Pokemon({
     },
     sounds: 'assets/sounds/lunatone-cry.ogg',
     nature: 'Lonely',
-    leviates: true,
+    levitates: true,
     held_item: all_items.sitrus_berry
 });
 
@@ -1169,6 +1327,80 @@ let lileep = new Pokemon({
     held_item: all_items.sitrus_berry
 });
 
+let pelipper = new Pokemon({
+    name: "Pelipper",
+    description: "It protects its young in its beak. It bobs on waves, resting on them on days when the waters are calm.",
+    types: ['water', 'flying'],
+    height: 1.2,
+    weight: 28,
+    moves: [deepClone(all_moves.growl), deepClone(all_moves.water_gun)],
+    learnable_moves: [{ at_level: 5, move: { ...all_moves.quick_attack } }, { at_level: 10, move: { ...all_moves.supersonic } }, { at_level: 15, move: { ...all_moves.wing_attack } }, { at_level: 18, move: { ...all_moves.water_pulse } }, { at_level: 20, move: { ...all_moves.air_slash } },],
+    abilities: ['Keen Eye'],
+    growth_rate: 'Medium Fast',
+    level: 5,
+    catch_rate: 45,
+    pokemon_number: 279,
+    hp: {
+        base: 60,
+        max: 60,
+        current: 60
+    },
+    xp: {
+        base: 154,
+        total: 0
+    },
+    atk: {
+        base: 50,
+        current: 50,
+        effective: 50,
+        stage: 0
+    },
+    def: {
+        base: 100,
+        current: 100,
+        effective: 100,
+        stage: 0
+    },
+    sp_atk: {
+        base: 95,
+        current: 95,
+        effective: 95,
+        stage: 0
+    },
+    sp_def: {
+        base: 70,
+        current: 70,
+        effective: 70,
+        stage: 0
+    },
+    speed: {
+        base: 65,
+        current: 65,
+        effective: 65,
+        stage: 0
+    },
+    images: {
+        front: {
+            path: base_path + 'pelipper-front.png',
+            key: 'pelipper-front',
+            frameWidth: 368,
+            frameHeight: 310,
+            frames: 19
+        },
+        back: {
+            path: base_path + 'pelipper-back.png',
+            key: 'pelipper-back',
+            frameWidth: 488,
+            frameHeight: 410,
+            frames: 19
+        }
+    },
+    sounds: 'assets/sounds/pelipper-cry.ogg',
+    held_item: null,
+    stat_total: 440,
+
+});
+
 let wingull = new Pokemon({
     name: "Wingull",
     description: "It rides upon ocean winds as if it were a glider. In the winter, it hides food around its nest.",
@@ -1182,6 +1414,7 @@ let wingull = new Pokemon({
     level: 5,
     catch_rate: 190,
     pokemon_number: 278,
+    evolution: { at_level: 20, into: deepClone(pelipper) },
     hp: {
         base: 40,
         max: 40,
@@ -1249,7 +1482,7 @@ let mightyena = new Pokemon({
     height: 1,
     weight: 37,
     moves: [deepClone(all_moves.tackle), deepClone(all_moves.howl)],
-    learnable_moves: [{ at_level: 7, move: { ...all_moves.sand_attack } }, { at_level: 10, move: { ...all_moves.bite } }, { at_level: 13, move: { ...all_moves.leer } }, { at_level: 19, move: { ...all_moves.swagger } }],
+    learnable_moves: [{ at_level: 7, move: { ...all_moves.sand_attack } }, { at_level: 10, move: { ...all_moves.bite } }, { at_level: 13, move: { ...all_moves.leer } }, { at_level: 16, move: { ...all_moves.ice_fang } }, { at_level: 20, move: { ...all_moves.swagger } }],
     abilities: ['Intimidate'],
     growth_rate: 'Medium Fast',
     level: 5,
@@ -1902,7 +2135,7 @@ let staravia = new Pokemon({
     sounds: 'assets/sounds/staravia-cry.ogg',
     held_item: null,
     stat_total: 340,
-    leviates: true
+    levitates: true
 });
 
 let starly = new Pokemon({
@@ -1977,7 +2210,7 @@ let starly = new Pokemon({
     sounds: 'assets/sounds/starly-cry.ogg',
     held_item: null,
     stat_total: 245,
-    leviates: true
+    levitates: true
 });
 
 let kricketune = new Pokemon({
@@ -2052,7 +2285,7 @@ let kricketune = new Pokemon({
     sounds: 'assets/sounds/kricketune-cry.ogg',
     held_item: null,
     stat_total: 384,
-    leviates: false
+    levitates: false
 });
 
 //Bandaid for boss pokemons
@@ -2064,7 +2297,7 @@ let erika_kricketune = new Pokemon({
     height: 1,
     weight: 25.5,
     moves: [deepClone(all_moves.giga_drain), deepClone(all_moves.night_slash), deepClone(all_moves.x_scissor), deepClone(all_moves.slash)],
-    learnable_moves: [],
+    learnable_moves: [{ at_level: 20, move: { ...all_moves.x_scissor } }],
     abilities: ['Swarm'],
     growth_rate: 'Medium Slow',
     level: 5,
@@ -2129,7 +2362,7 @@ let erika_kricketune = new Pokemon({
     sounds: 'assets/sounds/kricketune-cry.ogg',
     held_item: null,
     stat_total: 384,
-    leviates: false
+    levitates: false
 });
 
 let beautifly = new Pokemon({
@@ -2204,7 +2437,7 @@ let beautifly = new Pokemon({
     sounds: 'assets/sounds/beautifly-cry.ogg',
     held_item: null,
     stat_total: 384,
-    leviates: false
+    levitates: false
 });
 let deerling = new Pokemon({
     name: "Deerling",
@@ -2213,7 +2446,7 @@ let deerling = new Pokemon({
     height: 0.6,
     weight: 19.5,
     moves: [deepClone(all_moves.tackle), deepClone(all_moves.growl), deepClone(all_moves.double_kick), deepClone(all_moves.sand_attack)],
-    learnable_moves: [{ at_level: 12, move: { ...all_moves.mega_drain } }, { at_level: 15, move: { ...all_moves.bullet_seed } }, { at_level: 20, move: { ...all_moves.take_down } }],
+    learnable_moves: [{ at_level: 12, move: { ...all_moves.mega_drain } }, { at_level: 15, move: { ...all_moves.bullet_seed } }, { at_level: 18, move: { ...all_moves.take_down } }, { at_level: 20, move: { ...all_moves.zen_headbutt } }],
     abilities: ['Sap Sipper'],
     growth_rate: 'Medium Fast',
     level: 5,
@@ -2278,7 +2511,7 @@ let deerling = new Pokemon({
     sounds: 'assets/sounds/deerling-cry.ogg',
     held_item: null,
     stat_total: 335,
-    leviates: false
+    levitates: false
 });
 let foongus = new Pokemon({
     name: "Foongus",
@@ -2352,7 +2585,7 @@ let foongus = new Pokemon({
     sounds: 'assets/sounds/foongus-cry.ogg',
     held_item: null,
     stat_total: 294,
-    leviates: false
+    levitates: false
 });
 
 let tirtouga = new Pokemon({
@@ -2427,7 +2660,7 @@ let tirtouga = new Pokemon({
     sounds: 'assets/sounds/tirtouga-cry.ogg',
     held_item: null,
     stat_total: 355,
-    leviates: false
+    levitates: false
 });
 
 let krabby = new Pokemon({
@@ -2502,7 +2735,7 @@ let krabby = new Pokemon({
     sounds: 'assets/sounds/krabby-cry.ogg',
     held_item: null,
     stat_total: 355,
-    leviates: false
+    levitates: false
 });
 
 let ducklett = new Pokemon({
@@ -2577,7 +2810,7 @@ let ducklett = new Pokemon({
     sounds: 'assets/sounds/ducklett-cry.ogg',
     held_item: null,
     stat_total: 305,
-    leviates: false
+    levitates: false
 });
 let cranidos = new Pokemon({
     name: "Cranidos",
@@ -2585,9 +2818,9 @@ let cranidos = new Pokemon({
     types: ['rock'],
     height: 0.9,
     weight: 31.5,
-    moves: [deepClone(all_moves.headbutt), deepClone(all_moves.leer), deepClone(all_moves.focus_energy)],
-    learnable_moves: [{ at_level: 10, move: { ...all_moves.rock_smash } }, { at_level: 15, move: { ...all_moves.take_down } }],
-    abilities: ['Sturdy'],
+    moves: [deepClone(all_moves.headbutt), deepClone(all_moves.leer), deepClone(all_moves.focus_energy), deepClone(all_moves.stomp)],
+    learnable_moves: [{ at_level: 10, move: { ...all_moves.rock_smash } }, { at_level: 15, move: { ...all_moves.take_down } }, { at_level: 18, move: { ...all_moves.zen_headbutt } }, , { at_level: 20, move: { ...all_moves.head_smash } }],
+    abilities: ['Rock Head'],
     growth_rate: 'Erratic',
     level: 5,
     catch_rate: 45,
@@ -2651,7 +2884,7 @@ let cranidos = new Pokemon({
     sounds: 'assets/sounds/cranidos-cry.ogg',
     held_item: null,
     stat_total: 350,
-    leviates: false
+    levitates: false
 });
 let onix = new Pokemon({
     name: "Onix",
@@ -2660,8 +2893,8 @@ let onix = new Pokemon({
     height: 8.8,
     weight: 210,
     moves: [deepClone(all_moves.harden), deepClone(all_moves.tackle), deepClone(all_moves.rock_trhow), deepClone(all_moves.rock_polish)],
-    learnable_moves: [{ at_level: 12, move: { ...all_moves.dragon_breath } }, { at_level: 15, move: { ...all_moves.rock_slide } }],
-    abilities: ['Sturdy'],
+    learnable_moves: [{ at_level: 12, move: { ...all_moves.dragon_breath } }, { at_level: 15, move: { ...all_moves.rock_slide } }, { at_level: 20, move: { ...all_moves.head_smash } }],
+    abilities: ['Rock Head'],
     growth_rate: 'Medium Fast',
     level: 5,
     catch_rate: 45,
@@ -2725,7 +2958,7 @@ let onix = new Pokemon({
     sounds: 'assets/sounds/onix-cry.ogg',
     held_item: null,
     stat_total: 385,
-    leviates: false
+    levitates: false
 });
 
 let scolipede = new Pokemon({
@@ -2800,7 +3033,7 @@ let scolipede = new Pokemon({
     sounds: 'assets/sounds/scolipede-cry.ogg',
     held_item: null,
     stat_total: 485,
-    leviates: false
+    levitates: false
 });
 
 
@@ -2876,7 +3109,7 @@ let whirlipede = new Pokemon({
     sounds: 'assets/sounds/whirlipede-cry.ogg',
     held_item: null,
     stat_total: 360,
-    leviates: false
+    levitates: false
 });
 
 let frillish = new Pokemon({
@@ -2951,7 +3184,7 @@ let frillish = new Pokemon({
     sounds: 'assets/sounds/frillish-cry.ogg',
     held_item: null,
     stat_total: 335,
-    leviates: true
+    levitates: true
 });
 
 let heracross = new Pokemon({
@@ -3026,7 +3259,7 @@ let heracross = new Pokemon({
     sounds: 'assets/sounds/heracross-cry.ogg',
     held_item: null,
     stat_total: 500,
-    leviates: false
+    levitates: false
 });
 
 
@@ -3104,7 +3337,7 @@ let squirtle = new Pokemon({
     sounds: 'assets/sounds/squirtle-cry.ogg',
     held_item: null,
     stat_total: 314,
-    leviates: false
+    levitates: false
 
 
 
@@ -3185,7 +3418,7 @@ let carvanha = new Pokemon({
     sounds: 'assets/sounds/carvanha-cry.ogg',
     held_item: null,
     stat_total: 314,
-    leviates: false
+    levitates: false
 
 });
 
@@ -3263,7 +3496,7 @@ let silicobra = new Pokemon({
     sounds: 'assets/sounds/silicobra-cry.ogg',
     held_item: null,
     stat_total: 315,
-    leviates: false
+    levitates: false
 
 });
 
@@ -3341,7 +3574,7 @@ let cufant = new Pokemon({
     sounds: 'assets/sounds/cufant-cry.ogg',
     held_item: null,
     stat_total: 330,
-    leviates: false
+    levitates: false
 
 });
 
@@ -3419,7 +3652,7 @@ let cubchoo = new Pokemon({
     sounds: 'assets/sounds/cubchoo-cry.ogg',
     held_item: null,
     stat_total: 305,
-    leviates: false
+    levitates: false
 
 });
 
@@ -3498,7 +3731,7 @@ let archen = new Pokemon({
     sounds: 'assets/sounds/archen-cry.ogg',
     held_item: null,
     stat_total: 401,
-    leviates: false
+    levitates: false
 
 });
 
@@ -3555,9 +3788,7 @@ let nidorino = new Pokemon({
         effective: 65,
         stage: 0
     },
-    evolution: {
-
-    },
+    evolution: null,
     images: {
         front: {
             path: base_path + 'nidorino-front.png',
@@ -3577,7 +3808,7 @@ let nidorino = new Pokemon({
     sounds: 'assets/sounds/nidorino-cry.ogg',
     held_item: null,
     stat_total: 365,
-    leviates: false
+    levitates: false
 
 });
 
@@ -3595,7 +3826,7 @@ let nidoran = new Pokemon({
     level: 5,
     catch_rate: 235,
     pokemon_number: 32,
-    evolution: { at_level: 16, into: deepClone(staravia) },
+    evolution: { at_level: 16, into: deepClone(nidorino) },
     hp: {
         base: 46,
         max: 46,
@@ -3635,9 +3866,6 @@ let nidoran = new Pokemon({
         effective: 50,
         stage: 0
     },
-    evolution: {
-
-    },
     images: {
         front: {
             path: base_path + 'nidoran-front.png',
@@ -3657,12 +3885,479 @@ let nidoran = new Pokemon({
     sounds: 'assets/sounds/nidoran-cry.ogg',
     held_item: null,
     stat_total: 273,
-    leviates: false
+    levitates: false
 
 });
 
 
+let scyther = new Pokemon({
+    name: "Scyther",
+    description: "It scans its surroundings by raising its ears out of the grass. Its toxic horn is for protection.",
+    types: ['bug', 'flying'],
+    height: 1.5,
+    weight: 56,
+    moves: [deepClone(all_moves.leer), deepClone(all_moves.quick_attack
+    ), deepClone(all_moves.fury_swipes)],
+    learnable_moves: [{ at_level: 12, move: { ...all_moves.dobule_team } }, { at_level: 12, move: { ...all_moves.wing_attack } }],
+    abilities: ['Swarm'],
+    growth_rate: 'Medium Fast',
+    level: 5,
+    catch_rate: 45,
+    pokemon_number: 123,
+    evolution: { at_level: 16, into: deepClone(nidorino) },
+    hp: {
+        base: 70,
+        max: 70,
+        current: 70
+    },
+    xp: {
+        base: 100,
+        total: 0
+    },
+    atk: {
+        base: 110,
+        current: 110,
+        effective: 110,
+        stage: 0
+    },
+    def: {
+        base: 80,
+        current: 80,
+        effective: 80,
+        stage: 0
+    },
+    sp_atk: {
+        base: 55,
+        current: 55,
+        effective: 55,
+        stage: 0
+    },
+    sp_def: {
+        base: 80,
+        current: 80,
+        effective: 80,
+        stage: 0
+    },
+    speed: {
+        base: 105,
+        current: 105,
+        effective: 105,
+        stage: 0
+    },
+    images: {
+        front: {
+            path: base_path + 'scyther-front.png',
+            key: 'scyther-front',
+            frameWidth: 357,
+            frameHeight: 310,
+            frames: 35
+        },
+        back: {
+            path: base_path + 'scyther-back.png',
+            key: 'scyther-back',
+            frameWidth: 465,
+            frameHeight: 410,
+            frames: 35
+        }
+    },
+    sounds: 'assets/sounds/scyther-cry.ogg',
+    held_item: null,
+    stat_total: 500,
+    levitates: false
+
+});
+
+let crobat = new Pokemon({
+    name: "Crobat",
+    description: "Its hind limbs have become another set of wings. Crobat expertly maneuvers its four wings to dart in exquisite fashion through even the most confined caves without losing any speed.",
+    types: ['poison', 'flying'],
+    height: 1.8,
+    weight: 75,
+    moves: [deepClone(all_moves.toxic), deepClone(all_moves.astonish
+    ), deepClone(all_moves.absorb), deepClone(all_moves.supersonic)],
+    learnable_moves: [{ at_level: 15, move: { ...all_moves.poison_fang } }, { at_level: 18, move: { ...all_moves.bite } }, { at_level: 20, move: { ...all_moves.air_cutter } }],
+    abilities: ['Inner Focus'],
+    growth_rate: 'Medium Fast',
+    level: 5,
+    catch_rate: 90,
+    pokemon_number: 169,
+    evolution: null,
+    hp: {
+        base: 85,
+        max: 85,
+        current: 85
+    },
+    xp: {
+        base: 241,
+        total: 0
+    },
+    atk: {
+        base: 90,
+        current: 90,
+        effective: 90,
+        stage: 0
+    },
+    def: {
+        base: 80,
+        current: 80,
+        effective: 80,
+        stage: 0
+    },
+    sp_atk: {
+        base: 70,
+        current: 70,
+        effective: 70,
+        stage: 0
+    },
+    sp_def: {
+        base: 80,
+        current: 80,
+        effective: 80,
+        stage: 0
+    },
+    speed: {
+        base: 130,
+        current: 130,
+        effective: 130,
+        stage: 0
+    },
+    images: {
+        front: {
+            path: base_path + 'crobat-front.png',
+            key: 'crobat-front',
+            frameWidth: 779,
+            frameHeight: 610,
+            frames: 18
+        },
+        back: {
+            path: base_path + 'crobat-back.png',
+            key: 'crobat-back',
+            frameWidth: 1095,
+            frameHeight: 810,
+            frames: 18
+        }
+    },
+    sounds: 'assets/sounds/crobat-cry.ogg',
+    held_item: null,
+    stat_total: 535,
+    levitates: true
+
+});
+
+let houndoom = new Pokemon({
+    name: "Houndoom",
+    description: "Upon hearing its eerie howls, other Pokémon get the shivers and head straight back to their nests.",
+    types: ['dark', 'fire'],
+    height: 1.4,
+    weight: 35,
+    moves: [deepClone(all_moves.howl), deepClone(all_moves.leer
+    ), deepClone(all_moves.ember),],
+    learnable_moves: [{ at_level: 15, move: { ...all_moves.bite } }, { at_level: 18, move: { ...all_moves.bite } }, { at_level: 20, move: { ...all_moves.air_cutter } }],
+    abilities: ['Intimidate'],
+    growth_rate: 'Slow',
+    level: 5,
+    catch_rate: 45,
+    pokemon_number: 229,
+    evolution: null,
+    hp: {
+        base: 75,
+        max: 75,
+        current: 75
+    },
+    xp: {
+        base: 175,
+        total: 0
+    },
+    atk: {
+        base: 90,
+        current: 90,
+        effective: 90,
+        stage: 0
+    },
+    def: {
+        base: 50,
+        current: 50,
+        effective: 50,
+        stage: 0
+    },
+    sp_atk: {
+        base: 110,
+        current: 110,
+        effective: 110,
+        stage: 0
+    },
+    sp_def: {
+        base: 80,
+        current: 80,
+        effective: 80,
+        stage: 0
+    },
+    speed: {
+        base: 95,
+        current: 95,
+        effective: 95,
+        stage: 0
+    },
+    images: {
+        front: {
+            path: base_path + 'houndoom-front.png',
+            key: 'houndoom-front',
+            frameWidth: 204,
+            frameHeight: 310,
+            frames: 27
+        },
+        back: {
+            path: base_path + 'houndoom-back.png',
+            key: 'houndoom-back',
+            frameWidth: 259,
+            frameHeight: 410,
+            frames: 27
+        }
+    },
+    sounds: 'assets/sounds/houndoom-cry.ogg',
+    held_item: null,
+    stat_total: 500,
+    levitates: false
+
+});
+
+
+let dusclops = new Pokemon({
+    name: "Dusclops",
+    description: "	There are rumors that peeking inside its bandage-wrapped body will cause one to get pulled in through the gaps between the bandages, never to return. I’ve been too scared to verify.",
+    types: ['ghost'],
+    height: 1.6,
+    weight: 30.6,
+    moves: [deepClone(all_moves.astonish), deepClone(all_moves.night_shade
+    ), deepClone(all_moves.confuse_ray),],
+    learnable_moves: [{ at_level: 20, move: { ...all_moves.hex } }],
+    abilities: ['Pressure'],
+    growth_rate: 'Fast',
+    level: 5,
+    catch_rate: 90,
+    pokemon_number: 356,
+    evolution: null,
+    hp: {
+        base: 40,
+        max: 40,
+        current: 40
+    },
+    xp: {
+        base: 159,
+        total: 0
+    },
+    atk: {
+        base: 70,
+        current: 70,
+        effective: 70,
+        stage: 0
+    },
+    def: {
+        base: 130,
+        current: 130,
+        effective: 130,
+        stage: 0
+    },
+    sp_atk: {
+        base: 60,
+        current: 60,
+        effective: 60,
+        stage: 0
+    },
+    sp_def: {
+        base: 130,
+        current: 130,
+        effective: 130,
+        stage: 0
+    },
+    speed: {
+        base: 25,
+        current: 25,
+        effective: 25,
+        stage: 0
+    },
+    images: {
+        front: {
+            path: base_path + 'dusclops-front.png',
+            key: 'dusclops-front',
+            frameWidth: 380,
+            frameHeight: 310,
+            frames: 38
+        },
+        back: {
+            path: base_path + 'dusclops-back.png',
+            key: 'dusclops-back',
+            frameWidth: 508,
+            frameHeight: 410,
+            frames: 38
+        }
+    },
+    sounds: 'assets/sounds/dusclops-cry.ogg',
+    held_item: null,
+    stat_total: 455,
+    levitates: false
+
+});
+
+let quagsire = new Pokemon({
+    name: "Quagsire",
+    description: "A dim-witted Pokémon. It doesn’t care if it bumps its head into boats or rocks while swimming.",
+    types: ['water', 'ground'],
+    height: 1.4,
+    weight: 75,
+    moves: [deepClone(all_moves.tail_whip), deepClone(all_moves.water_gun
+    ), deepClone(all_moves.mud_shot),],
+    learnable_moves: [{ at_level: 15, move: { ...all_moves.water_pulse } }, { at_level: 20, move: { ...all_moves.aqua_tail } }],
+    abilities: ['Water Absorb'],
+    growth_rate: 'MediumFast',
+    level: 5,
+    catch_rate: 90,
+    pokemon_number: 195,
+    evolution: null,
+    hp: {
+        base: 95,
+        max: 95,
+        current: 95
+    },
+    xp: {
+        base: 151,
+        total: 0
+    },
+    atk: {
+        base: 85,
+        current: 85,
+        effective: 85,
+        stage: 0
+    },
+    def: {
+        base: 85,
+        current: 85,
+        effective: 85,
+        stage: 0
+    },
+    sp_atk: {
+        base: 65,
+        current: 65,
+        effective: 65,
+        stage: 0
+    },
+    sp_def: {
+        base: 65,
+        current: 65,
+        effective: 65,
+        stage: 0
+    },
+    speed: {
+        base: 35,
+        current: 35,
+        effective: 35,
+        stage: 0
+    },
+    images: {
+        front: {
+            path: base_path + 'quagsire-front.png',
+            key: 'quagsire-front',
+            frameWidth: 201,
+            frameHeight: 310,
+            frames: 44
+        },
+        back: {
+            path: base_path + 'quagsire-back.png',
+            key: 'quagsire-back',
+            frameWidth: 264,
+            frameHeight: 410,
+            frames: 44
+        }
+    },
+    sounds: 'assets/sounds/quagsire-cry.ogg',
+    held_item: null,
+    stat_total: 430,
+    levitates: false
+
+});
+
+let wooper = new Pokemon({
+    name: "Wooper",
+    description: "When the temperature cools in the evening, they emerge from water to seek food along the shore..",
+    types: ['water', 'ground'],
+    height: 0.4,
+    weight: 8.5,
+    moves: [deepClone(all_moves.tail_whip), deepClone(all_moves.water_gun
+    ), deepClone(all_moves.mud_shot),],
+    learnable_moves: [{ at_level: 15, move: { ...all_moves.water_pulse } }, { at_level: 20, move: { ...all_moves.aqua_tail } }],
+    abilities: ['Water Absorb'],
+    growth_rate: 'MediumFast',
+    level: 5,
+    catch_rate: 255,
+    pokemon_number: 194,
+    evolution: { at_level: 20, into: deepClone(quagsire) },
+    hp: {
+        base: 55,
+        max: 55,
+        current: 55
+    },
+    xp: {
+        base: 42,
+        total: 0
+    },
+    atk: {
+        base: 44,
+        current: 44,
+        effective: 44,
+        stage: 0
+    },
+    def: {
+        base: 45,
+        current: 45,
+        effective: 45,
+        stage: 0
+    },
+    sp_atk: {
+        base: 25,
+        current: 25,
+        effective: 25,
+        stage: 0
+    },
+    sp_def: {
+        base: 25,
+        current: 25,
+        effective: 25,
+        stage: 0
+    },
+    speed: {
+        base: 15,
+        current: 15,
+        effective: 15,
+        stage: 0
+    },
+    images: {
+        front: {
+            path: base_path + 'wooper-front.png',
+            key: 'wooper-front',
+            frameWidth: 397,
+            frameHeight: 310,
+            frames: 50
+        },
+        back: {
+            path: base_path + 'wooper-back.png',
+            key: 'wooper-back',
+            frameWidth: 517,
+            frameHeight: 410,
+            frames: 50
+        }
+    },
+    sounds: 'assets/sounds/wooper-cry.ogg',
+    held_item: null,
+    stat_total: 210,
+    levitates: false
+
+});
+
+
+
+
+
 export const Pokemons = {
     treecko, torchic, mudkip, aggron, nosepass, lunatone, lileep, wingull, ralts, zigzagoon, poochyena, electrike, meowth, timburr, gastly, deino, starly, staravia, deerling, foongus, beautifly, kricketune, tirtouga, krabby, ducklett, cranidos, onix,
-    scolipede, heracross, erika_kricketune, squirtle, marshtomp, carvanha, whirlipede, frillish, silicobra, cufant, cubchoo, archen, nidoran, mightyena, kirlia, linoone, nidorino
+    scolipede, heracross, erika_kricketune, squirtle, marshtomp, carvanha, whirlipede, frillish, silicobra, cufant, cubchoo, archen, nidoran, mightyena, kirlia, linoone, nidorino, combusken, grovyle, scyther, dusclops, houndoom, crobat, wooper, quagsire
 }

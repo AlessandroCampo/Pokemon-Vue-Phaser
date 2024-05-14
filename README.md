@@ -8,7 +8,9 @@
 
 ## Introduction
 
-Hello everyone, I'm Alessandro, and this is my first game development project: Pokemon Bloody Red. The project is still in a very early phase, and I plan to keep working and updating this constantly for a very long time, so feel free to reach out for any ideas, recommendations, bug reports (won't be hard to find one), or questions. So far, the game only consists of a few maps and one final boss: Duke Rayneera. If you manage to defeat her, congratulations! You're the first one to ever complete the game (creator included, rip).
+Hello everyone, I'm Alessandro, and this is my first game development project: Pokemon Bloody Red. The project is still in a very early phase, and I plan to keep working and updating this constantly for a very long time, so feel free to reach out for any ideas, recommendations, bug reports (won't be hard to find one), or questions. So far, the game only consists of a few maps and 4 boss fights: Archie, Rayneera, Erika and Maxie.
+
+ If you manage to defeat all of them, congratulations! You're the first one to ever complete the game (creator included, rip).
 
 ## How to Play
 
@@ -44,32 +46,33 @@ Use arrow keys to move the character and navigate the menus.
 Use the Enter key to confirm menu choices or interact with other characters or game objects.
 Use the backspace key to quit current menus or open the main menu in the world scene.
 
+### Level Difficulty
+
+In order to make the game more challenging, some "rules" are different compered to standard pokèmon games.
+
+1. **Hardcore Mode**:
+    In hardcore mode, you can only catch one pokèmon per species, and if it faitns during battle it's considered dead and won't be available anymore. You're not allowed to use any items in battle, and you can't overlevel the next lord fight (So you're restricted to lv15 before beating Rayneera and 20 after).
+    Ah almost forgot, your starters are shit.
+
+2. **Medium Mode**
+    I don't know why I called this "medium", it's still really hard. Compered to the hard mode you're at least allowed to use items during battle and you have the standard Hoenn starters. Doens't seem much, but it makes a huge difference trust me.
+
+2. **Easy Mode**
+    This mode is if you want to enjoy the game a bit more casually, you're allowed to catch more than one pokèmon per type and you don't lose them after KO. Also you're allowed to level up to 16 at the start of the game, which allows you to evolve some pokèmons earlier than other game modes, namely your starter.
 
 
 ## Plot
 
-In this fantasy world, pokemons are used as creatures to fight wars and politically control lands; therefore, it's illegal to own them and train them, as it's considered subversive behavior towards the regime. Therefore, as the main character, you will be engaged in battles by each guard you meet. Unlike regular pokemon games, if a pokemon faints in battle, it's considered dead and will not be available again. If all of your pokemons die, the window will instantly reload, and you will be back to the previous save point. Your goal is to defeated the 7 lords (villain gym leaders).
+In this fantasy world, pokemons are used as creatures to fight wars and politically control lands; therefore, it's illegal to own them and train them, as it's considered subversive behavior towards the regime. Therefore, as the main character, you will be engaged in battles by each guard you meet. Your goal is to defeated the 4 lords (villain gym leaders).
+Lose one single battle and you're considered dead, and the window will automatically refresh (Compulsive saving highly recommended!).
 
 ## Game Documentation
 
 At the start of the game, you will be given 200 Mega Balls and Rare Candies to speed up the farming process after choosing your starter.
 
-There is currently one boss fight in the game: Rayneera. Her team consists of:
+You can find detailed informations about the possible encounter and the main fights here:
 
-- **Nosepass**, moves: [Self Destruct, Seismic Toss, Thunder Wave, Rock Throw]
-- **Lunatone**, moves: [Moonlight, Confusion, Rock Slide, Hypnosis]
-- **Lileep**, moves: [Giga Drain, Sludge Bomb, Recover, Rock Tomb]
-
-All of Reyneera's pokemons hold a Sitrus Berry and are set at level 15. You're not allowed to own more than 1 pokemon over the size of the next boss' team, and you can't overlevel it. Therefore, for boss number one, the cap is level 15 and 4 pokemons owned.
-
-All other regular trainers will have a team of random pokemons (among the encounterable ones) with random moves, equal to the length of your team.
-
-Right now, you can encounter the following pokemons on the map: 
-Route 1: Poochyena, Wingull, Zigszagoon,  Electricke
-Route 2: Starly,Meowth, Wingull,  Ralts, Zigszagoon, Electricke
-Route 3: Tirtouga, Krabby, Wingull, Ducklett,
-Silvarea: Kricketune, Beautifly, Foongus, Deerling
-Cave: Cranidos, Onyx
+[Game Documentation](https://docs.google.com/document/d/10Z8nHdHQ3kvlFF5s2Wtgr9wolXKhQmJUD1l8wibRkoc/edit)
 
 ## Credits
 

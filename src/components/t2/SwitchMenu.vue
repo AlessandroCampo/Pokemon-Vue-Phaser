@@ -3,6 +3,7 @@
         <div class="bench" :class="index == active_voice ? 'active' : ''" v-for="(pokemon, index) in store.my_bench"
             :key="index">
             <img :src="`/pokemons/${pokemon.name.toLowerCase()}.gif`" alt="" class="sprite">
+            <img :src="`${pokemon?.held_item?.img_path}`" v-show="pokemon?.held_item" class="held-item">
             <div class="type-name">
                 <div>
                     {{ pokemon.name }}
@@ -55,18 +56,26 @@ const handleMovesInput = async function (e) {
         const ai_decided_swap = store.aiWantsSwap()
         const ai_best_move = store.calcAiBestMove()
 
-        store.battle_events.push(async () => {
 
-            await store.battle_scene_instance.changeAllyPokemonSprite(store.my_bench[active_voice.value])
-        });
+
+
 
 
         // only queuue an IA attack if ur switching out a non fainted pokemon
         if (!active_pokemon_fainted) {
             store.battle_events.push(async () => {
+
+                await store.battle_scene_instance.changeAllyPokemonSprite(store.my_bench[active_voice.value])
+            });
+
+            store.battle_events.push(async () => {
                 let ai_selected_move = store.battle_type == 'trainer' ? ai_best_move : store.oppo_pokemon.moves[Math.floor(Math.random() * store.oppo_pokemon.moves.length)]
                 await store.useMove(ai_selected_move, store.oppo_pokemon, store.my_pokemon, false);
             });
+            await store.processEvents();
+        } else {
+            await store.battle_scene_instance.changeAllyPokemonSprite(store.my_bench[active_voice.value])
+            setTimeout(() => { store.menu_state = 'options' }, 500)
         }
 
 
@@ -74,7 +83,7 @@ const handleMovesInput = async function (e) {
         // Push the opponent's move as an event into battle_events
 
 
-        await store.processEvents();
+
     }
 
 
@@ -226,5 +235,14 @@ img.sprite {
 /* Apply pulsating effect to child img and i elements when parent button is active */
 .bench.active {
     animation: pulsate 1.5s infinite;
+}
+
+.held-item {
+    height: auto;
+    width: 20px;
+    position: absolute;
+    bottom: 5%;
+    left: 20%;
+
 }
 </style>

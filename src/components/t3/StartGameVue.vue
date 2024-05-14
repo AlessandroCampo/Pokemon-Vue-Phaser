@@ -8,7 +8,7 @@
         </span>
     </div>
     <div class="title-container">
-        <img src="/trainers/rowan.png" class="professor">
+        <!-- <img src="/trainers/rowan.png" class="professor"> -->
     </div>
 </template>
 
@@ -20,9 +20,23 @@ import { onBeforeMount, onBeforeUnmount, onMounted } from 'vue'
 
 onMounted(async () => {
 
-    const start_game_messages = [`welcome to the game ${store.player_info.name}`, 'this game is a little different from the pokèmon games you have played so far', 'I always liked pokèmon games, but I always found the levelling process super boring and the overall far too easy', 'therefore, at the start of the game I will gift you a bunch of items, including rare candies and mega balls to make the game faster', "that said, that's the end of the good news...", "During the game, every time a pokèmon will faint it will be considered dead and will be removed from you party. If you lose a battle, you're considered as dead as your pokèmons and the window will refresh", "Why do you think I called the game bloody red??", "In this pokèmon world, catching and training pokèmons is considered illegal so every single policeman will try to battle you", "Your goal is to defeat all of the 4 lords on the map but you can't level your pokèmons higher than the average level of the following lord's team", "I never completed the game myself after coding all of it so good luck with that, and forgive me in advance for the milion bugs I still did not fix (Not talking about bug-type pokèmons eheheh)"]
+    const start_game_messages_hardcore = [`welcome to the game ${store.player_info.name}`, 'this game is a little different from the pokèmon games you have played so far', 'I always liked pokèmon games, but I always found the levelling process super boring and the overall far too easy', 'therefore, at the start of the game I will gift you a bunch of items, including rare candies and mega balls to make the game faster', "that said, that's the end of the good news...", "During the game, every time a pokèmon will faint it will be considered dead and will be removed from you party. If you lose a battle, you're considered as dead as your pokèmons and the window will refresh", "Why do you think I called the game bloody red??", "Ah I almost forgot, since you're brave enough to choose the Hardcore mode, you can't use any item in a trainer battle", "In this pokèmon world, catching and training pokèmons is considered illegal so every single policeman will try to battle you", "Your goal is to defeat all of the 4 lords on the map but you can't level your pokèmons higher than the average level of the following lord's team", "I never completed the game myself after coding all of it so good luck with that, and forgive me in advance for the milion bugs I still did not fix (Not talking about bug-type pokèmons eheheh)"]
+    const start_game_messages_medium = [`welcome to the game ${store.player_info.name}`, 'this game is a little different from the pokèmon games you have played so far', 'I always liked pokèmon games, but I always found the levelling process super boring and the overall far too easy', 'therefore, at the start of the game I will gift you a bunch of items, including rare candies and mega balls to make the game faster', "that said, that's the end of the good news...", "During the game, every time a pokèmon will faint it will be considered dead and will be removed from you party. If you lose a battle, you're considered as dead as your pokèmons and the window will refresh", "Why do you think I called the game bloody red??", "In this pokèmon world, catching and training pokèmons is considered illegal so every single policeman will try to battle you", "Your goal is to defeat all of the 4 lords on the map but you can't level your pokèmons higher than the average level of the following lord's team", "I never completed the game myself after coding all of it so good luck with that, and forgive me in advance for the milion bugs I still did not fix (Not talking about bug-type pokèmons eheheh)"]
+    const start_game_messages_easy = [`welcome to the game ${store.player_info.name}`, 'this game is a little different from the pokèmon games you have played so far', 'I always liked pokèmon games, but I always found the levelling process super boring and the overall far too easy', 'therefore, at the start of the game I will gift you a bunch of items, including rare candies and mega balls to make the game faster', "In this pokèmon world, catching and training pokèmons is considered illegal so every single policeman will try to battle you", "Your goal is to defeat all of the 4 lords on the map but you can't level your pokèmons higher than the average level of the last lord's team"]
+    let chosen_messages = []
+    switch (store.level_diff) {
+        case 'HARDCORE':
+            chosen_messages = start_game_messages_hardcore
+            break;
+        case 'MEDIUM':
+            chosen_messages = start_game_messages_medium
+            break;
+        case 'EASY':
+            chosen_messages = start_game_messages_easy
+            break;
+    }
     store.menu_state = 'text'
-    start_game_messages.forEach((message) => {
+    chosen_messages.forEach((message) => {
         map_store.add_new_message_to_queue(message)
     })
     window.addEventListener('keydown', (e) => {

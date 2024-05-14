@@ -74,11 +74,18 @@ export class WorldScene extends Phaser.Scene {
         let player_position = map_store.player_position_info.coords
 
         let player_direction = map_store.player_position_info.direction
+        if (!map_store.game_won) {
+            this.sound.play(AUDIO_ASSETS_KEY.WORLD, {
+                loop: true,
+                volume: 0.05
+            })
+        } else {
+            this.sound.play('win', {
+                loop: true,
+                volume: 0.1
+            })
+        }
 
-        this.sound.play(AUDIO_ASSETS_KEY.WORLD, {
-            loop: true,
-            volume: 0.05
-        })
         // this.cameras.main.setBounds(0, 0, 1280, 2176)
         // const x = 24
         // const y = 52
@@ -302,7 +309,7 @@ export class WorldScene extends Phaser.Scene {
         }
 
         let caughtPokemonNumbers = store.caught_mons;
-        let possibleEncounters = map_store.current_map.possible_encounters.filter(pokemon => !caughtPokemonNumbers.includes(pokemon.pokemon_number));
+        let possibleEncounters = store.config.rules.only_one_pokemon_per_type ? map_store.current_map.possible_encounters.filter(pokemon => !caughtPokemonNumbers.includes(pokemon.pokemon_number)) : map_store.current_map.possible_encounters;
         this.wildMonsterEcountered = Math.random() < map_store.encounter_frequency
         this.can_encounter_mons = possibleEncounters.length > 0
         if (this.wildMonsterEcountered && store.my_pokemon && possibleEncounters.length > 0) {
@@ -333,7 +340,7 @@ export class WorldScene extends Phaser.Scene {
         })
 
         if (nearbyObj) {
-            console.log(nearbyObj.event())
+
         }
 
 

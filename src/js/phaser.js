@@ -16,7 +16,7 @@ async function initializeGame() {
 
     // Initialize game once user is logged in
     const game = new Phaser.Game({
-        type: Phaser.CANVAS,
+        type: Phaser.WEBGL,
         pixelArt: false,
         scale: {
             parent: 'game-container',

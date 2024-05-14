@@ -123,8 +123,26 @@ berry healing should happen b4 swap
 both kill I should not know his pokemon
 nosepass exploded bad timing
 moves double learn
+
+
 recap forgetting move
-eriaks bugs 
-bug pp same move
-swap during poison bug double damage
-double poison when mon dies
+
+
+insert pc and mom in readme
+fix bug professor stuck when talking
+can give negative  items, focus sash  doesnt come back
+
+add generic animation  for special and status
+add end game victory screen
+
+marshtomp sitrus, mighty lum, krabby focus, deerling focus
+
+Marshtopmp: Water Pulse x2
+Crobat giga > deerling
+deerling zen
+deerling ko 
+Mighty in, ice fang
+Swap marshtomp on houndoom 
+Krabby bubble OS on houndoom
+krabby bubble on dusclops
+1v1 dusclops mighty
