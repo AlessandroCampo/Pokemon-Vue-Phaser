@@ -1032,6 +1032,25 @@ export const map_store = reactive({
             });
         });
     },
+    async checkIfGameExists() {
+        try {
+            const result = await signInAnonymously(auth);
+            const user = result.user;
+            const docRef = doc(db, 'Players', user.uid);
+
+            // Check if the document already exists
+            const docSnapshot = await getDoc(docRef);
+
+            if (docSnapshot.exists()) {
+                return true; // Game data exists
+            } else {
+                return false; // No game data
+            }
+        } catch (error) {
+            console.error("Error signing in anonymously or fetching data:", error);
+            throw error; // Rethrow the error for handling at a higher level
+        }
+    },
     async startNewGame() {
         store.my_pokemon = null
         store.my_bench = []

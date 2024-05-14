@@ -76,6 +76,11 @@ const menu_voices = [
     },
     {
         label: 'LOAD GAME', callback: async () => {
+            const game_exists = await map_store.checkIfGameExists()
+            if (!game_exists) {
+                window.alert('There is no game saved')
+                return
+            }
             await map_store.logUser()
             map_store.preload_scene_istance.scene.start(SCENE_KEYS.WORLD_SCENE)
             map_store.show_title_scene = false
@@ -143,11 +148,10 @@ const handleMovesInput = async function (e) {
 
     else if (e.key == 'Backspace') {
         if (choosing_name.value) {
+            document.getElementById('player_name').value = ''
             choosing_name.value = false
         }
-        if (show_settings.value) {
-            show_settings.value = false
-        }
+
     }
     else {
         return
