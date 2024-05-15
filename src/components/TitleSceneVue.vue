@@ -12,12 +12,14 @@
         </div>
         <div v-else class="menu-container" v-show="!choosing_name">
             <div class="menu-block" v-for="(voice, index) in menu_voices" :key="index"
-                :class="[index === active_voice ? 'pulsating' : '', voice.label]">
-                <i class="fa-solid fa-chevron-right" v-if="index == active_voice"></i>
+                :class="[index === active_voice ? 'pulsating' : '', voice.label]"
+                v-show="(voice.label === 'NEW GAME' || (voice.label === 'LOAD GAME' && game_exists))">
+                <i class="fa-solid fa-chevron-right" v-if="index === active_voice"></i>
                 <span>
                     {{ voice.label }}
                 </span>
             </div>
+
 
             <div class="menu-block choose-diff" :class="store.level_diff" v-if="active_voice == 0">
                 <i class="fa-solid fa-arrow-left"></i>
@@ -42,12 +44,15 @@
 import { SCENE_KEYS } from '@/js/scenes/scene-keys.mjs';
 import { map_store } from '@/mapStore.mjs';
 import { store } from '@/store';
-import { ref, onMounted, onBeforeUnmount } from 'vue'
+import { ref, onMounted, onBeforeUnmount, computed } from 'vue'
 let show_start_menu = ref(false)
 let active_voice = ref(0)
 let choosing_name = ref(false)
 
-
+let gameExists = async () => {
+    return await map_store.checkIfGameExists()
+}
+let game_exists = ref(false)
 
 
 const menu_voices = [
@@ -90,7 +95,8 @@ const menu_voices = [
 
 ]
 
-onMounted(() => {
+onMounted(async () => {
+    game_exists.value = await gameExists()
     window.addEventListener('keydown', handleMovesInput)
 })
 
@@ -114,6 +120,7 @@ const handleMovesInput = async function (e) {
     }
 
     else if (e.key == 'ArrowUp') {
+        if (!game_exists.value) return
         active_voice.value--
         if (active_voice.value < 0) {
             active_voice.value = menu_voices.length - 1
@@ -122,6 +129,7 @@ const handleMovesInput = async function (e) {
 
 
     } else if (e.key == 'ArrowDown') {
+        if (!game_exists.value) return
         active_voice.value++
         if (active_voice.value > menu_voices.length - 1) {
             active_voice.value = 0

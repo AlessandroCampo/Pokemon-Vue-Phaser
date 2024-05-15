@@ -97,7 +97,18 @@ export class PreloadScene extends Phaser.Scene {
         this.load.audio(AUDIO_ASSETS_KEY.WORLD, 'sounds/And-The-Journey-Begins.mp3');
         this.load.audio(AUDIO_ASSETS_KEY.TITLE, 'sounds/Title-Theme.mp3');
 
+        const remainingAudioFiles = [
+            { key: AUDIO_ASSETS_KEY.BATTLE, path: 'sounds/Decisive-Battle.mp3' },
+            { key: AUDIO_ASSETS_KEY.BOSS_FIGHT, path: 'sounds/Leau.mp3' },
+            { key: AUDIO_ASSETS_KEY.FLEE, path: 'sounds/flee.wav' },
+            { key: 'evolution-sound', path: 'sounds/evolution.mp3' },
+            { key: 'win', path: 'sounds/win.mp3' }
+        ];
 
+        // Iterate through the array and load each audio file asynchronously
+        remainingAudioFiles.forEach(audio => {
+            this.load.audio(audio.key, audio.path);
+        });
 
 
 
@@ -126,7 +137,7 @@ export class PreloadScene extends Phaser.Scene {
 
         this.load.on('complete', () => {
             map_store.loading = false;
-            this.loadRemainingAudioAsync();
+
 
         });
 
@@ -180,23 +191,9 @@ export class PreloadScene extends Phaser.Scene {
 
     loadRemainingAudioAsync() {
         // Define an array of objects containing audio asset key and file path
-        const remainingAudioFiles = [
-            { key: AUDIO_ASSETS_KEY.BATTLE, path: 'sounds/Decisive-Battle.mp3' },
-            { key: AUDIO_ASSETS_KEY.BOSS_FIGHT, path: 'sounds/Leau.mp3' },
-            { key: AUDIO_ASSETS_KEY.FLEE, path: 'sounds/flee.wav' },
-            { key: 'evolution-sound', path: 'sounds/evolution.mp3' },
-            { key: 'win', path: 'sounds/win.mp3' }
-        ];
 
-        // Iterate through the array and load each audio file asynchronously
-        remainingAudioFiles.forEach(audio => {
-            this.load.audio(audio.key, audio.path);
-        });
 
-        // Once all audio files are loaded, emit an event or execute a callback
-        this.load.on('complete', () => {
-            console.log('All audio files loaded.');
-        });
+
     }
 
 }

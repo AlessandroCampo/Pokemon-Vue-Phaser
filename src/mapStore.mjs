@@ -299,6 +299,8 @@ export let encounter_map = [
                                         map_store.add_new_message_to_queue('Take some Poké Balls and Rare Candies as well, use these items build an army and free us from that burden!');
                                         this.already_talked_to = true;
                                         store.event_on_going = false
+                                        setTimeout(() => { all_npcs.npc_2.dialouge.push('You can use my PC upstairs if you need to') }, 5000)
+
                                         resolve(); // Resolve the promise
                                     } else {
                                         // Continue waiting until my_pokemon is defined

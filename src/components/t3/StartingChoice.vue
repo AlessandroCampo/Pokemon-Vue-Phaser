@@ -5,7 +5,7 @@
                 :style="{ marginTop: index === 1 ? '-250px' : '' }">
                 <i class="fa-solid fa-hand-pointer" :class="index == current_choice ? 'active' : ''"></i>
                 <img :src="`/pokemons/${choice.name.toLowerCase()}.gif`" alt=""
-                    :class="[index === current_choice ? 'active' : '', choice.name === 'Cufant' ? 'scaled-down' : '']">
+                    :class="[index === current_choice ? 'active' : '', choice.name === 'Drilbur' ? 'scaled-up' : '']">
                 <div class="info">
                     <span> {{ choice.name }} </span>
                     <div class="types">
@@ -172,5 +172,11 @@ const handleMovesInput = async function (e) {
 
 img.active {
     animation: pulsate_img 1.5s infinite;
+}
+
+.scaled-up {
+    scale: 1.6;
+    margin-top: 50px;
+    padding-bottom: 30px
 }
 </style>
