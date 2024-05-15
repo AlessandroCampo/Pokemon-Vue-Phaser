@@ -135,14 +135,27 @@ const no_contact_animation = async function (sprite, player_controlled, move_typ
 
 const stat_change = async function (sprite, increase_boolean) {
     return new Promise(resolve => {
-        const boostingColor = 0x00FF00; // Green color
-        const nerfColor = 0xFF0000; // Red color
-        const targetColor = increase_boolean ? boostingColor : nerfColor;
-        sprite.setTint(targetColor)
-        setTimeout(() => {
-            sprite.clearTint()
-            resolve()
-        }, 1000)
+        // const boostingColor = 0x00FF00; // Green color
+        // const nerfColor = 0xFF0000; // Red color
+        // const targetColor = increase_boolean ? boostingColor : nerfColor;
+        // sprite.setTint(targetColor)
+        // setTimeout(() => {
+        //     sprite.clearTint()
+        //     resolve()
+        // }, 1000)
+
+        let origina_scale = sprite.scale
+        let scale_change = increase_boolean ? + 0.2 : -0.2
+
+        const tl = gsap.timeline();
+        tl.to(sprite, {
+            scale: origina_scale + scale_change,
+        }).to(sprite, {
+            scale: origina_scale,
+            onComplete: () => {
+                resolve()
+            }
+        })
     });
 }
 

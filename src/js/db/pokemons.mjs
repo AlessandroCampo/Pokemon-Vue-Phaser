@@ -1167,7 +1167,7 @@ let aron = new Pokemon({
         back: {
             path: base_path + 'aron-back.png',
             key: 'aron-back',
-            frameWidth: 396,
+            frameWidth: 369,
             frameHeight: 410,
             frames: 25
         }
