@@ -340,7 +340,7 @@ export class WorldScene extends Phaser.Scene {
         })
 
         if (nearbyObj) {
-
+            nearbyObj.event()
         }
 
 
