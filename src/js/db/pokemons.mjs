@@ -128,6 +128,9 @@ class Pokemon {
         if (this.height > 5) {
             player_controlled_multiplier *= 2
         }
+        if (this.name == 'Drilbur' && this.player_controlled) {
+            player_controlled_multiplier = 0.5
+        }
         if (this.name == 'Onix' && this.player_controlled) {
             player_controlled_multiplier = 0.8
         }
@@ -2069,8 +2072,8 @@ let electrike = new Pokemon({
     types: ['electric'],
     height: 0.6,
     weight: 15.2,
-    moves: [deepClone(all_moves.tackle), deepClone(all_moves.thunder_wave)],
-    learnable_moves: [{ at_level: 4, move: { ...all_moves.leer } }, { at_level: 8, move: { ...all_moves.howl } }, { at_level: 12, move: { ...all_moves.quick_attack } }, { at_level: 15, move: { ...all_moves.shock_wave } }, , { at_level: 20, move: { ...all_moves.bite } }],
+    moves: [deepClone(all_moves.tackle), deepClone(all_moves.thunder_wave), deepClone(all_moves.leer)],
+    learnable_moves: [{ at_level: 8, move: { ...all_moves.howl } }, { at_level: 12, move: { ...all_moves.quick_attack } }, { at_level: 15, move: { ...all_moves.shock_wave } }, , { at_level: 20, move: { ...all_moves.bite } }],
     abilities: ['Static'],
     growth_rate: 'Slow',
     level: 5,
@@ -4508,7 +4511,7 @@ let drilbur = new Pokemon({
     weight: 8.5,
     moves: [deepClone(all_moves.mud_slap), deepClone(all_moves.rapid_spin
     ), deepClone(all_moves.scratch),],
-    learnable_moves: [{ at_level: 8, move: { ...all_moves.hone_claws } }, { at_level: 12, move: { ...all_moves.fury_swipes } }, { at_level: 16, move: { ...all_moves.metal_claw } }, { at_level: 20, move: { ...all_moves.rock_slide } }],
+    learnable_moves: [{ at_level: 8, move: { ...all_moves.hone_claws } }, { at_level: 12, move: { ...all_moves.fury_swipes } }, { at_level: 15, move: { ...all_moves.metal_claw } }, { at_level: 20, move: { ...all_moves.rock_slide } }],
     abilities: ['Guts'],
     growth_rate: 'Medium Fast',
     level: 5,

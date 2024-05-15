@@ -201,7 +201,7 @@ const mega_ball = new Ball({
     name: 'Mega Ball',
     description: 'A good, high-performance Poké Ball that provides a higher success rate for catching Pokémon than a standard Poké Ball.',
     img_path: base_path + 'megaball.png',
-    catch_multiplier: 1.5,
+    catch_multiplier: 10000.5,
     asset_key: 'megaball',
     can_be_used_in_battle: true,
     price: 600

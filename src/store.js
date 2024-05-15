@@ -2140,7 +2140,7 @@ export const store = reactive({
                 loop: false,
                 volume: 0.1
             })
-            pokemon_img.src = `/pokemons/${old_pokemon.name}.gif`
+            pokemon_img.src = `/pokemons/${old_pokemon.name.toLowerCase()}.gif`
             gsap.set(pokemon_img, { scale: 1.5 })
             evolution_scene.classList.add('evolution-scene')
             app.append(evolution_scene)
@@ -2153,7 +2153,7 @@ export const store = reactive({
                 filter: 'brightness(5)',
                 yoyo: true,
                 onComplete: () => {
-                    pokemon_img.src = `/pokemons/${evolved_pokemon.name}.gif`;
+                    pokemon_img.src = `/pokemons/${evolved_pokemon.name.toLowerCase()}.gif`;
                     gsap.to(pokemon_img, {
                         scale: 1.5,
                         duration: 5,

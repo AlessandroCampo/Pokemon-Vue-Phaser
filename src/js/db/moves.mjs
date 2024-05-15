@@ -1089,7 +1089,7 @@ const rock_trhow = new Move({
     makes_contact: false,
     animation: null,
     description: 'The user picks up and throws a small rock at the target to attack.',
-    effects: [{ type: 'modify_stat', target_stat: 'speed', target: 'enemy', stages: -1, target_stat_label: 'speed', chance: 100 }]
+    effects: null;
 })
 
 const rock_slide = new Move({

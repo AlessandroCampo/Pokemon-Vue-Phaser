@@ -210,7 +210,7 @@ export let encounter_map = [
             },
         ],
         indoor: true,
-        battle_background: 'water-gym.png'
+        battle_background: 'water_gym.png'
     },
     {
         map_name: 'lab',
