@@ -5,7 +5,9 @@
         <div class="secondary-info">
             <span> Type: {{ prop_move.type }}</span>
             <span> Category: {{ prop_move.category }}</span>
-            <span> Accuracy: {{ prop_move.accuracy }}</span>
+            <span>Accuracy: {{ prop_move.accuracy === null || prop_move.accuracy > 100 ? '-' : prop_move.accuracy
+                }}</span>
+
             <span v-if="prop_move.power"> Power: {{ prop_move.power }}</span>
             <span> Makes contact? {{ prop_move.makes_contact }}</span>
         </div>

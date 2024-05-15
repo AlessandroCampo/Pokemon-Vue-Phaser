@@ -2140,7 +2140,7 @@ export const store = reactive({
                 loop: false,
                 volume: 0.1
             })
-            pokemon_img.src = `public/pokemons/${old_pokemon.name}.gif`
+            pokemon_img.src = `/pokemons/${old_pokemon.name}.gif`
             gsap.set(pokemon_img, { scale: 1.5 })
             evolution_scene.classList.add('evolution-scene')
             app.append(evolution_scene)
@@ -2153,7 +2153,7 @@ export const store = reactive({
                 filter: 'brightness(5)',
                 yoyo: true,
                 onComplete: () => {
-                    pokemon_img.src = `public/pokemons/${evolved_pokemon.name}.gif`;
+                    pokemon_img.src = `/pokemons/${evolved_pokemon.name}.gif`;
                     gsap.to(pokemon_img, {
                         scale: 1.5,
                         duration: 5,
@@ -2280,7 +2280,7 @@ export const store = reactive({
             this.config.rules.items_in_battle_allowed = false
             this.config.rules.only_one_pokemon_per_type = true
             this.config.rules.pokemon_dead_after_ko = true
-            map_store.starter_choices = [deepClone(Pokemons.silicobra), deepClone(Pokemons.cufant), deepClone(Pokemons.cubchoo)]
+            map_store.starter_choices = [deepClone(Pokemons.drilbur), deepClone(Pokemons.aron), deepClone(Pokemons.cubchoo)]
         } else if (level == 'MEDIUM') {
             if (!this.defeated_npcs.includes(40)) {
                 this.level_cap = 15

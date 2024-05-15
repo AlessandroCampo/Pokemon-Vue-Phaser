@@ -101,7 +101,7 @@ const erika = new Trainer({
 
 const archie = new Trainer({
     name: 'archie',
-    lead: deepClone(Pokemons.tirtouga),
+    lead: deepClone(Pokemons.omanyte),
     bench: [deepClone(Pokemons.marshtomp), deepClone(Pokemons.carvanha), deepClone(Pokemons.krabby)],
     position: {
         x: 950,

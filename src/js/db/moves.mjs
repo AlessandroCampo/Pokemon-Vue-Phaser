@@ -462,6 +462,22 @@ const fury_swipes = new Move({
     repetitions: 'x'
 })
 
+const rapid_spin = new Move({
+    name: 'Rapid Spin',
+    category: 'physical',
+    type: 'normal',
+    power: 50,
+    accuracy: 100,
+    pp: {
+        max: 40,
+        current: 40
+    },
+    makes_contact: true,
+    animation: null,
+    description: 'A spin attack that can also eliminate such moves as Bind, Wrap, and Leech Seed. This also raises the user’s Speed stat.',
+    effects: [{ type: 'modify_stat', target_stat: 'speed', target: 'ally', stages: +1, target_stat_label: 'speed', chance: 100 }]
+})
+
 // WATERTYPE MOVES 
 const water_gun = new Move({
     name: 'Water Gun',
@@ -1176,6 +1192,22 @@ const mud_shot = new Move({
     effects: [{ type: 'modify_stat', target_stat: 'speed', target: 'enemy', stages: -1, target_stat_label: 'speed', chance: 100 }]
 })
 
+const mud_slap = new Move({
+    name: 'Mud Slap',
+    category: 'Special',
+    type: 'ground',
+    power: 20,
+    accuracy: 100,
+    pp: {
+        max: 10,
+        current: 10
+    },
+    makes_contact: false,
+    animation: null,
+    description: 'The user hurls mud in the target’s face to inflict damage and lower its accuracy.',
+    effects: [{ type: 'modify_stat', target_stat: 'accuracy', target: 'enemy', stages: -1, target_stat_label: 'accuracy', chance: 100 }]
+})
+
 const bulldoze = new Move({
     name: 'Bulldoze',
     category: 'physical',
@@ -1641,6 +1673,22 @@ const night_slash = new Move({
     crhit_ratio: 3
 })
 
+const hone_claws = new Move({
+    name: 'Hone Claws',
+    category: 'status',
+    type: 'dark',
+    power: null,
+    accuracy: 1000,
+    pp: {
+        max: 15,
+        current: 15
+    },
+    makes_contact: false,
+    animation: null,
+    description: 'The user sharpens its claws to boost its Attack stat and accuracy.',
+    effects: [{ type: 'modify_stat', target_stat: 'atk', target: 'ally', stages: +1, target_stat_label: 'attack' }, { type: 'modify_stat', target_stat: 'accuracy', target: 'ally', stages: +1, target_stat_label: 'accuracy' }]
+})
+
 //FAIRY MOVES 
 
 const baby_doll_eyes = new Move({
@@ -1936,5 +1984,8 @@ export const all_moves = {
     incinerate,
     will_o_wisp,
     shadow_ball,
-    zen_headbutt
+    zen_headbutt,
+    mud_slap,
+    rapid_spin,
+    hone_claws
 }

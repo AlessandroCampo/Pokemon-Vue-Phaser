@@ -50,9 +50,10 @@
             </div>
             <div style="display: flex; gap: 15px;">
                 <div>
-                    <strong>Accuracy:</strong><span>{{ store.learnable_move.accuracy ? store.learnable_move.accuracy :
-                        '-' }}</span>
+                    <strong>Accuracy:</strong><span>{{ store.learnable_move.accuracy === null ||
+                        store.learnable_move.accuracy > 100 ? '-' : store.learnable_move.accuracy }}</span>
                 </div>
+
                 <div>
                     <strong>Power:</strong><span>{{ store.learnable_move.power ? store.learnable_move.power :
                         '-' }}</span>

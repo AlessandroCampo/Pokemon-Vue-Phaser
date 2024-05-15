@@ -61,6 +61,9 @@ const handleMovesInput = async function (e) {
     if (e.key == 'Enter') {
 
         store.battle_events = [];
+        if (store.battle_events.length >= 2) {
+            return
+        }
         // Determine AI decision and selected moves
         const ai_decided_swap = store.aiWantsSwap();
         const ai_best_move = store.calcAiBestMove();

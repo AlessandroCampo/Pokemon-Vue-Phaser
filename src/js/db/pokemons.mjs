@@ -1034,9 +1034,8 @@ let aggron = new Pokemon({
     name: "Aggron",
     description: "While seeking iron for food, it digs tunnels by breaking through bedrock with its steel horns.",
     types: ['steel', 'rock'],
-    height: 2,
     moves: [{ ...all_moves.harden }, { ...all_moves.metal_claw }, { ...all_moves.rock_tomb }, { ...all_moves.tackle }],
-    learnable_moves: [{ at_level: 12, move: { ...all_moves.headbutt } }, { at_level: 15, move: { ...all_moves.protect } }, { at_level: 18, move: { ...all_moves.rock_slide } }, { at_level: 20, move: { ...all_moves.water_pulse } }],
+    learnable_moves: [{ at_level: 12, move: { ...all_moves.headbutt } }, { at_level: 15, move: { ...all_moves.protect } }, { at_level: 18, move: { ...all_moves.rock_slide } }, { at_level: 20, move: { ...all_moves.iron_head } }],
     abilities: ['Rock Head'],
     growth_rate: 'Slow',
     level: 5,
@@ -1102,6 +1101,79 @@ let aggron = new Pokemon({
     },
     sounds: 'assets/sounds/aggron-cry.ogg',
     stat_total: 530
+});
+
+let aron = new Pokemon({
+    name: "Aron",
+    description: "It usually lives deep in mountains. But when it’s hungry, it shows up at the foot of the mountains and eats railroad tracks and cars.",
+    types: ['steel'],
+    height: 0.4,
+    weight: 60,
+    moves: [{ ...all_moves.harden }, { ...all_moves.metal_claw }, { ...all_moves.rock_tomb }, { ...all_moves.tackle }],
+    learnable_moves: [{ at_level: 12, move: { ...all_moves.headbutt } }, { at_level: 15, move: { ...all_moves.protect } }, { at_level: 18, move: { ...all_moves.rock_slide } }, { at_level: 20, move: { ...all_moves.iron_head } }],
+    abilities: ['Rock Head'],
+    growth_rate: 'Slow',
+    level: 5,
+    catch_rate: 180,
+    pokemon_number: 304,
+    hp: {
+        base: 50,
+        max: 50,
+        current: 50
+    },
+    xp: {
+        base: 66,
+        total: 0
+    },
+    atk: {
+        base: 70,
+        current: 70,
+        effective: 70,
+        stage: 0
+    },
+    def: {
+        base: 100,
+        current: 100,
+        effective: 100,
+        stage: 0
+    },
+    sp_atk: {
+        base: 40,
+        current: 40,
+        effective: 40,
+        stage: 0
+    },
+    sp_def: {
+        base: 40,
+        current: 40,
+        effective: 40,
+        stage: 0
+    },
+    speed: {
+        base: 30,
+        current: 30,
+        effective: 30,
+        stage: 0
+    },
+    evolution: null,
+    images: {
+        front: {
+            path: base_path + 'aron-front.png',
+            key: 'aron-front',
+            frameWidth: 276,
+            frameHeight: 310,
+            frames: 25
+        },
+        back: {
+            path: base_path + 'aron-back.png',
+            key: 'aron-back',
+            frameWidth: 396,
+            frameHeight: 410,
+            frames: 25
+        }
+    },
+    sounds: 'assets/sounds/aron-cry.ogg',
+    stat_total: 330
 });
 
 let nosepass = new Pokemon({
@@ -2647,7 +2719,7 @@ let tirtouga = new Pokemon({
             key: 'tirtouga-front',
             frameWidth: 411,
             frameHeight: 148,
-            frames: 80
+            frames: 59
         },
         back: {
             path: base_path + 'tirtouga-back.png',
@@ -2658,6 +2730,81 @@ let tirtouga = new Pokemon({
         }
     },
     sounds: 'assets/sounds/tirtouga-cry.ogg',
+    held_item: null,
+    stat_total: 355,
+    levitates: false
+});
+
+let omanyte = new Pokemon({
+    name: "Omanyte",
+    description: "This Pokémon is a member of an ancient, extinct species. Omanyte paddles through water with its 10 tentacles, looking like it’s just drifting along.",
+    types: ['water', 'rock'],
+    height: 0.4,
+    weight: 7.5,
+    moves: [deepClone(all_moves.water_gun), deepClone(all_moves.withdraw), deepClone(all_moves.protect), deepClone(all_moves.aqua_jet)],
+    learnable_moves: [{ at_level: 12, move: { ...all_moves.rock_slide } }, { at_level: 15, move: { ...all_moves.mud_shot } }],
+    abilities: ['Shell Armor'],
+    growth_rate: 'Medium Fast',
+    level: 5,
+    catch_rate: 45,
+    pokemon_number: 138,
+    evolution: null,
+    hp: {
+        base: 35,
+        max: 35,
+        current: 35
+    },
+    xp: {
+        base: 71,
+        total: 0
+    },
+    atk: {
+        base: 40,
+        current: 40,
+        effective: 40,
+        stage: 0
+    },
+    def: {
+        base: 100,
+        current: 100,
+        effective: 100,
+        stage: 0
+    },
+    sp_atk: {
+        base: 90,
+        current: 90,
+        effective: 90,
+        stage: 0
+    },
+    sp_def: {
+        base: 55,
+        current: 55,
+        effective: 55,
+        stage: 0
+    },
+    speed: {
+        base: 35,
+        current: 35,
+        effective: 35,
+        stage: 0
+    },
+    images: {
+        front: {
+            path: base_path + 'omanyte-front.png',
+            key: 'omanyte-front',
+            frameWidth: 314,
+            frameHeight: 310,
+            frames: 50
+        },
+        back: {
+            path: base_path + 'omanyte-back.png',
+            key: 'omanyte-back',
+            frameWidth: 416,
+            frameHeight: 410,
+            frames: 50
+        }
+    },
+    sounds: 'assets/sounds/omanyte-cry.ogg',
     held_item: null,
     stat_total: 355,
     levitates: false
@@ -4353,11 +4500,89 @@ let wooper = new Pokemon({
 
 });
 
+let drilbur = new Pokemon({
+    name: "Drilbur",
+    description: "It’s a digger, using its claws to burrow through the ground. It causes damage to vegetable crops, so many farmers have little love for it.",
+    types: ['ground'],
+    height: 0.3,
+    weight: 8.5,
+    moves: [deepClone(all_moves.mud_slap), deepClone(all_moves.rapid_spin
+    ), deepClone(all_moves.scratch),],
+    learnable_moves: [{ at_level: 8, move: { ...all_moves.hone_claws } }, { at_level: 12, move: { ...all_moves.fury_swipes } }, { at_level: 16, move: { ...all_moves.metal_claw } }, { at_level: 20, move: { ...all_moves.rock_slide } }],
+    abilities: ['Guts'],
+    growth_rate: 'Medium Fast',
+    level: 5,
+    catch_rate: 120,
+    pokemon_number: 529,
+    evolution: null,
+    hp: {
+        base: 60,
+        max: 60,
+        current: 60
+    },
+    xp: {
+        base: 66,
+        total: 0
+    },
+    atk: {
+        base: 85,
+        current: 85,
+        effective: 85,
+        stage: 0
+    },
+    def: {
+        base: 40,
+        current: 40,
+        effective: 40,
+        stage: 0
+    },
+    sp_atk: {
+        base: 30,
+        current: 30,
+        effective: 30,
+        stage: 0
+    },
+    sp_def: {
+        base: 45,
+        current: 45,
+        effective: 45,
+        stage: 0
+    },
+    speed: {
+        base: 68,
+        current: 68,
+        effective: 68,
+        stage: 0
+    },
+    images: {
+        front: {
+            path: base_path + 'drilbur-front.png',
+            key: 'drilbur-front',
+            frameWidth: 559,
+            frameHeight: 310,
+            frames: 30
+        },
+        back: {
+            path: base_path + 'drilbur-back.png',
+            key: 'drilbur-back',
+            frameWidth: 742,
+            frameHeight: 410,
+            frames: 30
+        }
+    },
+    sounds: 'assets/sounds/drilbur-cry.ogg',
+    held_item: null,
+    stat_total: 328,
+    levitates: false
+
+});
+
+
 
 
 
 
 export const Pokemons = {
-    treecko, torchic, mudkip, aggron, nosepass, lunatone, lileep, wingull, ralts, zigzagoon, poochyena, electrike, meowth, timburr, gastly, deino, starly, staravia, deerling, foongus, beautifly, kricketune, tirtouga, krabby, ducklett, cranidos, onix,
-    scolipede, heracross, erika_kricketune, squirtle, marshtomp, carvanha, whirlipede, frillish, silicobra, cufant, cubchoo, archen, nidoran, mightyena, kirlia, linoone, nidorino, combusken, grovyle, scyther, dusclops, houndoom, crobat, wooper, quagsire
+    treecko, torchic, mudkip, aggron, nosepass, lunatone, lileep, wingull, ralts, zigzagoon, poochyena, electrike, meowth, timburr, gastly, deino, starly, staravia, deerling, foongus, beautifly, kricketune, krabby, ducklett, cranidos, onix,
+    scolipede, heracross, erika_kricketune, squirtle, marshtomp, carvanha, whirlipede, frillish, cubchoo, archen, nidoran, mightyena, kirlia, linoone, nidorino, combusken, grovyle, scyther, dusclops, houndoom, crobat, wooper, quagsire, drilbur, omanyte, aron
 }

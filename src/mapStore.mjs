@@ -716,7 +716,7 @@ export let encounter_map = [
 
 export const map_store = reactive({
     loading: true,
-    walking_speed: 120,
+    walking_speed: 150,
     text_queue: [],
     all_messages_read: true,
     event_on_cooldown: false,
@@ -738,7 +738,7 @@ export const map_store = reactive({
     first_loading: true,
     player_istance: undefined,
     chracacter_istances: {},
-    starter_choices: [deepClone(Pokemons.cubchoo), deepClone(Pokemons.silicobra), deepClone(Pokemons.cufant)],
+    starter_choices: [deepClone(Pokemons.cubchoo), deepClone(Pokemons.drilbur), deepClone(Pokemons.aron)],
     fetched_data: {},
     show_menu: false,
     show_party_menu: false,

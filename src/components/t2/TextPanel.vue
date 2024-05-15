@@ -1,8 +1,7 @@
 <template>
 
     <div class="text-panel">
-        <img :src="`/public/characters/portraits/${map_store.talking_npc?.name}.png`" alt=""
-            v-show="map_store.talking_npc">
+        <img :src="`/characters/portraits/${map_store.talking_npc?.name}.png`" alt="" v-show="map_store.talking_npc">
         <span>
             {{ renderedText }}
         </span>
