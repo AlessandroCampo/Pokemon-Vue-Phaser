@@ -1066,7 +1066,7 @@ export const store = reactive({
         return best_swap;
     },
     aiWantsSwap() {
-        if (this.oppo_bench.length == 0) return false
+        if (this.oppo_bench.length == 0 || this.my_pokemon.status == 'frozen') return false
         let predicted_player_move = this.playerHighestDmgMove()
 
         let highest_dmg_ai_move = this.highestAiDmgMove(this.oppo_pokemon)

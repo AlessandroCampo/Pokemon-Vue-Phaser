@@ -55,8 +55,22 @@ const handleMovesInput = async function (e) {
         let ai_decision
         const ai_decided_swap = store.aiWantsSwap()
         const ai_best_move = store.calcAiBestMove()
+        const ai_selected_move = store.battle_type == 'trainer' ? ai_best_move : store.oppo_pokemon.moves[Math.floor(Math.random() * store.oppo_pokemon.moves.length)];
 
 
+        const oppo_pokemon_swap = async () => {
+            await store.battle_scene_instance.changeOpponentPokemonSprite(ai_decided_swap);
+        };
+
+        const oppo_pokemon_attack = async () => {
+            await store.useMove(ai_selected_move, store.oppo_pokemon, store.my_pokemon, false);
+        };
+
+        if (!ai_decided_swap) {
+            ai_decision = oppo_pokemon_attack;
+        } else {
+            ai_decision = oppo_pokemon_swap;
+        }
 
 
 
@@ -68,10 +82,7 @@ const handleMovesInput = async function (e) {
                 await store.battle_scene_instance.changeAllyPokemonSprite(store.my_bench[active_voice.value])
             });
 
-            store.battle_events.push(async () => {
-                let ai_selected_move = store.battle_type == 'trainer' ? ai_best_move : store.oppo_pokemon.moves[Math.floor(Math.random() * store.oppo_pokemon.moves.length)]
-                await store.useMove(ai_selected_move, store.oppo_pokemon, store.my_pokemon, false);
-            });
+            store.battle_events.push(ai_decision);
             await store.processEvents();
         } else {
             await store.battle_scene_instance.changeAllyPokemonSprite(store.my_bench[active_voice.value])

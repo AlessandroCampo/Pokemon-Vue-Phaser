@@ -1089,7 +1089,7 @@ const rock_trhow = new Move({
     makes_contact: false,
     animation: null,
     description: 'The user picks up and throws a small rock at the target to attack.',
-    effects: null;
+    effects: null
 })
 
 const rock_slide = new Move({
@@ -1243,7 +1243,7 @@ const ice_beam = new Move({
     makes_contact: false,
     animation: null,
     description: 'The target is struck with an icy-cold beam of energy. This may also leave the target frozen.',
-    effects: [{ type: 'apply_status', applied_status: 'frozen', target: 'enemy', chance: 100 }]
+    effects: [{ type: 'apply_status', applied_status: 'frozen', target: 'enemy', chance: 10 }]
 
 })
 
